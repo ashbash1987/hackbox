@@ -1,15 +1,26 @@
-import express, { Express } from 'express';
+import { Server, Socket } from "socket.io";
 import dotenv from 'dotenv';
-
-import routes from './routes';
+import roomManager from "./RoomManager";
 
 dotenv.config();
+const port: number = parseInt(process.env.PORT as string, 10) || 3000;
 
-const app: Express = express();
-const port = process.env.PORT;
-
-routes(app);
-
-app.listen(port, () => {
-  console.log(`⚡️ Hackbox is running on port ${port}!`);
+const io = new Server({
+  cors: {
+    origin: "*",
+    credentials: false,
+  }
 });
+
+io.on("connection", (socket: Socket) => {
+  const { userType, userId, userName, roomCode } = socket.handshake.query;
+
+  socket.data.userType = userType;
+  socket.data.userId = userId;
+  socket.data.userName = userName;
+  socket.data.roomCode = roomCode;
+
+  roomManager.assignRoom(socket);
+});
+
+io.listen(port);
