@@ -39,7 +39,8 @@ class Room {
 
     existingPlayer.socket.join(this.code);
     this.sendPlayersToHost();
-    existingPlayer.socket.emit('msg', existingPlayer.lastReceivedMessage);
+    existingPlayer.socket.emit('theme', existingPlayer.theme);
+    existingPlayer.socket.emit('display', existingPlayer.display);
   }
 
   sendPlayersToHost() {

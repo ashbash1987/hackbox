@@ -10,10 +10,16 @@ class Host {
   }
 
   initializeSocketEvents() {
-    this.socket.on("msg", (payload) => {
+    this.socket.on("theme", (payload) => {
       const player = this.room.players[payload.to];
-      player.lastReceivedMessage = payload;
-      player.socket.emit("msg", player.lastReceivedMessage);
+      player.theme = payload;
+      player.socket.emit("theme", player.theme);
+    });
+
+    this.socket.on("display", (payload) => {
+      const player = this.room.players[payload.to];
+      player.display = payload;
+      player.socket.emit("display", player.display);
     });
   }
 

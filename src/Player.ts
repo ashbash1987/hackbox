@@ -7,19 +7,29 @@ export interface SanitizedPlayer {
   name: string;
 }
 
+export interface ThemeState {
+  backgroundColor?: string;
+}
+
+export interface DisplayState {
+  components?: unknown[];
+}
+
 class Player {
   socket: Socket;
-  lastReceivedMessage: Object;
+  display: DisplayState;
+  theme: ThemeState;
 
   constructor(socket: Socket) {
     this.socket = socket;
-    this.lastReceivedMessage = {};
+    this.display = {};
+    this.theme = {};
     this.initializeSocketEvents();
   }
 
   initializeSocketEvents() {
     this.socket.on("msg", (payload) => {
-      this.room.host.socket.emit("msg", ({ userId: this.userId, ...payload }))
+      this.room.host.socket.emit("msg", ({ ...payload, userId: this.userId }))
     });
   }
 
