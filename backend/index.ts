@@ -1,17 +1,17 @@
 import 'dotenv/config';
 
 import express from "express";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
-import roomManager from "./RoomManager";
+import roomManager from "./src/RoomManager";
 
-const port: number = parseInt(process.env.PORT as string, 10) || 3000;
+const port: number = parseInt(process.env.PORT, 10);
 
 const app = express();
 
-const options: cors.CorsOptions = {
-  origin: "http://localhost:3000",
+const options: CorsOptions = {
+  origin: [process.env.PLAYER_ORIGIN],
 };
 
 app.use(cors(options));
@@ -42,3 +42,5 @@ io.on("connection", (socket: Socket) => {
 });
 
 server.listen(port);
+
+console.log(`✨ Backend listening on ${port}!`);
