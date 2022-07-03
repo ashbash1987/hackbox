@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
+import { getUserId } from "@/lib/browserStorage";
+
+getUserId();
 </script>
 
 <template>

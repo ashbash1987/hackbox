@@ -6,7 +6,8 @@
   "scripts": {
     "player": "cd player && npm run dev",
     "backend": "cd backend && npm run dev",
-    "dev": "concurrently \"npm run player\" \"npm run backend\""
+    "host": "cd host && npm run dev",
+    "dev": "concurrently \"npm run player\" \"npm run backend\" \"npm run host\""
   },
   "repository": {
     "type": "git",

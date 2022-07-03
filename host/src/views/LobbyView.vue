@@ -9,11 +9,6 @@ import {
 import router from "@/router";
 import roomExists from "@/lib/roomExists";
 
-const updateRoomExists = async () => {
-  const roomCode = getRoomCode();
-  state.roomExists = roomCode.length !== 4 ? false : await roomExists(roomCode);
-};
-
 const setRoomCodeFromInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const newRoomCode = target.value;
@@ -22,69 +17,13 @@ const setRoomCodeFromInput = (event: Event) => {
   updateRoomExists();
 };
 
-const setUserNameFromInput = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const newUserName = target.value;
-  state.userName = newUserName;
-  setUserName(newUserName);
+const createGame = () => {
+  router.push(`/rooms/${roomCode}`);
 };
-
-const canJoin = computed(() => {
-  if (state.userName.length === 0) return false;
-  if (state.userName.length > 12) return false;
-  return state.roomExists;
-});
-
-const joinGame = () => {
-  router.push("/play");
-};
-
-const state = reactive({
-  roomCode: getRoomCode(),
-  userName: getUserName(),
-  roomExists: false,
-});
-
-updateRoomExists();
 </script>
 
 <template>
-  <div class="lobby-wrapper">
-    <nav class="lobby-nav--wrapper">
-      <div class="lobby-nav">
-        <div class="lobby-nav--left"></div>
-        <div class="lobby-nav--center">bzzr.tv</div>
-        <div class="lobby-nav--right"></div>
-      </div>
-    </nav>
-    <section class="lobby-main--wrapper">
-      <div class="lobby-main">
-        <div class="input-area">
-          <label>ROOM CODE</label>
-          <input
-            type="text"
-            maxlength="4"
-            :value="state.roomCode"
-            @input="setRoomCodeFromInput"
-          />
-        </div>
-
-        <div class="input-area">
-          <label>NAME</label>
-          <input
-            type="text"
-            maxlength="12"
-            :value="state.userName"
-            @input="setUserNameFromInput"
-          />
-        </div>
-
-        <button @click="joinGame" :disabled="!canJoin">PLAY</button>
-
-        <a class="host-link" href="/host">Host your own game</a>
-      </div>
-    </section>
-  </div>
+  <button @click="createGame">Host BZZR</button>
 </template>
 
 <style scoped>

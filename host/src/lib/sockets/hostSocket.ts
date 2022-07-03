@@ -28,7 +28,6 @@ const initializeHostSocket = (router: Router, state: HostState) => {
     query: {
       userType: 'host',
       userId: getUserId(),
-      userName: getUserName(),
       roomCode: getRoomCode(),
     }
   });

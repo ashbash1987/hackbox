@@ -11,12 +11,18 @@ const port: number = parseInt(process.env.PORT, 10);
 const app = express();
 
 const options: CorsOptions = {
-  origin: [process.env.PLAYER_ORIGIN],
+  origin: [process.env.PLAYER_ORIGIN, process.env.HOST_ORIGIN],
 };
 
 app.use(cors(options));
 
 app.get('/rooms/:roomCode', (req, res) => {
+  const roomCode = req.params.roomCode as string;
+  const exists = !!roomManager.findRoom(roomCode);
+  res.json({ exists });
+})
+
+app.post('/rooms', (req, res) => {
   const roomCode = req.params.roomCode as string;
   const exists = !!roomManager.findRoom(roomCode);
   res.json({ exists });
