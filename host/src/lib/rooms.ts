@@ -1,4 +1,5 @@
 import config from "@/config";
+import { getUserId } from "./browserStorage";
 
 const roomExists = async (roomCode: string): Promise<boolean> => {
   const response = await fetch(`${config.backendUri}/rooms/${roomCode}`);
@@ -6,10 +7,24 @@ const roomExists = async (roomCode: string): Promise<boolean> => {
   return body.exists;
 }
 
-const createRoom = async (): Promise<string> => {
-  const response = fetch(`${config.backendUri}/rooms`, {
-    method: 'POST'
-  });
+const authorizedToHost = async (userId: string, roomCode: string): Promise<boolean> => {
+  const response = await fetch(`${config.backendUri}/rooms/${roomCode}/auth-host/${userId}`);
+  const body = await response.json();
+  return body.authed;
 }
 
-export default roomExists;
+const createRoom = async (): Promise<string> => {
+  const response = await fetch(`${config.backendUri}/rooms`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      hostId: getUserId(),
+    })
+  });
+  const body = await response.json();
+  return body.roomCode;
+}
+
+export { roomExists, authorizedToHost, createRoom };

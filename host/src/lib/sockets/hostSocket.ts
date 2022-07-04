@@ -1,7 +1,8 @@
 import { io, Socket } from "socket.io-client";
 import type { Router } from "vue-router";
-import { getUserId, getUserName, getRoomCode } from "@/lib/browserStorage";
+import { getUserId } from "@/lib/browserStorage";
 import type { HostState } from "@/types";
+import config from "@/config";
 
 const attachHostEvents = (socket: Socket, state: HostState, router: Router) => {
   socket.on("msg", (payload) => {
@@ -24,11 +25,10 @@ const attachHostEvents = (socket: Socket, state: HostState, router: Router) => {
 }
 
 const initializeHostSocket = (router: Router, state: HostState) => {
-  const socket = io(`http://localhost:9001`, {
+  const socket = io(config.backendUri, {
     query: {
-      userType: 'host',
       userId: getUserId(),
-      roomCode: getRoomCode(),
+      roomCode: router.currentRoute.value.params.roomCode,
     }
   });
 

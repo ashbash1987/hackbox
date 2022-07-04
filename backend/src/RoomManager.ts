@@ -1,6 +1,5 @@
 import { Socket } from "socket.io";
 import Room from "./Room";
-import Player from "./Player";
 import Host from "./Host";
 
 class RoomManager {
@@ -10,42 +9,33 @@ class RoomManager {
     this.rooms = {};
   }
 
+  generateRoomCode = () => {
+    const consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Z'];
+    return [1, 2, 3, 4].map(() => consonants[Math.floor(Math.random() * consonants.length)]).join('');
+  }
+
   findRoom(roomCode: string) {
     return this.rooms[roomCode];
   }
 
-  findOrCreateRoom(roomCode: string, host: Host) {
+  createRoom(hostId: string, roomCode: string): Room {
     const existingRoom = this.findRoom(roomCode);
-    if (existingRoom) return existingRoom;
+    if (existingRoom) return this.createRoom(hostId, this.generateRoomCode());
 
-    const newRoom = new Room(roomCode, host)
+    const newRoom = new Room(roomCode, new Host(hostId, roomCode));
     this.rooms[roomCode] = newRoom;
     return newRoom;
   }
 
-  assignRoom(socket: Socket) {
-    const { roomCode, userType } = socket.data;
-
-    if (userType === 'host') {
-      const host = new Host(socket);
-      const room = this.findOrCreateRoom(roomCode, host)
-      room.connectHost(host);
+  joinRoom(socket: Socket, userId: string, userName: string, roomCode: string) {
+    let room = this.findRoom(roomCode);
+    if (!room) {
+      socket.emit('error', { message: 'This room does not exist.' });
+      socket.disconnect(true);
       return;
     }
 
-    if (userType === 'player') {
-      const player = new Player(socket);
-      let room = this.findRoom(roomCode);
-      if (!room) {
-        socket.emit('error', { message: 'This room does not exist.' });
-        socket.disconnect(true);
-        return;
-      }
-      room.connectPlayer(player);
-      return;
-    }
-
-    socket.emit('error', { message: "Please specify a valid userType. ('host', 'player', or 'viewer')" });
+    room.join(userId, userName, socket);
   }
 }
 

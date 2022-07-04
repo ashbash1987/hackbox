@@ -1,54 +1,44 @@
+import { Socket } from "socket.io";
 import Host from "./Host";
 import Player, { SanitizedPlayer } from "./Player";
 
-type SanitizedPlayers = { [userId: string]: SanitizedPlayer }
+type SanitizedPlayers = { [id: string]: SanitizedPlayer }
 
 class Room {
-  code: string;
+  id: string;
   host: Host;
-  players: { [userId: string]: Player };
+  players: { [id: string]: Player };
 
   constructor(roomCode: string, host: Host) {
-    this.code = roomCode;
+    this.id = roomCode;
     this.host = host;
     this.players = {};
   }
 
-  connectHost(host: Host) {
-    if (this.host.userId === host.userId) {
-      this.host = host;
-      host.socket.join(this.code);
-      this.sendPlayersToHost();
-      return;
-    } else {
-      host.socket.emit('error', { message: 'You are not the host of this room.' });
-      host.socket.disconnect(true);
+  join(userId: string, userName: string, socket: Socket) {
+    if (userId === this.host.id) {
+      this.host.connect(socket);
       return;
     }
-  }
 
-  connectPlayer(player: Player) {
-    let existingPlayer = this.players[player.userId];
-    if (existingPlayer) {
-      existingPlayer.socket = player.socket;
+    const existingPlayer = this.players[userId];
+    if (!!existingPlayer) {
+      existingPlayer.connect(socket);
     } else {
-      this.players[player.userId] = player;
+      const newPlayer = new Player(userId, userName, this.id);
+      this.players[userId] = newPlayer;
+      newPlayer.connect(socket);
     }
 
-    existingPlayer = this.players[player.userId];
-
-    existingPlayer.socket.join(this.code);
     this.sendPlayersToHost();
-    existingPlayer.socket.emit('theme', existingPlayer.theme);
-    existingPlayer.socket.emit('display', existingPlayer.display);
   }
 
   sendPlayersToHost() {
     const sanitizedPlayers = Object.values(this.players).reduce((acc: SanitizedPlayers, player) => {
-      acc[player.userId] = player.sanitized;
+      acc[player.id] = player.sanitized;
       return acc;
     }, {});
-    this.host.socket.emit("players", { players: sanitizedPlayers });
+    this.host.send("players", { players: sanitizedPlayers });
   }
 }
 

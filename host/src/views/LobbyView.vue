@@ -1,29 +1,15 @@
 <script setup lang="ts">
-import { reactive, computed } from "vue";
-import {
-  getRoomCode,
-  getUserName,
-  setRoomCode,
-  setUserName,
-} from "@/lib/browserStorage";
+import { createRoom } from "@/lib/rooms";
 import router from "@/router";
-import roomExists from "@/lib/roomExists";
 
-const setRoomCodeFromInput = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const newRoomCode = target.value;
-  state.roomCode = newRoomCode;
-  setRoomCode(newRoomCode);
-  updateRoomExists();
-};
-
-const createGame = () => {
-  router.push(`/rooms/${roomCode}`);
-};
+const startGame = async () => {
+  const roomCode = await createRoom();
+  router.push(`/${roomCode}`);
+}
 </script>
 
 <template>
-  <button @click="createGame">Host BZZR</button>
+  <button @click="startGame">Host BZZR</button>
 </template>
 
 <style scoped>

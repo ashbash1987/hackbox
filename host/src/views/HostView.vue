@@ -3,13 +3,11 @@ import { reactive } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 import type { Component, HostState } from "@/types";
-import { getRoomCode } from "@/lib/browserStorage";
 
 const state: HostState = reactive({
   players: {},
 });
 
-const roomCode = getRoomCode();
 const socket = initializeHostSocket(router, state);
 
 const customColor = "white";
@@ -33,7 +31,7 @@ const sendDisplay = (userId: string, components: Component[]) => {
 
 <template>
   <div class="about">
-    <h1>Hosting in {{ roomCode }}</h1>
+    <h1>Hosting</h1>
     <label>
       Custom Color
       <input v-model="customColor" />

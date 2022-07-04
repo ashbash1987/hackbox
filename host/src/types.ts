@@ -23,5 +23,5 @@ export interface PlayerState {
 }
 
 export interface HostState {
-  players: { [userId: string]: SanitizedPlayer };
+  players: { [id: string]: SanitizedPlayer };
 }
