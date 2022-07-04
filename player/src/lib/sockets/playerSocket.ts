@@ -20,6 +20,7 @@ const attachPlayerEvents = (socket: Socket, state: PlayerState, router: Router) 
   });
 
   socket.on('display', (payload) => {
+    console.log(payload);
     state.display = { ...state.display, ...payload.display };
   });
 }

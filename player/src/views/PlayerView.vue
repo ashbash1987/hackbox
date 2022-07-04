@@ -5,7 +5,8 @@ import router from "@/router";
 import type { PlayerState } from "@/types";
 import { getRoomCode, getUserName } from "@/lib/browserStorage";
 const defaultTheme = {
-  backgroundColor: "white",
+  navbarColor: "lightblue",
+  backgroundColor: "#424952",
 };
 
 const defaultDisplay = {
@@ -30,9 +31,12 @@ initializePlayerSocket(router, state);
     </div>
     <div class="player-main--wrapper">
       <div class="player-main">
-        <div v-for="(component, key) in state.display.components" :key="key">
-          <p>{{ component.value }}</p>
-        </div>
+        <component
+          v-for="(comp, key) in state.display.components"
+          :is="comp.type"
+          :key="key"
+          :custom="comp.props"
+        />
       </div>
     </div>
   </div>
@@ -49,8 +53,9 @@ initializePlayerSocket(router, state);
   display: flex;
   justify-content: center;
   height: 50px;
+  z-index: 10;
   color: black;
-  background-color: v-bind("state.theme.backgroundColor");
+  background-color: v-bind("state.theme.navbarColor");
 }
 
 .player-nav {
@@ -67,6 +72,9 @@ initializePlayerSocket(router, state);
 .player-main--wrapper {
   display: flex;
   justify-content: center;
+  margin-top: -50px;
+  min-height: 100vh;
+  background-color: v-bind("state.theme.backgroundColor");
 }
 
 .player-main {

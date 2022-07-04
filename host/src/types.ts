@@ -1,12 +1,11 @@
-export interface SanitizedPlayer {
+export interface Player {
   id: string;
-  socketId: string;
   name: string;
 }
 
 export interface Component {
   type: string;
-  value: string;
+  props: { [key: string]: unknown };
 }
 
 export interface ThemeState {
@@ -22,6 +21,11 @@ export interface PlayerState {
   display: DisplayState;
 }
 
+interface PlayerMap {
+  [id: string]: Player
+}
+
 export interface HostState {
-  players: { [id: string]: SanitizedPlayer };
+  players: PlayerMap;
+  messages: unknown[];
 }

@@ -7,6 +7,7 @@ export interface SanitizedPlayer {
 }
 
 export interface ThemeState {
+  navbarColor?: string;
   backgroundColor?: string;
 }
 
@@ -37,10 +38,23 @@ class Player {
     this.socket.on("msg", (payload) => {
       this.room.host.send("msg", ({ ...payload, userId: this.id }))
     });
+
+    this.updateTheme({});
+    this.updateDisplay({});
   }
 
   send(eventName: string, payload: unknown) {
     this.socket?.emit(eventName, payload);
+  }
+
+  updateTheme(payload: object) {
+    this.theme = { ...this.theme, ...payload };
+    this.send("theme", this.theme);
+  }
+
+  updateDisplay(payload: object) {
+    this.display = { ...this.display, ...payload };
+    this.send("display", this.display);
   }
 
   get room() {

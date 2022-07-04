@@ -2,14 +2,20 @@
 import { createRoom } from "@/lib/rooms";
 import router from "@/router";
 
-const startGame = async () => {
+const startTestGame = async () => {
   const roomCode = await createRoom();
-  router.push(`/${roomCode}`);
+  router.push(`/test/${roomCode}`);
+}
+
+const startBzzrGame = async () => {
+  const roomCode = await createRoom();
+  router.push(`/bzzr/${roomCode}`);
 }
 </script>
 
 <template>
-  <button @click="startGame">Host BZZR</button>
+  <button @click="startTestGame">Test Room</button>
+  <button @click="startBzzrGame">BZZR</button>
 </template>
 
 <style scoped>

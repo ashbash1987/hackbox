@@ -1,22 +1,17 @@
 <script setup lang="ts">
-import { reactive } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
-import type { Component, HostState } from "@/types";
+import type { Component } from "@/types";
 
-const state: HostState = reactive({
-  players: {},
-});
-
-const socket = initializeHostSocket(router, state);
+const { socket, state } = initializeHostSocket(router);
 
 const customColor = "white";
 
-const sendTheme = (userId: string, backgroundColor: string) => {
+const sendTheme = (userId: string, navbarColor: string) => {
   socket?.emit("theme", {
     to: userId,
     theme: {
-      backgroundColor,
+      navbarColor,
     },
   });
 };
@@ -42,13 +37,11 @@ const sendDisplay = (userId: string, components: Component[]) => {
       <tr>
         <th>Name</th>
         <th>User ID</th>
-        <th>Socket ID</th>
         <th>Send Message</th>
       </tr>
       <tr v-for="key in Object.keys(state.players)" :key="key">
         <td>{{ state.players[key].name }}</td>
         <td>{{ state.players[key].id }}</td>
-        <td>{{ state.players[key].socketId }}</td>
         <td>
           <button
             @click="

@@ -14,16 +14,20 @@ class Host {
   connect(socket: Socket) {
     this.socket = socket;
 
-    socket.on("theme", (payload) => {
-      const player = this.room.players[payload.to];
-      player.theme = payload;
-      player.send("theme", player.theme);
+    socket.on("theme", async (payload) => {
+      const recipients = [payload.to].flat();
+      return Promise.allSettled(recipients.map((userId: string) => {
+        const player = this.room.players[userId];
+        player.updateTheme(payload);
+      }));
     });
 
-    socket.on("display", (payload) => {
-      const player = this.room.players[payload.to];
-      player.display = payload;
-      player.send("display", player.display);
+    socket.on("display", async (payload) => {
+      const recipients = [payload.to].flat();
+      return Promise.allSettled(recipients.map((userId: string) => {
+        const player = this.room.players[userId];
+        player.updateDisplay(payload);
+      }));
     });
   }
 

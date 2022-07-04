@@ -1,9 +1,10 @@
 export interface Component {
   type: string;
-  value: string;
+  props: { [key: string]: unknown };
 }
 
 export interface ThemeState {
+  navbarColor: string;
   backgroundColor: string;
 }
 
