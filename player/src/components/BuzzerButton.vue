@@ -13,5 +13,6 @@ const props = defineProps(["custom"]);
   background-color: v-bind("props.custom.backgroundColor");
   font-size: 75px;
   height: 500px;
+  margin: 0;
 }
 </style>

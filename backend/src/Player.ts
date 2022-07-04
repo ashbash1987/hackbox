@@ -43,8 +43,8 @@ class Player {
     }
 
     if (newState.ui) {
-      if (newState.ui.header) this.state.ui.header = newState.ui.header;
-      if (newState.ui.main) this.state.ui.main = newState.ui.main;
+      if (newState.ui.header) this.state.ui.header = { ...this.state.ui.header, ...newState.ui.header };
+      if (newState.ui.main) this.state.ui.main = { ...this.state.ui.main, ...newState.ui.main };
     }
 
     this.send("update", this.state);
