@@ -3,23 +3,29 @@ import { reactive } from "vue";
 import initializePlayerSocket from "@/lib/sockets/playerSocket";
 import router from "@/router";
 import type { PlayerState } from "@/types";
-import { getRoomCode, getUserName } from "@/lib/browserStorage";
-const defaultTheme = {
-  navbarColor: "lightblue",
-  backgroundColor: "#424952",
+
+const defaultState: PlayerState = {
+  theme: {
+    header: {
+      textColor: "black",
+      backgroundColor: "black",
+    },
+    main: {
+      backgroundColor: "black",
+    },
+  },
+  ui: {
+    header: {
+      text: "",
+    },
+    main: {
+      align: "start",
+      components: [],
+    },
+  },
 };
 
-const defaultDisplay = {
-  components: [],
-};
-
-const roomCode = getRoomCode();
-const userName = getUserName();
-
-const state: PlayerState = reactive({
-  theme: defaultTheme,
-  display: defaultDisplay,
-});
+const state: PlayerState = reactive(defaultState);
 
 initializePlayerSocket(router, state);
 </script>
@@ -27,12 +33,12 @@ initializePlayerSocket(router, state);
 <template>
   <div class="player-wrapper">
     <div class="player-nav--wrapper">
-      <div class="player-nav">{{ userName }} in {{ roomCode }}</div>
+      <div class="player-nav">{{ state.ui.header.text }}</div>
     </div>
     <div class="player-main--wrapper">
       <div class="player-main">
         <component
-          v-for="(comp, key) in state.display.components"
+          v-for="(comp, key) in state.ui.main.components"
           :is="comp.type"
           :key="key"
           :custom="comp.props"
@@ -54,8 +60,8 @@ initializePlayerSocket(router, state);
   justify-content: center;
   height: 50px;
   z-index: 10;
-  color: black;
-  background-color: v-bind("state.theme.navbarColor");
+  color: v-bind("state.theme.header.textColor");
+  background-color: v-bind("state.theme.header.backgroundColor");
 }
 
 .player-nav {
@@ -74,17 +80,17 @@ initializePlayerSocket(router, state);
   justify-content: center;
   margin-top: -50px;
   min-height: 100vh;
-  background-color: v-bind("state.theme.backgroundColor");
+  background-color: v-bind("state.theme.main.backgroundColor");
 }
 
 .player-main {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: v-bind("state.ui.main.align");
+  margin-top: 50px;
   width: 100%;
   min-width: 350px;
   max-width: 450px;
-  padding: 20px;
 }
 
 .input-area {

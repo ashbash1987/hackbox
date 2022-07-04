@@ -1,18 +1,10 @@
 import type { Socket } from "socket.io";
 import roomManager from "./RoomManager";
-
+import type { PlayerState } from "../types";
 export interface SanitizedPlayer {
   id: string;
   name: string;
-}
-
-export interface ThemeState {
-  navbarColor?: string;
-  backgroundColor?: string;
-}
-
-export interface DisplayState {
-  components?: unknown[];
+  state: PlayerState;
 }
 
 class Player {
@@ -20,16 +12,14 @@ class Player {
   id: string;
   name: string;
   roomCode: string;
-  display: DisplayState;
-  theme: ThemeState;
+  state: PlayerState;
 
-  constructor(id: string, name: string, roomCode: string) {
+  constructor(id: string, name: string, roomCode: string, state: PlayerState) {
     this.id = id;
     this.name = name;
     this.roomCode = roomCode;
+    this.state = state;
     this.socket = null;
-    this.display = {};
-    this.theme = {};
   }
 
   connect(socket: Socket) {
@@ -39,22 +29,25 @@ class Player {
       this.room.host.send("msg", ({ ...payload, userId: this.id }))
     });
 
-    this.updateTheme({});
-    this.updateDisplay({});
+    this.updateState();
   }
 
   send(eventName: string, payload: unknown) {
     this.socket?.emit(eventName, payload);
   }
 
-  updateTheme(payload: object) {
-    this.theme = { ...this.theme, ...payload };
-    this.send("theme", this.theme);
-  }
+  updateState(newState: Partial<PlayerState> = {}) {
+    if (newState.theme) {
+      if (newState.theme.header) this.state.theme.header = { ...this.state.theme.header, ...newState.theme.header };
+      if (newState.theme.main) this.state.theme.main = { ...this.state.theme.main, ...newState.theme.main }
+    }
 
-  updateDisplay(payload: object) {
-    this.display = { ...this.display, ...payload };
-    this.send("display", this.display);
+    if (newState.ui) {
+      if (newState.ui.header) this.state.ui.header = newState.ui.header;
+      if (newState.ui.main) this.state.ui.main = newState.ui.main;
+    }
+
+    this.send("update", this.state);
   }
 
   get room() {
@@ -65,6 +58,7 @@ class Player {
     return {
       id: this.id,
       name: this.name,
+      state: this.state,
     };
   }
 }

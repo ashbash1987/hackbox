@@ -1,3 +1,17 @@
+export interface Player {
+  id: string;
+  name: string;
+}
+
+interface PlayerMap {
+  [id: string]: Player
+}
+
+export interface HostState {
+  players: PlayerMap;
+  messages: unknown[];
+}
+
 export interface Component {
   type: string;
   props: { [key: string]: unknown };

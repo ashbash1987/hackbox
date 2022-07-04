@@ -3,24 +3,6 @@ export interface Player {
   name: string;
 }
 
-export interface Component {
-  type: string;
-  props: { [key: string]: unknown };
-}
-
-export interface ThemeState {
-  backgroundColor: string;
-}
-
-export interface DisplayState {
-  components?: Component[];
-}
-
-export interface PlayerState {
-  theme: ThemeState;
-  display: DisplayState;
-}
-
 interface PlayerMap {
   [id: string]: Player
 }
@@ -28,4 +10,29 @@ interface PlayerMap {
 export interface HostState {
   players: PlayerMap;
   messages: unknown[];
+}
+
+export interface Component {
+  type: string;
+  props: { [key: string]: unknown };
+}
+
+export interface ThemeState {
+  header: {
+    text: string;
+    textColor: string;
+    backgroundColor: string;
+  };
+  main: {
+    backgroundColor: string;
+  }
+}
+
+export interface ComponentsState {
+  main: Component[];
+}
+
+export interface PlayerState {
+  theme: ThemeState;
+  components: ComponentsState;
 }

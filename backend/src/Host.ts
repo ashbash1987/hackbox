@@ -1,6 +1,10 @@
 import type { Socket } from "socket.io";
 import roomManager from "./RoomManager";
 
+const forAllRecipients = (recipients: any, callback: (recipientId: string) => void) => {
+  return Promise.allSettled([recipients].flat().map(callback));
+};
+
 class Host {
   id: string;
   roomCode: string;
@@ -14,20 +18,11 @@ class Host {
   connect(socket: Socket) {
     this.socket = socket;
 
-    socket.on("theme", async (payload) => {
-      const recipients = [payload.to].flat();
-      return Promise.allSettled(recipients.map((userId: string) => {
-        const player = this.room.players[userId];
-        player.updateTheme(payload);
-      }));
-    });
-
-    socket.on("display", async (payload) => {
-      const recipients = [payload.to].flat();
-      return Promise.allSettled(recipients.map((userId: string) => {
-        const player = this.room.players[userId];
-        player.updateDisplay(payload);
-      }));
+    socket.on("update player", async (payload) => {
+      await forAllRecipients(payload.to, (recipientId) => {
+        const player = this.room.players[recipientId];
+        player.updateState(payload.data);
+      })
     });
   }
 

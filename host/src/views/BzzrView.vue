@@ -27,25 +27,30 @@ const togglePlayer = (userId: string) => {
   gameState.players[userId] = {
     locked: false,
     score: 0,
-  }
-}
+  };
+};
 
 const enableBuzzers = () => {
-  socket.emit("display", {
+  socket.emit("update player", {
     to: Object.keys(gameState.players).filter(
       (key: string) => !gameState.players[key].locked
     ),
-    display: {
-      components: [
-        {
-          type: "BuzzerButton",
-          props: {
-            label: "BUZZ!",
-            backgroundColor: "red",
-            textColor: "white",
-          },
+    data: {
+      ui: {
+        main: {
+          align: "end",
+          components: [
+            {
+              type: "BuzzerButton",
+              props: {
+                label: "BUZZ!",
+                backgroundColor: "red",
+                textColor: "white",
+              },
+            },
+          ],
         },
-      ],
+      },
     },
   });
 };

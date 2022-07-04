@@ -5,8 +5,6 @@ import type { Component } from "@/types";
 
 const { socket, state } = initializeHostSocket(router);
 
-const customColor = "white";
-
 const sendTheme = (userId: string, navbarColor: string) => {
   socket?.emit("theme", {
     to: userId,
@@ -17,7 +15,7 @@ const sendTheme = (userId: string, navbarColor: string) => {
 };
 
 const sendDisplay = (userId: string, components: Component[]) => {
-  socket?.emit("display", {
+  socket?.emit("update player", {
     to: userId,
     display: { components },
   });
@@ -29,7 +27,7 @@ const sendDisplay = (userId: string, components: Component[]) => {
     <h1>Hosting</h1>
     <label>
       Custom Color
-      <input v-model="customColor" />
+      <textarea v-model="customColor" />
     </label>
     <h3>Players</h3>
     <p v-if="!Object.keys(state.players).length">None</p>

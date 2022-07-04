@@ -15,13 +15,9 @@ const attachPlayerEvents = (socket: Socket, state: PlayerState, router: Router) 
     alert(payload.message);
   })
 
-  socket.on('theme', (payload) => {
-    state.theme = { ...state.theme, ...payload.theme };
-  });
-
-  socket.on('display', (payload) => {
-    console.log(payload);
-    state.display = { ...state.display, ...payload.display };
+  socket.on('update', (payload) => {
+    state.theme = payload.theme;
+    state.ui = payload.ui;
   });
 }
 
