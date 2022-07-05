@@ -6,7 +6,7 @@ const defaultProps = {
   textColor: "white",
   backgroundColor: "red",
 }
-const props = { ...defaultProps, ...customProps };
+const props = { ...defaultProps, ...customProps.custom };
 </script>
 
 <template>
