@@ -10,39 +10,84 @@ const playerStateInput = reactive({
     "theme": {
       "header": {
         "textColor": "black",
-        "backgroundColor": "pink"
+        "backgroundColor": "#FAA516"
       },
       "main": {
-        "backgroundColor": "#222233"
+        "backgroundColor": "black"
       }
     },
     "ui": {
       "header": {
-        "text": "PLAYER"
+        "text": "JOHN"
       },
       "main": {
-        "align": "center",
+        "align": "start",
         "components": [
           {
-            "type": "BuzzerButton",
+            "type": "TextBox",
             "props": {
-              "label": "DEAL",
-              "backgroundColor": "yellow",
-              "textColor": "black"
+              "text": "Which of these US presidents appeared on the television series 'Laugh-In'?",
+              "textColor": "white",
+              "backgroundColor": "black",
+              "borderColor": "#7391CA"
             }
           },
           {
-            "type": "BuzzerButton",
+            "type": "SelectButton",
             "props": {
-              "label": "NO DEAL",
-              "backgroundColor": "red",
-              "textColor": "white"
+              "label": "A: Lyndon Johnson",
+              "value": "A",
+              "align": "start",
+              "textColor": "white",
+              "backgroundColor": "black",
+              "borderColor": "#7391CA",
+              "hoverBackgroundColor": "#FAA516",
+              "hoverTextColor": "black"
+            }
+          },
+          {
+            "type": "SelectButton",
+            "props": {
+              "label": "B: Richard Nixon",
+              "value": "B",
+              "align": "start",
+              "textColor": "white",
+              "backgroundColor": "black",
+              "borderColor": "#7391CA",
+              "hoverBackgroundColor": "#FAA516",
+              "hoverTextColor": "black"
+            }
+          },
+          {
+            "type": "SelectButton",
+            "props": {
+              "label": "C: Jimmy Carter",
+              "value": "C",
+              "align": "start",
+              "textColor": "white",
+              "backgroundColor": "black",
+              "borderColor": "#7391CA",
+              "hoverBackgroundColor": "#FAA516",
+              "hoverTextColor": "black"
+            }
+          },
+          {
+            "type": "SelectButton",
+            "props": {
+              "label": "D: Gerald Ford",
+              "value": "D",
+              "align": "start",
+              "textColor": "white",
+              "backgroundColor": "black",
+              "borderColor": "#7391CA",
+              "hoverBackgroundColor": "#FAA516",
+              "hoverTextColor": "black"
             }
           }
         ]
       }
     }
-  }`
+  }`,
 });
 
 const updatePlayerState = (userId: string) => {

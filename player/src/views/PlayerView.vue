@@ -36,12 +36,13 @@ initializePlayerSocket(router, state);
       <div class="player-nav">{{ state.ui.header.text }}</div>
     </div>
     <div class="player-main--wrapper">
-      <div class="player-main">
+      <div class="player-main" v-if="state.ui.main.components">
         <component
-          v-for="(comp, key) in state.ui.main.components"
+          v-for="comp in state.ui.main.components"
           :is="comp.type"
-          :key="key"
+          :key="comp.key"
           :custom="comp.props"
+          class="player-component"
         />
       </div>
     </div>
@@ -92,6 +93,11 @@ initializePlayerSocket(router, state);
   width: 100%;
   min-width: 350px;
   max-width: 450px;
+}
+
+.player-component {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .input-area {

@@ -1,0 +1,31 @@
+<script setup lang="ts">
+import { defineProps } from "vue";
+const customProps = defineProps(["custom"]);
+
+const defaultProps = {
+  backgroundColor: "white",
+  borderColor: "black",
+  textColor: "black",
+  align: "center",
+};
+
+const props = { ...defaultProps, ...customProps.custom };
+</script>
+
+<template>
+  <div class="textbox">
+    <p>{{ props.text }}</p>
+  </div>
+</template>
+
+<style scoped>
+.textbox {
+  display: flex;
+  text-align: v-bind("props.align");
+  color: v-bind("props.textColor");
+  background-color: v-bind("props.backgroundColor");
+  border: 4px solid v-bind("props.borderColor");
+  border-radius: 10px;
+  padding: 10px;
+}
+</style>

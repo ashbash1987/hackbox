@@ -1,4 +1,5 @@
 export interface Component {
+  key: string;
   type: string;
   props: { [key: string]: unknown };
 }
@@ -19,7 +20,7 @@ export interface UiState {
   },
   main: {
     align: "start" | "center" | "end";
-    components: Component[],
+    components: Component[] | null,
   },
 }
 

@@ -1,6 +1,9 @@
 import type { Socket } from "socket.io";
 import roomManager from "./RoomManager";
 import type { PlayerState } from "../types";
+import mergeStates from "./helpers/mergeStates";
+import { randomUUID } from "crypto";
+
 export interface SanitizedPlayer {
   id: string;
   name: string;
@@ -14,12 +17,38 @@ class Player {
   roomCode: string;
   state: PlayerState;
 
-  constructor(id: string, name: string, roomCode: string, state: PlayerState) {
+  constructor(id: string, name: string, roomCode: string) {
     this.id = id;
     this.name = name;
     this.roomCode = roomCode;
-    this.state = state;
     this.socket = null;
+    this.state = {
+      theme: {
+        header: {
+          textColor: "black",
+          backgroundColor: "lightpink",
+        },
+        main: {
+          backgroundColor: "#222233",
+        },
+      },
+      ui: {
+        header: {
+          text: name,
+        },
+        main: {
+          align: "start" as "start",
+          components: [
+            {
+              type: "TextBox",
+              props: {
+                text: "Waiting to join the game...",
+              }
+            }
+          ],
+        }
+      }
+    }
   }
 
   connect(socket: Socket) {
@@ -37,16 +66,10 @@ class Player {
   }
 
   updateState(newState: Partial<PlayerState> = {}) {
-    if (newState.theme) {
-      if (newState.theme.header) this.state.theme.header = { ...this.state.theme.header, ...newState.theme.header };
-      if (newState.theme.main) this.state.theme.main = { ...this.state.theme.main, ...newState.theme.main }
-    }
-
-    if (newState.ui) {
-      if (newState.ui.header) this.state.ui.header = { ...this.state.ui.header, ...newState.ui.header };
-      if (newState.ui.main) this.state.ui.main = { ...this.state.ui.main, ...newState.ui.main };
-    }
-
+    this.state = mergeStates(this.state, newState);
+    this.state.ui.main.components = this.state.ui.main.components.map((component) => (
+      { ...component, key: randomUUID() }
+    ))
     this.send("update", this.state);
   }
 

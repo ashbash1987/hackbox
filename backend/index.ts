@@ -5,8 +5,8 @@ import cors from "cors";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import roomManager from "./src/RoomManager";
-import Host from './src/Host';
 import Room from './src/Room';
+import type { PlayerState } from './types';
 
 const port: number = parseInt(process.env.PORT, 10);
 
@@ -41,7 +41,7 @@ app.post('/rooms', (req, res) => {
     roomCode = roomManager.generateRoomCode();
   }
 
-  newRoom = roomManager.createRoom(req.body.hostId, roomManager.generateRoomCode());
+  newRoom = roomManager.createRoom(req.body.hostId, roomCode);
 
   return res.json({ ok: true, roomCode: newRoom.id })
 })

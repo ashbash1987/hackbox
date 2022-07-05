@@ -9,32 +9,11 @@ class Room {
   id: string;
   host: Host;
   players: { [id: string]: Player };
-  defaultPlayerState: PlayerState;
 
-  constructor(roomCode: string, host: Host) {
+  constructor(roomCode: string, host: Host, state: Partial<PlayerState> = {}) {
     this.id = roomCode;
     this.host = host;
     this.players = {};
-    this.defaultPlayerState = {
-      theme: {
-        header: {
-          textColor: "white",
-          backgroundColor: "#333333",
-        },
-        main: {
-          backgroundColor: "#888888",
-        },
-      },
-      ui: {
-        header: {
-          text: this.id,
-        },
-        main: {
-          align: "start",
-          components: [],
-        },
-      }
-    };
   }
 
   join(userId: string, userName: string, socket: Socket) {
@@ -47,7 +26,7 @@ class Room {
       if (!!player) {
         player.connect(socket);
       } else {
-        player = new Player(userId, userName, this.id, this.defaultPlayerState);
+        player = new Player(userId, userName, this.id);
         this.players[userId] = player;
         player.connect(socket);
       }
