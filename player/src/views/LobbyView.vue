@@ -8,6 +8,7 @@ import {
 } from "@/lib/browserStorage";
 import router from "@/router";
 import roomExists from "@/lib/roomExists";
+import config from "@/config";
 
 const updateRoomExists = async () => {
   const roomCode = getRoomCode();
@@ -81,7 +82,7 @@ updateRoomExists();
 
         <button @click="joinGame" :disabled="!canJoin">PLAY</button>
 
-        <a class="host-link" href="/host">Host your own game</a>
+        <a class="host-link" :href="config.hostUri">Host your own game</a>
       </div>
     </section>
   </div>

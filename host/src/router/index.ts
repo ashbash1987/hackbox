@@ -31,6 +31,7 @@ const router = createRouter({
       component: () => import('../views/BzzrView.vue'),
       beforeEnter: authorizeHost
     },
+    { path: '/:pathMatch(.*)*', redirect: "/" },
   ],
 })
 
