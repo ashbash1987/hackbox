@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const customProps = defineProps(["custom"]);
+import type { Socket } from "socket.io-client";
+import { inject } from "vue";
+const socket: Socket = inject("socket") as Socket;
 
 const defaultProps = {
   label: "A: 42",
@@ -8,11 +10,21 @@ const defaultProps = {
   backgroundColor: "#AAAAAA",
   borderColor: "black",
 };
-const props = { ...defaultProps, ...customProps.custom };
+
+const providedProps = defineProps(["custom", "socket"]);
+const props = {
+  ...defaultProps,
+  ...providedProps.custom,
+  socket: providedProps.socket,
+};
+
+const respond = () => {
+  socket.emit("msg", { value: props.value });
+};
 </script>
 
 <template>
-  <button class="select-button">{{ props.label }}</button>
+  <button @click="respond" class="select-button">{{ props.label }}</button>
 </template>
 
 <style scoped>

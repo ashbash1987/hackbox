@@ -6,7 +6,6 @@ import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import roomManager from "./src/RoomManager";
 import Room from "./src/Room";
-import type { PlayerState } from "./types";
 
 const port: number = parseInt(process.env.PORT, 10);
 
@@ -49,12 +48,13 @@ app.post("/rooms", (req, res) => {
 });
 
 const server = createServer(app);
-
 const io = new Server(server, {
   cors: {
     origin: "*",
   },
 });
+
+roomManager.io = io;
 
 interface Handshake {
   userId: string;

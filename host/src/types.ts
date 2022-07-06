@@ -7,14 +7,21 @@ interface PlayerMap {
   [id: string]: Player;
 }
 
+export interface Message {
+  id: string;
+  from: string;
+  timestamp: number;
+  message: object;
+}
+
 export interface HostState {
   players: PlayerMap;
-  messages: unknown[];
+  messages: Message[];
 }
 
 export interface Component {
   type: string;
-  props: { [key: string]: unknown };
+  props: { [key: string]: object };
 }
 
 export interface ThemeState {

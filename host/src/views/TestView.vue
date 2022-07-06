@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
+import type { Message } from "@/types";
 
 const { socket, state } = initializeHostSocket(router);
 
@@ -97,6 +98,17 @@ const updatePlayerState = (userId: string) => {
     data: json,
   });
 };
+
+const players = computed(() =>
+  Object.keys(state.players).map((key) => state.players[key])
+);
+
+const latestMessages = computed(() =>
+  Object.keys(state.players).reduce((acc, key) => {
+    acc[key] = state.messages.reverse().find((msg) => msg.from === key);
+    return acc;
+  }, {} as { [key: string]: Message | undefined })
+);
 </script>
 
 <template>
@@ -107,15 +119,23 @@ const updatePlayerState = (userId: string) => {
     <p v-if="!Object.keys(state.players).length">None</p>
     <table v-else>
       <tr>
+        <th>Send Message</th>
         <th>Name</th>
         <th>User ID</th>
-        <th>Send Message</th>
+        <th>Last response</th>
+        <th>Received at</th>
       </tr>
-      <tr v-for="key in Object.keys(state.players)" :key="key">
-        <td>{{ state.players[key].name }}</td>
-        <td>{{ state.players[key].id }}</td>
+      <tr v-for="player in players" :key="player.id">
         <td>
-          <button @click="() => updatePlayerState(key)">Update</button>
+          <button @click="() => updatePlayerState(player.id)">Update</button>
+        </td>
+        <td>{{ player.name }}</td>
+        <td>{{ player.id }}</td>
+        <td>
+          {{ latestMessages[player.id]?.message.value }}
+        </td>
+        <td>
+          {{ latestMessages[player.id]?.timestamp }}
         </td>
       </tr>
     </table>

@@ -16,12 +16,14 @@ class Player {
   name: string;
   roomCode: string;
   state: PlayerState;
+  messages: object[];
 
   constructor(id: string, name: string, roomCode: string) {
     this.id = id;
     this.name = name;
     this.roomCode = roomCode;
     this.socket = null;
+    this.messages = [];
     this.state = {
       theme: {
         header: {
@@ -55,14 +57,30 @@ class Player {
     this.socket = socket;
 
     this.socket.on("msg", (payload) => {
-      this.room.host.send("msg", { ...payload, userId: this.id });
+      const message = {
+        id: randomUUID(),
+        from: this.id,
+        timestamp: Date.now(),
+        message: payload,
+      };
+      this.messages.push(message);
+      this.room.host.send("msg", message);
     });
 
-    this.updateState();
+    this.sendSelfState();
+    this.sendRoomState();
   }
 
   send(eventName: string, payload: unknown) {
     this.socket?.emit(eventName, payload);
+  }
+
+  sendSelfState() {
+    this.send("self", this.state);
+  }
+
+  sendRoomState() {
+    this.send("room", this.room.state);
   }
 
   updateState(newState: Partial<PlayerState> = {}) {
@@ -70,7 +88,7 @@ class Player {
     this.state.ui.main.components = this.state.ui.main.components.map(
       (component) => ({ ...component, key: randomUUID() })
     );
-    this.send("update", this.state);
+    this.sendSelfState();
   }
 
   get room() {

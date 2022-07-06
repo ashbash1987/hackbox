@@ -1,11 +1,13 @@
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import Room from "./Room";
 import Host from "./Host";
 
 class RoomManager {
+  io: Server | null;
   rooms: { [roomCode: string]: Room };
 
   constructor() {
+    this.io = null;
     this.rooms = {};
   }
 

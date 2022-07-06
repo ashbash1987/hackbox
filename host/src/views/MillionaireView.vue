@@ -12,8 +12,9 @@ interface GameState {
   };
 }
 
-const { state } = initializeHostSocket(router);
-const gameState: GameState = reactive({
+const { socket, state } = initializeHostSocket(router);
+
+const roomState: GameState = reactive({
   players: {},
   buzzer: {
     active: false,
@@ -35,7 +36,14 @@ const gameState: GameState = reactive({
       <tr v-for="key in Object.keys(state.players)" :key="key">
         <td>{{ state.players[key].name }}</td>
         <td>{{ state.players[key].id }}</td>
-        <td></td>
+        <td>
+          {{
+            state.messages
+              .reverse()
+              .find((message) => message.from === state.players[key].id)
+              ?.message.value
+          }}
+        </td>
       </tr>
     </table>
   </div>

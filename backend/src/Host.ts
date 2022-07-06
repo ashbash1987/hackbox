@@ -27,6 +27,10 @@ class Host {
         player.updateState(payload.data);
       });
     });
+
+    socket.on("update room", async (payload) => {
+      this.room.updateState(payload);
+    });
   }
 
   send(eventName: string, payload: unknown) {

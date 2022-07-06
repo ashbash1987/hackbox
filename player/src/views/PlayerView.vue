@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { provide } from "vue";
 import initializePlayerSocket from "@/lib/sockets/playerSocket";
 import router from "@/router";
 import type { PlayerState } from "@/types";
@@ -25,9 +25,8 @@ const defaultState: PlayerState = {
   },
 };
 
-const state: PlayerState = reactive(defaultState);
-
-initializePlayerSocket(router, state);
+const { socket, state } = initializePlayerSocket(router, defaultState);
+provide("socket", socket);
 </script>
 
 <template>

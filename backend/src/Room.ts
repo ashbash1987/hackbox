@@ -2,17 +2,20 @@ import { Socket } from "socket.io";
 import Host from "./Host";
 import Player, { SanitizedPlayer } from "./Player";
 import type { PlayerState } from "../types";
+import roomManager from "./RoomManager";
 
 type SanitizedPlayers = { [id: string]: SanitizedPlayer };
 
 class Room {
   id: string;
   host: Host;
+  state: object;
   players: { [id: string]: Player };
 
   constructor(roomCode: string, host: Host, state: Partial<PlayerState> = {}) {
     this.id = roomCode;
     this.host = host;
+    this.state = {};
     this.players = {};
   }
 
@@ -33,6 +36,11 @@ class Room {
     }
 
     this.sendPlayersToHost();
+  }
+
+  updateState(state: object) {
+    this.state = state;
+    roomManager.io?.to(this.id).emit("update state", this.state);
   }
 
   sendPlayersToHost() {
