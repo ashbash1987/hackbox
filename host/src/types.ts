@@ -11,7 +11,7 @@ export interface Message {
   id: string;
   from: string;
   timestamp: number;
-  message: object;
+  message: { [key: string]: unknown };
 }
 
 export interface HostState {
