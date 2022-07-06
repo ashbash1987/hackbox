@@ -20,11 +20,17 @@ export interface UiState {
   };
   main: {
     align: "start" | "center" | "end";
-    components: Component[] | null;
+    components: Component[];
   };
 }
 
 export interface PlayerState {
   theme: ThemeState;
   ui: UiState;
+}
+
+export interface PlayerStatePayload {
+  theme: ThemeState;
+  ui: UiState;
+  presets: { [key: string]: Component };
 }

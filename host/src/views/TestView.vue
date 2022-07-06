@@ -17,72 +17,66 @@ const playerStateInput = reactive({
         "backgroundColor": "black"
       }
     },
+    "presets": {
+      "Question": {
+        "type": "TextBox",
+        "props": {
+          "textColor": "white",
+          "backgroundColor": "black",
+          "borderColor": "#7391CA"
+        }
+      },
+      "Answer": {
+        "type": "SelectButton",
+        "props": {
+          "align": "start",
+          "textColor": "white",
+          "backgroundColor": "black",
+          "borderColor": "#7391CA",
+          "hoverBackgroundColor": "#FAA516",
+          "hoverTextColor": "black"
+        }
+      }
+    },
     "ui": {
       "header": {
-        "text": "JOHN"
+        "text": "CHUNGUS"
       },
       "main": {
         "align": "start",
         "components": [
           {
-            "type": "TextBox",
+            "type": "Question",
             "props": {
-              "text": "Which of these US presidents appeared on the television series 'Laugh-In'?",
-              "textColor": "white",
-              "backgroundColor": "black",
-              "borderColor": "#7391CA"
+              "text": "Which of these US presidents appeared on the television series 'Laugh-In'?"
             }
           },
           {
-            "type": "SelectButton",
+            "type": "Answer",
             "props": {
               "label": "A: Lyndon Johnson",
-              "value": "A",
-              "align": "start",
-              "textColor": "white",
-              "backgroundColor": "black",
-              "borderColor": "#7391CA",
-              "hoverBackgroundColor": "#FAA516",
-              "hoverTextColor": "black"
+              "value": "A"
             }
           },
           {
-            "type": "SelectButton",
+            "type": "Answer",
             "props": {
               "label": "B: Richard Nixon",
-              "value": "B",
-              "align": "start",
-              "textColor": "white",
-              "backgroundColor": "black",
-              "borderColor": "#7391CA",
-              "hoverBackgroundColor": "#FAA516",
-              "hoverTextColor": "black"
+              "value": "B"
             }
           },
           {
-            "type": "SelectButton",
+            "type": "Answer",
             "props": {
               "label": "C: Jimmy Carter",
-              "value": "C",
-              "align": "start",
-              "textColor": "white",
-              "backgroundColor": "black",
-              "borderColor": "#7391CA",
-              "hoverBackgroundColor": "#FAA516",
-              "hoverTextColor": "black"
+              "value": "C"
             }
           },
           {
-            "type": "SelectButton",
+            "type": "Answer",
             "props": {
               "label": "D: Gerald Ford",
-              "value": "D",
-              "align": "start",
-              "textColor": "white",
-              "backgroundColor": "black",
-              "borderColor": "#7391CA",
-              "hoverBackgroundColor": "#FAA516",
-              "hoverTextColor": "black"
+              "value": "D"
             }
           }
         ]
@@ -105,7 +99,7 @@ const players = computed(() =>
 
 const latestMessages = computed(() =>
   Object.keys(state.players).reduce((acc, key) => {
-    acc[key] = state.messages.reverse().find((msg) => msg.from === key);
+    acc[key] = state.messages.find((msg) => msg.from === key);
     return acc;
   }, {} as { [key: string]: Message | undefined })
 );

@@ -31,7 +31,7 @@ const respond = () => {
 .select-button {
   display: flex;
   border: 2px solid v-bind("props.borderColor");
-  text-align: v-bind("props.align");
+  justify-content: v-bind("props.align");
   color: v-bind("props.textColor");
   background-color: v-bind("props.backgroundColor");
   font-size: 20px;

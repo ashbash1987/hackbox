@@ -4,6 +4,7 @@ import { reactive } from "vue";
 import type { Router } from "vue-router";
 import type { PlayerState } from "@/types";
 import { getUserId, getUserName, getRoomCode } from "@/lib/browserStorage";
+import { expandStatePresets } from "../stateHelpers";
 
 const attachPlayerEvents = (
   socket: Socket,
@@ -25,8 +26,9 @@ const attachPlayerEvents = (
   });
 
   socket.on("self", (payload) => {
-    state.theme = payload.theme;
-    state.ui = payload.ui;
+    const newState = expandStatePresets(payload);
+    state.theme = newState.theme;
+    state.ui = newState.ui;
   });
 };
 

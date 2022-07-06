@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 import roomManager from "./RoomManager";
 import type { PlayerState } from "../types";
-import mergeStates from "./helpers/mergeStates";
+import { mergeStates } from "./helpers/stateHelpers";
 import { randomUUID } from "crypto";
 
 export interface SanitizedPlayer {
@@ -27,11 +27,11 @@ class Player {
     this.state = {
       theme: {
         header: {
-          textColor: "black",
-          backgroundColor: "lightpink",
+          textColor: "white",
+          backgroundColor: "#4254f4",
         },
         main: {
-          backgroundColor: "#222233",
+          backgroundColor: "white",
         },
       },
       ui: {
@@ -44,7 +44,11 @@ class Player {
             {
               type: "TextBox",
               props: {
-                text: "Waiting to join the game...",
+                text: "Waiting for the host to let you in...",
+                align: "center",
+                borderColor: "white",
+                textColor: "white",
+                backgroundColor: "#4254f4",
               },
             },
           ],

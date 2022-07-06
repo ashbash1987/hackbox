@@ -2,12 +2,12 @@ import { io, Socket } from "socket.io-client";
 import { reactive } from "vue";
 import type { Router } from "vue-router";
 import { getUserId } from "@/lib/browserStorage";
-import type { HostState } from "@/types";
+import type { HostState, Message } from "@/types";
 import config from "@/config";
 
 const attachHostEvents = (socket: Socket, state: HostState, router: Router) => {
-  socket.on("msg", (payload) => {
-    state.messages.push(payload);
+  socket.on("msg", (message: Message) => {
+    state.messages.unshift(message);
   });
 
   socket.on("players", (payload) => {

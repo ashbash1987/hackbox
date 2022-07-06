@@ -40,4 +40,5 @@ export interface UiState {
 export interface PlayerState {
   theme: ThemeState;
   ui: UiState;
+  presets?: { [key: string]: Component };
 }

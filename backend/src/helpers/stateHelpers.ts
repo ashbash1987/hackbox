@@ -18,6 +18,11 @@ const mergeStates = (
       };
   }
 
+  if (newState.presets) {
+    const oldPresets = oldState.presets || {};
+    combinedState.presets = { ...oldPresets, ...newState.presets };
+  }
+
   if (newState.ui) {
     if (newState.ui.header)
       combinedState.ui.header = {
@@ -31,4 +36,4 @@ const mergeStates = (
   return combinedState;
 };
 
-export default mergeStates;
+export { mergeStates };
