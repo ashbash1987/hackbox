@@ -15,22 +15,26 @@ const attachHostEvents = (socket: Socket, state: HostState, router: Router) => {
   });
 
   socket.on("disconnect", (reason: string) => {
-    const reconnectReasons = ['ping timeout', 'transport close', 'transport error'];
+    const reconnectReasons = [
+      "ping timeout",
+      "transport close",
+      "transport error",
+    ];
     if (reconnectReasons.includes(reason)) return;
-    router.push('/')
+    router.push("/");
   });
 
   socket.on("error", (payload: { message: string }) => {
     alert(payload.message);
-  })
-}
+  });
+};
 
 const initializeHostSocket = (router: Router) => {
   const socket = io(config.backendUri, {
     query: {
       userId: getUserId(),
       roomCode: router.currentRoute.value.params.roomCode,
-    }
+    },
   });
 
   const state: HostState = reactive({

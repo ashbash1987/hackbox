@@ -1,7 +1,10 @@
 import type { Socket } from "socket.io";
 import roomManager from "./RoomManager";
 
-const forAllRecipients = (recipients: any, callback: (recipientId: string) => void) => {
+const forAllRecipients = (
+  recipients: any,
+  callback: (recipientId: string) => void
+) => {
   return Promise.allSettled([recipients].flat().map(callback));
 };
 
@@ -22,7 +25,7 @@ class Host {
       await forAllRecipients(payload.to, (recipientId) => {
         const player = this.room.players[recipientId];
         player.updateState(payload.data);
-      })
+      });
     });
   }
 

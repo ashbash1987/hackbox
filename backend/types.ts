@@ -4,7 +4,7 @@ export interface Player {
 }
 
 interface PlayerMap {
-  [id: string]: Player
+  [id: string]: Player;
 }
 
 export interface HostState {
@@ -24,17 +24,17 @@ export interface ThemeState {
   };
   main: {
     backgroundColor: string;
-  }
+  };
 }
 
 export interface UiState {
   header: {
     text: string;
-  },
+  };
   main: {
     align: "start" | "center" | "end";
-    components: Component[],
-  },
+    components: Component[];
+  };
 }
 
 export interface PlayerState {

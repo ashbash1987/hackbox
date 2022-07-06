@@ -5,12 +5,12 @@ import router from "@/router";
 const startTestGame = async () => {
   const roomCode = await createRoom();
   router.push(`/test/${roomCode}`);
-}
+};
 
 const startBzzrGame = async () => {
   const roomCode = await createRoom();
   router.push(`/bzzr/${roomCode}`);
-}
+};
 </script>
 
 <template>

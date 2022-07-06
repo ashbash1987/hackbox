@@ -11,17 +11,17 @@ export interface ThemeState {
   };
   main: {
     backgroundColor: string;
-  }
+  };
 }
 
 export interface UiState {
   header: {
     text: string;
-  },
+  };
   main: {
     align: "start" | "center" | "end";
-    components: Component[] | null,
-  },
+    components: Component[] | null;
+  };
 }
 
 export interface PlayerState {

@@ -10,9 +10,32 @@ class RoomManager {
   }
 
   generateRoomCode = () => {
-    const consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Z'];
-    return [1, 2, 3, 4].map(() => consonants[Math.floor(Math.random() * consonants.length)]).join('');
-  }
+    const consonants = [
+      "B",
+      "C",
+      "D",
+      "F",
+      "G",
+      "H",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "V",
+      "W",
+      "X",
+      "Z",
+    ];
+    return [1, 2, 3, 4]
+      .map(() => consonants[Math.floor(Math.random() * consonants.length)])
+      .join("");
+  };
 
   findRoom(roomCode: string) {
     return this.rooms[roomCode];
@@ -30,7 +53,7 @@ class RoomManager {
   joinRoom(socket: Socket, userId: string, userName: string, roomCode: string) {
     let room = this.findRoom(roomCode);
     if (!room) {
-      socket.emit('error', { message: 'This room does not exist.' });
+      socket.emit("error", { message: "This room does not exist." });
       socket.disconnect(true);
       return;
     }

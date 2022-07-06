@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
 const customProps = defineProps(["custom"]);
 const defaultProps = {
   label: "BUZZ",
   textColor: "white",
   backgroundColor: "red",
-}
+};
 const props = { ...defaultProps, ...customProps.custom };
 </script>
 

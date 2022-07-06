@@ -43,19 +43,19 @@ class Player {
               type: "TextBox",
               props: {
                 text: "Waiting to join the game...",
-              }
-            }
+              },
+            },
           ],
-        }
-      }
-    }
+        },
+      },
+    };
   }
 
   connect(socket: Socket) {
     this.socket = socket;
 
     this.socket.on("msg", (payload) => {
-      this.room.host.send("msg", ({ ...payload, userId: this.id }))
+      this.room.host.send("msg", { ...payload, userId: this.id });
     });
 
     this.updateState();
@@ -67,9 +67,9 @@ class Player {
 
   updateState(newState: Partial<PlayerState> = {}) {
     this.state = mergeStates(this.state, newState);
-    this.state.ui.main.components = this.state.ui.main.components.map((component) => (
-      { ...component, key: randomUUID() }
-    ))
+    this.state.ui.main.components = this.state.ui.main.components.map(
+      (component) => ({ ...component, key: randomUUID() })
+    );
     this.send("update", this.state);
   }
 

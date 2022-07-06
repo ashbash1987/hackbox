@@ -3,7 +3,7 @@ import Host from "./Host";
 import Player, { SanitizedPlayer } from "./Player";
 import type { PlayerState } from "../types";
 
-type SanitizedPlayers = { [id: string]: SanitizedPlayer }
+type SanitizedPlayers = { [id: string]: SanitizedPlayer };
 
 class Room {
   id: string;
@@ -36,10 +36,13 @@ class Room {
   }
 
   sendPlayersToHost() {
-    const sanitizedPlayers = Object.values(this.players).reduce((acc: SanitizedPlayers, player) => {
-      acc[player.id] = player.sanitized;
-      return acc;
-    }, {});
+    const sanitizedPlayers = Object.values(this.players).reduce(
+      (acc: SanitizedPlayers, player) => {
+        acc[player.id] = player.sanitized;
+        return acc;
+      },
+      {}
+    );
     this.host.send("players", { players: sanitizedPlayers });
   }
 }
