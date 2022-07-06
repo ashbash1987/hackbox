@@ -21,6 +21,7 @@ const props = { ...defaultProps, ...customProps.custom };
 .textbox {
   display: flex;
   justify-content: v-bind("props.align");
+  text-align: v-bind("props.align");
   color: v-bind("props.textColor");
   background-color: v-bind("props.backgroundColor");
   border: 4px solid v-bind("props.borderColor");
