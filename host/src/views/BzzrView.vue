@@ -3,35 +3,14 @@ import { reactive, computed } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 import type { Message } from "@/types";
-
-interface GameState {
-  players: {
-    [id: string]: {
-      id: string;
-      name: string;
-      locked: boolean;
-      score: number;
-    };
-  };
-  buzzer: {
-    active: boolean;
-  };
-}
+import type { GameState } from "./bzzr/types";
+import { textLayout, buzzerLayout } from "./bzzr/layouts";
 
 const { socket, state } = initializeHostSocket(router);
 const gameState: GameState = reactive({
   players: {},
   buzzer: {
     active: false,
-  },
-});
-
-const buzzerComponent = () => ({
-  type: "BuzzerButton",
-  props: {
-    label: gameState.buzzer.active ? "BUZZ" : "Wait",
-    backgroundColor: gameState.buzzer.active ? "red" : "blue",
-    active: gameState.buzzer.active,
   },
 });
 
@@ -43,117 +22,56 @@ const addMemberToGame = (userId: string) => {
     score: 0,
   };
 
-  socket.emit("update player", {
-    to: userId,
-    data: {
-      theme: {},
-      ui: {
-        main: {
-          align: "end",
-          components: [buzzerComponent()],
-        },
-      },
-    },
-  });
+  socket.emit("update player", { to: userId, data: buzzerLayout(gameState) });
 };
 
 const removePlayerFromGame = (userId: string) => {
   delete gameState.players[userId];
-
   socket.emit("update player", {
     to: userId,
-    data: {
-      ui: {
-        main: {
-          components: [{ type: "TextBox", props: { text: "Kicked" } }],
-        },
-      },
-    },
+    data: textLayout("Kicked from game."),
   });
 };
 
-const unlockPlayers = async (userIds: string | string[]) => {
-  const to = [userIds].flat();
-  await Promise.all(
-    to.map((playerId) => {
-      gameState.players[playerId].locked = false;
-
-      socket.emit("update player", {
-        to: playerId,
-        data: {
-          ui: {
-            main: {
-              components: [buzzerComponent()],
-            },
-          },
-        },
-      });
-    })
-  );
+const unlockPlayers = async (userIds: string[]) => {
+  userIds.forEach((playerId) => {
+    gameState.players[playerId].locked = false;
+  });
+  socket.emit("update player", { to: userIds, data: buzzerLayout(gameState) });
 };
 
-const lockPlayers = async (userIds: string | string[]) => {
-  const to = [userIds].flat();
-  await Promise.all(
-    to.map((playerId) => {
-      gameState.players[playerId].locked = true;
-
-      socket.emit("update player", {
-        to: playerId,
-        data: {
-          ui: {
-            main: {
-              components: [
-                { type: "TextBox", props: { text: "You are locked out." } },
-              ],
-            },
-          },
-        },
-      });
-    })
-  );
+const lockPlayers = async (userIds: string[]) => {
+  userIds.forEach((playerId) => {
+    gameState.players[playerId].locked = true;
+  });
+  socket.emit("update player", {
+    to: userIds,
+    data: textLayout("You are locked out."),
+  });
 };
 
 const toggleLock = async (userId: string) => {
   gameState.players[userId].locked
-    ? unlockPlayers(userId)
-    : lockPlayers(userId);
+    ? unlockPlayers([userId])
+    : lockPlayers([userId]);
 };
 
 const activateBuzzer = () => {
   gameState.buzzer.active = true;
 
-  socket.emit("update player", {
-    to: Object.keys(gameState.players).filter(
-      (key: string) => !gameState.players[key].locked
-    ),
-    data: {
-      ui: {
-        main: {
-          align: "end",
-          components: [buzzerComponent()],
-        },
-      },
-    },
-  });
+  const to = Object.keys(gameState.players).filter(
+    (key: string) => !gameState.players[key].locked
+  );
+  socket.emit("update player", { to, data: buzzerLayout(gameState) });
 };
 
 const deactivateBuzzer = () => {
   gameState.buzzer.active = false;
 
-  socket.emit("update player", {
-    to: Object.keys(gameState.players).filter(
-      (key: string) => !gameState.players[key].locked
-    ),
-    data: {
-      ui: {
-        main: {
-          align: "end",
-          components: [buzzerComponent()],
-        },
-      },
-    },
-  });
+  const to = Object.keys(gameState.players).filter(
+    (key: string) => !gameState.players[key].locked
+  );
+  socket.emit("update player", { to, data: buzzerLayout(gameState) });
 };
 
 const toggleBuzzer = () => {

@@ -24,7 +24,7 @@ class Host {
     socket.on("update player", async (payload) => {
       await forAllRecipients(payload.to, (recipientId) => {
         const player = this.room.members[recipientId];
-        player.updateState(payload.data);
+        player?.updateState(payload.data);
       });
     });
 

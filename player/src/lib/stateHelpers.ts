@@ -10,6 +10,7 @@ const expandStatePresets = (state: PlayerStatePayload): PlayerState => {
     return { key: component.key, type: preset.type, props };
   });
 
+  console.log(components);
   state.ui.main.components = components;
 
   return state;

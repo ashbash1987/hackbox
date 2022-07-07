@@ -1,6 +1,5 @@
 import config from "@/config";
 import { getUserId } from "./browserStorage";
-import type { MemberState } from "@/types";
 
 const roomExists = async (roomCode: string): Promise<boolean> => {
   const response = await fetch(`${config.backendUri}/rooms/${roomCode}`);
