@@ -1,3 +1,9 @@
+export interface Buzz {
+  playerId: string;
+  timestamp: number;
+  localSpeed: number;
+}
+
 export interface GameState {
   players: {
     [id: string]: {
@@ -9,5 +15,6 @@ export interface GameState {
   };
   buzzer: {
     active: boolean;
+    buzzes: Buzz[];
   };
 }

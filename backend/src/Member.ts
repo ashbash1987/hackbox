@@ -65,6 +65,7 @@ class Member {
         id: randomUUID(),
         from: this.id,
         timestamp: Date.now(),
+        event: payload.event,
         message: payload,
       };
       this.messages.push(message);

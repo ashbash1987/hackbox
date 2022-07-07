@@ -11,6 +11,7 @@ interface MemberMap {
 export interface Message {
   id: string;
   from: string;
+  event: string;
   timestamp: number;
   message: { [key: string]: unknown };
 }

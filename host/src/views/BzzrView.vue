@@ -4,13 +4,36 @@ import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 import type { GameState } from "./bzzr/types";
 import { textLayout, buzzerLayout } from "./bzzr/layouts";
+import { getGameState, setGameState } from "@/lib/browserStorage";
+import type { Message } from "@/types";
+
+const roomCode = router.currentRoute.value.params.roomCode as string;
 
 const { socket, state } = initializeHostSocket(router);
-const gameState: GameState = reactive({
+const defaultGameState = {
   players: {},
   buzzer: {
     active: false,
+    buzzes: [],
   },
+};
+
+const gameState: GameState = reactive(
+  getGameState(roomCode) || defaultGameState
+);
+
+socket.on("msg", (message: Message) => {
+  if (
+    message.event === "buzz" &&
+    !gameState.buzzer.buzzes.find((buzz) => buzz.playerId === message.from)
+  ) {
+    gameState.buzzer.buzzes.push({
+      playerId: message.from,
+      localSpeed: message.message.ms as number,
+      timestamp: message.timestamp,
+    });
+  }
+  setGameState(roomCode, gameState);
 });
 
 const addMemberToGame = (userId: string) => {
@@ -20,12 +43,14 @@ const addMemberToGame = (userId: string) => {
     locked: false,
     score: 0,
   };
+  setGameState(roomCode, gameState);
 
   socket.emit("update player", { to: userId, data: buzzerLayout(gameState) });
 };
 
 const removePlayerFromGame = (userId: string) => {
   delete gameState.players[userId];
+  setGameState(roomCode, gameState);
   socket.emit("update player", {
     to: userId,
     data: textLayout("Kicked from game."),
@@ -36,6 +61,7 @@ const unlockPlayers = async (userIds: string[]) => {
   userIds.forEach((playerId) => {
     gameState.players[playerId].locked = false;
   });
+  setGameState(roomCode, gameState);
   socket.emit("update player", { to: userIds, data: buzzerLayout(gameState) });
 };
 
@@ -43,6 +69,7 @@ const lockPlayers = async (userIds: string[]) => {
   userIds.forEach((playerId) => {
     gameState.players[playerId].locked = true;
   });
+  setGameState(roomCode, gameState);
   socket.emit("update player", {
     to: userIds,
     data: textLayout("You are locked out."),
@@ -57,6 +84,8 @@ const toggleLock = async (userId: string) => {
 
 const activateBuzzer = () => {
   gameState.buzzer.active = true;
+  gameState.buzzer.buzzes = [];
+  setGameState(roomCode, gameState);
 
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
@@ -66,7 +95,8 @@ const activateBuzzer = () => {
 
 const deactivateBuzzer = () => {
   gameState.buzzer.active = false;
-  state.messages = [];
+  gameState.buzzer.buzzes = [];
+  setGameState(roomCode, gameState);
 
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
@@ -80,16 +110,18 @@ const toggleBuzzer = () => {
 
 const increasePlayerScore = (userId: string) => {
   gameState.players[userId].score += 1;
+  setGameState(roomCode, gameState);
 };
 
 const decreasePlayerScore = (userId: string) => {
   gameState.players[userId].score -= 1;
+  setGameState(roomCode, gameState);
 };
 
 const timeDifferenceDisplay = (key: number): string => {
   if (key === 0) return "";
-  const current = state.messages[key].timestamp;
-  const previous = state.messages[key - 1].timestamp;
+  const current = gameState.buzzer.buzzes[key].timestamp;
+  const previous = gameState.buzzer.buzzes[key - 1].timestamp;
   const ms = current - previous;
 
   return `+${(ms / 1000).toFixed(3)}s`;
@@ -98,7 +130,7 @@ const timeDifferenceDisplay = (key: number): string => {
 
 <template>
   <div class="about">
-    <h1>{{ router.currentRoute.value.params.roomCode }}</h1>
+    <h1>{{ roomCode }}</h1>
     <h2>
       Buzzer is {{ gameState.buzzer.active ? "ACTIVATED" : "DEACTIVATED" }}
     </h2>
@@ -106,10 +138,10 @@ const timeDifferenceDisplay = (key: number): string => {
       {{ gameState.buzzer.active ? "Deactivate buzzer" : "Activate buzzer" }}
     </button>
     <h3>All Buzzes</h3>
-    <p v-if="!state.messages.length">None</p>
+    <p v-if="!gameState.buzzer.buzzes.length">None</p>
     <ol v-else>
-      <li v-for="(message, key) in state.messages" :key="key">
-        <strong>{{ gameState.players[message.from].name }}</strong>
+      <li v-for="(buzz, key) in gameState.buzzer.buzzes" :key="key">
+        <strong>{{ gameState.players[buzz.playerId].name }}</strong>
         {{ timeDifferenceDisplay(key) }}
       </li>
     </ol>
