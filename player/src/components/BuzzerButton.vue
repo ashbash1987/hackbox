@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { inject, onMounted, onUnmounted } from "vue";
+import { inject, onMounted, onUnmounted, reactive } from "vue";
 import type { Socket } from "socket.io-client";
 
 let mountedAt: number;
+const buzzerState = reactive({
+  buzzed: false,
+});
 
 const socket = inject("socket") as Socket;
 
@@ -11,10 +14,14 @@ const defaultProps = {
   label: "BUZZ",
   textColor: "white",
   backgroundColor: "red",
+  active: false,
 };
 const props = { ...defaultProps, ...customProps.custom };
 
 const respond = () => {
+  if (!props.active) return;
+  buzzerState.buzzed = true;
+  window.removeEventListener("keydown", handleKeydown);
   socket.emit("msg", { event: "buzz", ms: Date.now() - mountedAt });
 };
 
@@ -35,7 +42,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <button @click="respond" class="buzzer-button">
+  <button @click="respond" :disabled="buzzerState.buzzed" class="buzzer-button">
     {{ props.label }}
   </button>
 </template>

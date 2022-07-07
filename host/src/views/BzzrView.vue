@@ -67,6 +67,7 @@ const activateBuzzer = () => {
 
 const deactivateBuzzer = () => {
   gameState.buzzer.active = false;
+  state.messages = [];
 
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
@@ -78,55 +79,76 @@ const toggleBuzzer = () => {
   gameState.buzzer.active ? deactivateBuzzer() : activateBuzzer();
 };
 
-const latestMessages = computed(() =>
+const latestMessagesByPlayer = computed(() =>
   Object.keys(gameState.players).reduce((acc, key) => {
     acc[key] = state.messages.find((msg) => msg.from === key);
     return acc;
   }, {} as { [key: string]: Message | undefined })
 );
+
+const increasePlayerScore = (userId: string) => {
+  gameState.players[userId].score += 1;
+};
+
+const decreasePlayerScore = (userId: string) => {
+  gameState.players[userId].score -= 1;
+};
 </script>
 
 <template>
   <div class="about">
     <h1>{{ router.currentRoute.value.params.roomCode }}</h1>
+    <h2>
+      Buzzer is {{ gameState.buzzer.active ? "ACTIVATED" : "DEACTIVATED" }}
+    </h2>
     <button @click="toggleBuzzer">
       {{ gameState.buzzer.active ? "Deactivate buzzer" : "Activate buzzer" }}
     </button>
+    <h3>All Buzzes</h3>
+    <p v-if="!state.messages.length">None</p>
+    <ul v-else>
+      <li v-for="(message, key) in state.messages" :key="key">
+        {{ gameState.players[message.from].name }}: {{ message.timestamp }}
+      </li>
+    </ul>
     <h3>Players</h3>
     <p v-if="!Object.keys(gameState.players).length">None</p>
     <table v-else>
       <tr>
         <th>Name</th>
-        <th>User ID</th>
-        <th>Last Message</th>
+        <th>Score</th>
         <th>Actions</th>
       </tr>
       <tr v-for="key in Object.keys(gameState.players)" :key="key">
         <td>{{ gameState.players[key].name }}</td>
-        <td>{{ gameState.players[key].id }}</td>
-        <td>{{ latestMessages[key]?.message }}</td>
+        <td>
+          <button @click="() => decreasePlayerScore(key)">-</button>
+          {{ gameState.players[key].score }}
+          <button @click="() => increasePlayerScore(key)">+</button>
+        </td>
         <td>
           <button @click="() => toggleLock(key)">
             {{ gameState.players[key].locked ? "Unlock" : "Lock" }}
           </button>
-          <button @click="() => removePlayerFromGame(key)">
-            Remove from game
-          </button>
+          <button @click="() => removePlayerFromGame(key)">Kick</button>
         </td>
       </tr>
     </table>
 
-    <h3>Room Members</h3>
+    <h3>Waiting in lobby...</h3>
     <p v-if="!Object.keys(state.members).length">None</p>
     <table v-else>
       <tr>
         <th>Name</th>
-        <th>User ID</th>
         <th>Toggle</th>
       </tr>
-      <tr v-for="key in Object.keys(state.members)" :key="key">
+      <tr
+        v-for="key in Object.keys(state.members).filter(
+          (key) => !gameState.players[key]
+        )"
+        :key="key"
+      >
         <td>{{ state.members[key].name }}</td>
-        <td>{{ state.members[key].id }}</td>
         <td>
           <button
             :disabled="!!gameState.players[key]"
