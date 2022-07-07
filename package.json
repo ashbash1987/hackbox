@@ -7,7 +7,8 @@
     "player": "cd player && npm run dev",
     "backend": "cd backend && npm run dev",
     "host": "cd host && npm run dev",
-    "dev": "concurrently \"npm run player\" \"npm run backend\" \"npm run host\""
+    "dev": "concurrently \"npm run player\" \"npm run backend\" \"npm run host\"",
+    "update-server": "cd backend && npm run update-server"
   },
   "repository": {
     "type": "git",
