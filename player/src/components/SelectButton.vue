@@ -15,7 +15,6 @@ const providedProps = defineProps(["custom", "socket"]);
 const props = {
   ...defaultProps,
   ...providedProps.custom,
-  socket: providedProps.socket,
 };
 
 const respond = () => {

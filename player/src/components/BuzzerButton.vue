@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type { Socket } from "socket.io-client";
+import { inject } from "vue";
+const socket: Socket = inject("socket") as Socket;
+
 const customProps = defineProps(["custom"]);
 const defaultProps = {
   label: "BUZZ",
@@ -6,10 +10,15 @@ const defaultProps = {
   backgroundColor: "red",
 };
 const props = { ...defaultProps, ...customProps.custom };
+
+const receivedAt = Date.now();
+const respond = () => {
+  socket.emit("msg", { event: "buzz", ms: Date.now() - receivedAt });
+};
 </script>
 
 <template>
-  <button class="buzzer-button">{{ props.label }}</button>
+  <button @click="respond" class="buzzer-button">{{ props.label }}</button>
 </template>
 
 <style scoped>

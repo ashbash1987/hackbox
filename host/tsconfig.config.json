@@ -2,6 +2,8 @@
   "extends": "@vue/tsconfig/tsconfig.node.json",
   "include": ["vite.config.*", "vitest.config.*", "cypress.config.*"],
   "compilerOptions": {
+    "target": "ES2019",
+    "lib": ["ES2019"],
     "composite": true,
     "types": ["node"]
   }
