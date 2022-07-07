@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { reactive, computed } from "vue";
+import { reactive } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
-import type { Message } from "@/types";
 import type { GameState } from "./bzzr/types";
 import { textLayout, buzzerLayout } from "./bzzr/layouts";
 
@@ -79,19 +78,21 @@ const toggleBuzzer = () => {
   gameState.buzzer.active ? deactivateBuzzer() : activateBuzzer();
 };
 
-const latestMessagesByPlayer = computed(() =>
-  Object.keys(gameState.players).reduce((acc, key) => {
-    acc[key] = state.messages.find((msg) => msg.from === key);
-    return acc;
-  }, {} as { [key: string]: Message | undefined })
-);
-
 const increasePlayerScore = (userId: string) => {
   gameState.players[userId].score += 1;
 };
 
 const decreasePlayerScore = (userId: string) => {
   gameState.players[userId].score -= 1;
+};
+
+const timeDifferenceDisplay = (key: number): string => {
+  if (key === 0) return "";
+  const current = state.messages[key].timestamp;
+  const previous = state.messages[key - 1].timestamp;
+  const ms = current - previous;
+
+  return `+${(ms / 1000).toFixed(3)}s`;
 };
 </script>
 
@@ -106,11 +107,12 @@ const decreasePlayerScore = (userId: string) => {
     </button>
     <h3>All Buzzes</h3>
     <p v-if="!state.messages.length">None</p>
-    <ul v-else>
+    <ol v-else>
       <li v-for="(message, key) in state.messages" :key="key">
-        {{ gameState.players[message.from].name }}: {{ message.timestamp }}
+        <strong>{{ gameState.players[message.from].name }}</strong>
+        {{ timeDifferenceDisplay(key) }}
       </li>
-    </ul>
+    </ol>
     <h3>Players</h3>
     <p v-if="!Object.keys(gameState.players).length">None</p>
     <table v-else>

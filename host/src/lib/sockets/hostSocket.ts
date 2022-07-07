@@ -7,7 +7,7 @@ import config from "@/config";
 
 const attachHostEvents = (socket: Socket, state: HostState, router: Router) => {
   socket.on("msg", (message: Message) => {
-    state.messages.unshift(message);
+    state.messages.push(message);
   });
 
   socket.on("members", (payload) => {
