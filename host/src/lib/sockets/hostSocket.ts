@@ -10,8 +10,8 @@ const attachHostEvents = (socket: Socket, state: HostState, router: Router) => {
     state.messages.unshift(message);
   });
 
-  socket.on("players", (payload) => {
-    state.players = payload.players;
+  socket.on("members", (payload) => {
+    state.members = payload.members;
   });
 
   socket.on("disconnect", (reason: string) => {
@@ -38,7 +38,7 @@ const initializeHostSocket = (router: Router) => {
   });
 
   const state: HostState = reactive({
-    players: {},
+    members: {},
     messages: [],
   });
 

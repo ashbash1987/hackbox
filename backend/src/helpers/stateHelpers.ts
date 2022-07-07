@@ -1,9 +1,9 @@
-import { PlayerState } from "../../types";
+import { MemberState } from "../../types";
 
 const mergeStates = (
-  oldState: PlayerState,
-  newState: Partial<PlayerState>
-): PlayerState => {
+  oldState: MemberState,
+  newState: Partial<MemberState>
+): MemberState => {
   const combinedState = oldState;
   if (newState.theme) {
     if (newState.theme.header)

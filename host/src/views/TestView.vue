@@ -90,7 +90,7 @@ const linterUrl = computed(() => {
   return `https://jsonlint.com/?json=${encodedJson}`;
 });
 
-const updatePlayerState = (userId: string) => {
+const updateMemberState = (userId: string) => {
   const json = JSON.parse(playerStateInput.input);
   socket?.emit("update player", {
     to: userId,
@@ -98,12 +98,12 @@ const updatePlayerState = (userId: string) => {
   });
 };
 
-const players = computed(() =>
-  Object.keys(state.players).map((key) => state.players[key])
+const members = computed(() =>
+  Object.keys(state.members).map((key) => state.members[key])
 );
 
 const latestMessages = computed(() =>
-  Object.keys(state.players).reduce((acc, key) => {
+  Object.keys(state.members).reduce((acc, key) => {
     acc[key] = state.messages.find((msg) => msg.from === key);
     return acc;
   }, {} as { [key: string]: Message | undefined })
@@ -115,8 +115,8 @@ const latestMessages = computed(() =>
     <h1>Hosting {{ router.currentRoute.value.params.roomCode }}</h1>
     <textarea v-model="playerStateInput.input"></textarea>
     <a class="lint-link" :href="linterUrl" target="_blank"> Validate JSON </a>
-    <h3>Players</h3>
-    <p v-if="!Object.keys(state.players).length">None</p>
+    <h3>Members</h3>
+    <p v-if="!Object.keys(state.members).length">None</p>
     <table v-else>
       <tr>
         <th>Send Message</th>
@@ -125,9 +125,9 @@ const latestMessages = computed(() =>
         <th>Last response</th>
         <th>Received at</th>
       </tr>
-      <tr v-for="player in players" :key="player.id">
+      <tr v-for="player in members" :key="player.id">
         <td>
-          <button @click="() => updatePlayerState(player.id)">Update</button>
+          <button @click="() => updateMemberState(player.id)">Update</button>
         </td>
         <td>{{ player.name }}</td>
         <td>{{ player.id }}</td>

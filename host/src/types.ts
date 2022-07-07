@@ -1,11 +1,11 @@
-export interface Player {
+export interface Member {
   id: string;
   name: string;
   messages: [];
 }
 
-interface PlayerMap {
-  [id: string]: Player;
+interface MemberMap {
+  [id: string]: Member;
 }
 
 export interface Message {
@@ -16,7 +16,7 @@ export interface Message {
 }
 
 export interface HostState {
-  players: PlayerMap;
+  members: MemberMap;
   messages: Message[];
 }
 
@@ -40,7 +40,7 @@ export interface ComponentsState {
   main: Component[];
 }
 
-export interface PlayerState {
+export interface MemberState {
   theme: ThemeState;
   components: ComponentsState;
 }

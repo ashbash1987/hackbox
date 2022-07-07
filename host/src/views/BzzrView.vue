@@ -4,7 +4,7 @@ import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 
 interface GameState {
-  players: {
+  members: {
     [id: string]: {
       locked: boolean;
       score: number;
@@ -17,14 +17,14 @@ interface GameState {
 
 const { socket, state } = initializeHostSocket(router);
 const gameState: GameState = reactive({
-  players: {},
+  members: {},
   buzzer: {
     active: false,
   },
 });
 
-const togglePlayer = (userId: string) => {
-  gameState.players[userId] = {
+const toggleMember = (userId: string) => {
+  gameState.members[userId] = {
     locked: false,
     score: 0,
   };
@@ -32,8 +32,8 @@ const togglePlayer = (userId: string) => {
 
 const enableBuzzers = () => {
   socket.emit("update player", {
-    to: Object.keys(gameState.players).filter(
-      (key: string) => !gameState.players[key].locked
+    to: Object.keys(gameState.members).filter(
+      (key: string) => !gameState.members[key].locked
     ),
     data: {
       ui: {
@@ -60,20 +60,20 @@ const enableBuzzers = () => {
   <div class="about">
     <h1>{{ router.currentRoute.value.params.roomCode }}</h1>
     <button @click="enableBuzzers">Enable Buzzers</button>
-    <h3>Players</h3>
-    <p v-if="!Object.keys(state.players).length">None</p>
+    <h3>Members</h3>
+    <p v-if="!Object.keys(state.members).length">None</p>
     <table v-else>
       <tr>
         <th>Name</th>
         <th>User ID</th>
         <th>Toggle</th>
       </tr>
-      <tr v-for="key in Object.keys(state.players)" :key="key">
-        <td>{{ state.players[key].name }}</td>
-        <td>{{ state.players[key].id }}</td>
+      <tr v-for="key in Object.keys(state.members)" :key="key">
+        <td>{{ state.members[key].name }}</td>
+        <td>{{ state.members[key].id }}</td>
         <td>
-          <button @click="() => togglePlayer(key)">
-            {{ gameState.players[key] ? "Active" : "Inactive" }}
+          <button @click="() => toggleMember(key)">
+            {{ gameState.members[key] ? "Active" : "Inactive" }}
           </button>
         </td>
       </tr>

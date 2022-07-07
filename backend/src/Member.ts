@@ -1,21 +1,21 @@
 import type { Socket } from "socket.io";
 import roomManager from "./RoomManager";
-import type { PlayerState } from "../types";
+import type { MemberState } from "../types";
 import { mergeStates } from "./helpers/stateHelpers";
 import { randomUUID } from "crypto";
 
-export interface SanitizedPlayer {
+export interface SanitizedMember {
   id: string;
   name: string;
-  state: PlayerState;
+  state: MemberState;
 }
 
-class Player {
+class Member {
   socket: Socket | null;
   id: string;
   name: string;
   roomCode: string;
-  state: PlayerState;
+  state: MemberState;
   messages: object[];
 
   constructor(id: string, name: string, roomCode: string) {
@@ -87,7 +87,7 @@ class Player {
     this.send("room", this.room.state);
   }
 
-  updateState(newState: Partial<PlayerState> = {}) {
+  updateState(newState: Partial<MemberState> = {}) {
     this.state = mergeStates(this.state, newState);
     this.state.ui.main.components = this.state.ui.main.components.map(
       (component) => ({ ...component, key: randomUUID() })
@@ -99,7 +99,7 @@ class Player {
     return roomManager.findRoom(this.roomCode);
   }
 
-  get sanitized(): SanitizedPlayer {
+  get sanitized(): SanitizedMember {
     return {
       id: this.id,
       name: this.name,
@@ -108,4 +108,4 @@ class Player {
   }
 }
 
-export default Player;
+export default Member;

@@ -1,14 +1,14 @@
-export interface Player {
+export interface Member {
   id: string;
   name: string;
 }
 
-interface PlayerMap {
-  [id: string]: Player;
+interface MemberMap {
+  [id: string]: Member;
 }
 
 export interface HostState {
-  players: PlayerMap;
+  members: MemberMap;
   messages: unknown[];
 }
 
@@ -37,7 +37,7 @@ export interface UiState {
   };
 }
 
-export interface PlayerState {
+export interface MemberState {
   theme: ThemeState;
   ui: UiState;
   presets?: { [key: string]: Component };
