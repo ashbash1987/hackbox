@@ -40,7 +40,7 @@ const playerStateInput = reactive({
     },
     "ui": {
       "header": {
-        "text": "CHUNGUS"
+        "text": "CARPENTER"
       },
       "main": {
         "align": "start",
@@ -85,6 +85,11 @@ const playerStateInput = reactive({
   }`,
 });
 
+const linterUrl = computed(() => {
+  const encodedJson = encodeURIComponent(playerStateInput.input);
+  return `https://jsonlint.com/?json=${encodedJson}`;
+});
+
 const updatePlayerState = (userId: string) => {
   const json = JSON.parse(playerStateInput.input);
   socket?.emit("update player", {
@@ -109,6 +114,7 @@ const latestMessages = computed(() =>
   <div class="about">
     <h1>Hosting {{ router.currentRoute.value.params.roomCode }}</h1>
     <textarea v-model="playerStateInput.input"></textarea>
+    <a class="lint-link" :href="linterUrl" target="_blank"> Validate JSON </a>
     <h3>Players</h3>
     <p v-if="!Object.keys(state.players).length">None</p>
     <table v-else>
@@ -139,7 +145,13 @@ const latestMessages = computed(() =>
 <style>
 textarea {
   height: 500px;
-  width: 50%;
+  min-width: 400px;
+  max-width: 600px;
+  width: 100%;
   margin: 10px;
+}
+
+.lint-link {
+  display: block;
 }
 </style>
