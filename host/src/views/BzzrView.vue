@@ -76,7 +76,8 @@ const unlockPlayers = async (userIds: string | string[]) => {
   const to = [userIds].flat();
   await Promise.all(
     to.map((playerId) => {
-      gameState.players[playerId].locked = true;
+      gameState.players[playerId].locked = false;
+
       socket.emit("update player", {
         to: playerId,
         data: {
@@ -96,6 +97,7 @@ const lockPlayers = async (userIds: string | string[]) => {
   await Promise.all(
     to.map((playerId) => {
       gameState.players[playerId].locked = true;
+
       socket.emit("update player", {
         to: playerId,
         data: {
