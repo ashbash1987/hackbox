@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { inject, onMounted, onUnmounted } from "vue";
 import type { Socket } from "socket.io-client";
-import { inject } from "vue";
-const socket: Socket = inject("socket") as Socket;
+
+let mountedAt: number;
+
+const socket = inject("socket") as Socket;
 
 const customProps = defineProps(["custom"]);
 const defaultProps = {
@@ -11,14 +14,30 @@ const defaultProps = {
 };
 const props = { ...defaultProps, ...customProps.custom };
 
-const receivedAt = Date.now();
 const respond = () => {
-  socket.emit("msg", { event: "buzz", ms: Date.now() - receivedAt });
+  socket.emit("msg", { event: "buzz", ms: Date.now() - mountedAt });
 };
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.code === "Space" || event.code === "Enter") {
+    respond();
+  }
+};
+
+onMounted(() => {
+  mountedAt = Date.now();
+  window.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleKeydown);
+});
 </script>
 
 <template>
-  <button @click="respond" class="buzzer-button">{{ props.label }}</button>
+  <button @click="respond" class="buzzer-button">
+    {{ props.label }}
+  </button>
 </template>
 
 <style scoped>
