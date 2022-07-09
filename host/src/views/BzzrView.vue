@@ -221,10 +221,9 @@ const updateTeamColor = (teamId: string, event: Event) => {
 };
 
 const timeDifferenceDisplay = (key: number): string => {
-  if (key === 0) return "";
   const current = gameState.buzzer.buzzes[key].timestamp;
-  const previous = gameState.buzzer.buzzes[key - 1].timestamp;
-  const ms = current - previous;
+  const first = gameState.buzzer.buzzes[0].timestamp;
+  const ms = current - first;
 
   return `+${(ms / 1000).toFixed(3)}s`;
 };

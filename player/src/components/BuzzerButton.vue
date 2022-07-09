@@ -52,7 +52,8 @@ onUnmounted(() => {
   color: v-bind("props.textColor");
   background-color: v-bind("props.backgroundColor");
   font-size: 75px;
-  height: 500px;
+  height: 300px;
   margin: 0;
+  box-shadow: 3px 3px #000000;
 }
 </style>

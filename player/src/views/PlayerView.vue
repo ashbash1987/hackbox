@@ -68,8 +68,8 @@ provide("socket", socket);
   display: flex;
   justify-content: center;
   width: 100%;
-  min-width: 350px;
-  max-width: 450px;
+  min-width: 300px;
+  max-width: 350px;
   align-items: center;
   font-size: 28px;
   font-weight: bold;
@@ -79,7 +79,8 @@ provide("socket", socket);
   display: flex;
   justify-content: center;
   margin-top: -50px;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: -webkit-fill-available;
   background-color: v-bind("state.theme.main.backgroundColor");
 }
 
@@ -87,11 +88,11 @@ provide("socket", socket);
   display: flex;
   flex-direction: column;
   justify-content: v-bind("state.ui.main.align");
-  margin-top: 70px;
-  margin-bottom: 20px;
+  margin-top: 60px;
+  margin-bottom: 10px;
   width: 100%;
-  min-width: 350px;
-  max-width: 450px;
+  min-width: 300px;
+  max-width: 350px;
 }
 
 .player-component {

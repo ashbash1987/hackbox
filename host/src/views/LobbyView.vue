@@ -37,8 +37,8 @@ const startBzzrGame = async () => {
   display: flex;
   justify-content: center;
   width: 100%;
-  min-width: 350px;
-  max-width: 450px;
+  min-width: 300px;
+  max-width: 350px;
   align-items: center;
   font-size: 28px;
   font-weight: bold;
@@ -54,8 +54,8 @@ const startBzzrGame = async () => {
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  min-width: 350px;
-  max-width: 450px;
+  min-width: 300px;
+  max-width: 350px;
   padding: 20px;
 }
 
