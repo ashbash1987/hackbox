@@ -1,75 +1,80 @@
-import type { Team } from "./types";
+export interface ColorTheme {
+  primary: string;
+  secondary: string;
+  text: string;
+}
 
-const defaultTheme = {
-  header: {
-    backgroundColor: "#000000",
-    textColor: "white",
-  },
-  main: {
-    backgroundColor: "#7f7f7f",
-  },
+const defaultTheme: ColorTheme = {
+  primary: "#000000",
+  secondary: "#3f3f3f",
+  text: "white",
 };
 
-const teamThemes: { [key: string]: object } = {
+const teamThemes: { [key: string]: ColorTheme } = {
   red: {
-    header: {
-      backgroundColor: "#ff0000",
-      textColor: "white",
-    },
-    main: {
-      backgroundColor: "#7f3f3f",
-    },
+    primary: "hsl(0, 100%, 50%)",
+    secondary: "hsl(0, 60%, 30%)",
+    text: "white",
   },
   orange: {
-    header: {
-      backgroundColor: "#ff9d00",
-      textColor: "white",
-    },
-    main: {
-      backgroundColor: "#7f5f3f",
-    },
+    primary: "hsl(30, 100%, 50%)",
+    secondary: "hsl(30, 60%, 30%)",
+    text: "white",
   },
   yellow: {
-    header: {
-      backgroundColor: "#ffff00",
-      textColor: "black",
-    },
-    main: {
-      backgroundColor: "#7f7f3f",
-    },
+    primary: "hsl(60, 100%, 50%)",
+    secondary: "hsl(60, 60%, 30%)",
+    text: "black",
+  },
+  chartreuse: {
+    primary: "hsl(90, 100%, 50%)",
+    secondary: "hsl(90, 60%, 30%)",
+    text: "black",
   },
   green: {
-    header: {
-      backgroundColor: "#00ff00",
-      textColor: "black",
-    },
-    main: {
-      backgroundColor: "#3f7f3f",
-    },
+    primary: "hsl(120, 100%, 50%)",
+    secondary: "hsl(120, 60%, 30%)",
+    text: "black",
+  },
+  springgreen: {
+    primary: "hsl(150, 100%, 50%)",
+    secondary: "hsl(150, 60%, 30%)",
+    text: "black",
+  },
+  cyan: {
+    primary: "hsl(180, 100%, 50%)",
+    secondary: "hsl(180, 60%, 30%)",
+    text: "black",
+  },
+  azure: {
+    primary: "hsl(210, 100%, 50%)",
+    secondary: "hsl(210, 60%, 30%)",
+    text: "white",
   },
   blue: {
-    header: {
-      backgroundColor: "#0000ff",
-      textColor: "white",
-    },
-    main: {
-      backgroundColor: "#3f3f7f",
-    },
+    primary: "hsl(240, 100%, 50%)",
+    secondary: "hsl(240, 60%, 30%)",
+    text: "white",
   },
   purple: {
-    header: {
-      backgroundColor: "#7f00ff",
-      textColor: "white",
-    },
-    main: {
-      backgroundColor: "#5f3f7f",
-    },
+    primary: "hsl(270, 100%, 50%)",
+    secondary: "hsl(270, 60%, 30%)",
+    text: "white",
+  },
+  pink: {
+    primary: "hsl(300, 100%, 50%)",
+    secondary: "hsl(300, 60%, 30%)",
+    text: "black",
+  },
+  rose: {
+    primary: "hsl(330, 100%, 50%)",
+    secondary: "hsl(330, 60%, 30%)",
+    text: "black",
   },
 };
 
-const teamTheme = (team: Team) => {
-  if (!team) return defaultTheme;
-  return teamThemes[team.color];
+const getColorTheme = (color?: string): ColorTheme => {
+  return teamThemes[color || ""] || defaultTheme;
 };
 
-export { defaultTheme, teamTheme };
+export { getColorTheme };

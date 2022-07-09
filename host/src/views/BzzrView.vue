@@ -7,13 +7,13 @@ import { reactive } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 
-import { teamTheme } from "./bzzr/themes";
+import { getColorTheme } from "./bzzr/themes";
 import sounds from "./bzzr/sounds";
 import {
   textLayout,
   buzzerLayout,
   emptyLayout,
-  buzzedLayout,
+  themeLayout,
 } from "./bzzr/layouts";
 
 const roomCode = router.currentRoute.value.params.roomCode as string;
@@ -48,20 +48,25 @@ const sendMemberState = (userId: string | string[], data: object) => {
 };
 
 socket.on("msg", (message: Message) => {
+  const player = gameState.players[message.from];
+  if (!player) return;
+
   if (
     message.event === "buzz" &&
-    !gameState.buzzer.buzzes.find((buzz) => buzz.playerId === message.from)
+    !gameState.buzzer.buzzes.find((buzz) => buzz.playerId === player.id)
   ) {
     if (gameState.buzzer.buzzes.length === 0) {
       sounds.beep();
     }
     gameState.buzzer.buzzes.push({
-      playerId: message.from,
+      playerId: player.id,
       localSpeed: message.message.ms as number,
       timestamp: message.timestamp,
     });
+    const team = gameState.teams[player.team || ""];
+    const colorTheme = getColorTheme(team?.color);
     sendRoomState(gameState);
-    sendMemberState(message.from, { ui: buzzedLayout() });
+    sendMemberState(message.from, { ui: textLayout(colorTheme, "Buzzed in!") });
   }
 });
 
@@ -72,10 +77,13 @@ const addMemberToGame = (userId: string) => {
     locked: false,
     score: 0,
   };
+
+  const colorTheme = getColorTheme();
+
   sendRoomState(gameState);
   sendMemberState(userId, {
-    theme: teamTheme(""),
-    ui: buzzerLayout(),
+    theme: themeLayout(colorTheme),
+    ui: buzzerLayout(colorTheme),
   });
 };
 
@@ -83,41 +91,46 @@ const removePlayerFromGame = (userId: string) => {
   delete gameState.players[userId];
   sendRoomState(gameState);
   sendMemberState(userId, {
-    theme: teamTheme(""),
+    theme: themeLayout(getColorTheme()),
     ui: emptyLayout(state.members[userId].name),
   });
 };
 
-const unlockPlayers = async (userIds: string[]) => {
-  userIds.forEach((playerId) => {
-    gameState.players[playerId].locked = false;
-  });
+const unlockPlayer = async (userId: string) => {
+  const player = gameState.players[userId];
+  player.locked = false;
+  const team = gameState.teams[player.team || ""];
+  const colorTheme = getColorTheme(team?.color);
   sendRoomState(gameState);
-  sendMemberState(userIds, { ui: buzzerLayout() });
+  sendMemberState(userId, { ui: buzzerLayout(colorTheme) });
 };
 
-const lockPlayers = async (userIds: string[]) => {
-  userIds.forEach((playerId) => {
-    gameState.players[playerId].locked = true;
-  });
+const lockPlayer = async (userId: string) => {
+  const player = gameState.players[userId];
+  player.locked = true;
+  const team = gameState.teams[player.team || ""];
+  const colorTheme = getColorTheme(team?.color);
   sendRoomState(gameState);
-  sendMemberState(userIds, { ui: textLayout("You are locked out.") });
+  sendMemberState(userId, {
+    ui: textLayout(colorTheme, "You are locked out."),
+  });
 };
 
 const toggleLock = async (userId: string) => {
-  gameState.players[userId].locked
-    ? unlockPlayers([userId])
-    : lockPlayers([userId]);
+  gameState.players[userId].locked ? unlockPlayer(userId) : lockPlayer(userId);
 };
 
 const activateBuzzer = () => {
   gameState.buzzer.buzzes = [];
   sendRoomState(gameState);
 
-  const to = Object.keys(gameState.players).filter(
-    (key: string) => !gameState.players[key].locked
-  );
-  sendMemberState(to, { ui: buzzerLayout() });
+  Object.entries(gameState.players)
+    .filter(([_playerId, player]) => !player.locked)
+    .map(([playerId, player]) => {
+      const team = gameState.teams[player.team || ""];
+      const colorTheme = getColorTheme(team?.color);
+      sendMemberState(playerId, { ui: buzzerLayout(colorTheme) });
+    });
 };
 
 const increasePlayerScore = (userId: string) => {
@@ -137,18 +150,13 @@ const updatePlayerTeam = (playerId: string, event: Event) => {
   const team = gameState.teams[teamId];
 
   player.team = teamId;
-
-  const headerText = team ? `${team.name}: ${player.name}` : player.name;
-  sendMemberState(playerId, {
-    theme: teamTheme(team),
-    ui: {
-      header: {
-        text: headerText,
-      },
-    },
-  });
+  const colorTheme = getColorTheme(team?.color);
 
   sendRoomState(gameState);
+  sendMemberState(playerId, {
+    theme: themeLayout(colorTheme),
+    ui: player.locked ? emptyLayout() : buzzerLayout(colorTheme),
+  });
 };
 
 const teamInput = reactive({ name: "" });
@@ -173,8 +181,10 @@ const removeTeam = (teamId: string) => {
     const player = gameState.players[playerId];
     player.team = undefined;
 
+    const colorTheme = getColorTheme();
+
     sendMemberState(playerId, {
-      theme: teamTheme(""),
+      theme: themeLayout(colorTheme),
       ui: {
         header: {
           text: player.name,
@@ -189,15 +199,20 @@ const removeTeam = (teamId: string) => {
 
 const updateTeamColor = (teamId: string, event: Event) => {
   const target = event.target as HTMLInputElement;
-  gameState.teams[teamId].color = target.value;
-  const to = Object.keys(gameState.players).filter(
-    (playerId) => gameState.players[playerId].team === teamId
-  );
-
+  const color = target.value;
+  gameState.teams[teamId].color = color;
   sendRoomState(gameState);
-  sendMemberState(to, {
-    theme: teamTheme(gameState.teams[teamId].color),
-  });
+
+  Object.entries(gameState.players)
+    .filter(([_playerId, player]) => player.team === teamId)
+    .map(([playerId, player]) => {
+      const colorTheme = getColorTheme(color);
+
+      sendMemberState(playerId, {
+        theme: themeLayout(colorTheme),
+        ui: player.locked ? emptyLayout() : buzzerLayout(colorTheme),
+      });
+    });
 };
 
 const timeDifferenceDisplay = (key: number): string => {
@@ -259,9 +274,15 @@ const handleVolumeChange = (event: Event) => {
           <option value="red">Red</option>
           <option value="orange">Orange</option>
           <option value="yellow">Yellow</option>
+          <option value="chartreuse">Chartreuse</option>
+          <option value="springgreen">Spring Green</option>
           <option value="green">Green</option>
+          <option value="cyan">Cyan</option>
+          <option value="azure">Azure</option>
           <option value="blue">Blue</option>
           <option value="purple">Purple</option>
+          <option value="pink">Pink</option>
+          <option value="rose">Rose</option>
         </select>
       </th>
       <th>

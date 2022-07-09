@@ -1,20 +1,24 @@
-const buzzerComponent = () => ({
-  type: "BuzzerButton",
-});
+import type { ColorTheme } from "./themes";
 
-const buzzedLayout = () => ({
+const themeLayout = (theme: ColorTheme) => ({
+  header: {
+    backgroundColor: theme.primary,
+    textColor: theme.text,
+  },
   main: {
-    align: "center",
-    components: [
-      {
-        type: "TextBox",
-        props: { text: "BUZZED!" },
-      },
-    ],
+    backgroundColor: theme.secondary,
   },
 });
 
-const emptyLayout = (userName: string) => ({
+const buzzerComponent = (theme: ColorTheme) => ({
+  type: "BuzzerButton",
+  props: {
+    backgroundColor: theme.primary,
+    textColor: theme.text,
+  },
+});
+
+const emptyLayout = (userName?: string) => ({
   header: {
     text: userName,
   },
@@ -24,18 +28,28 @@ const emptyLayout = (userName: string) => ({
   },
 });
 
-const buzzerLayout = () => ({
+const buzzerLayout = (theme: ColorTheme) => ({
   main: {
     align: "center",
-    components: [buzzerComponent()],
+    components: [buzzerComponent(theme)],
   },
 });
 
-const textLayout = (text: string) => ({
+const textLayout = (theme: ColorTheme, text: string) => ({
   main: {
     align: "start",
-    components: [{ type: "TextBox", props: { text } }],
+    components: [
+      {
+        type: "TextBox",
+        props: {
+          text,
+          backgroundColor: theme.primary,
+          textColor: theme.text,
+          border: `4px solid ${theme.text}`,
+        },
+      },
+    ],
   },
 });
 
-export { buzzerLayout, textLayout, buzzedLayout, emptyLayout };
+export { buzzerLayout, textLayout, emptyLayout, themeLayout };

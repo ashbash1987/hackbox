@@ -14,7 +14,11 @@ const defaultProps = {
   label: "BUZZ",
   textColor: "white",
   backgroundColor: "red",
-  shadow: "3px 3px #000000",
+  shadow: "5px 5px #000000",
+  radius: "70px",
+  fontSize: "70px",
+  height: "300px",
+  border: "2px solid white",
 };
 const props = { ...defaultProps, ...customProps.custom };
 
@@ -50,9 +54,11 @@ onUnmounted(() => {
 .buzzer-button {
   color: v-bind("props.textColor");
   background-color: v-bind("props.backgroundColor");
-  font-size: 75px;
-  height: 300px;
+  font-size: v-bind("props.fontSize");
+  height: v-bind("props.height");
   margin: 0;
   box-shadow: v-bind("props.shadow");
+  border-radius: v-bind("props.radius");
+  border: v-bind("props.border");
 }
 </style>
