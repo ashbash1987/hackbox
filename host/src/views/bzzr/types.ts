@@ -4,15 +4,25 @@ export interface Buzz {
   localSpeed: number;
 }
 
+export interface Player {
+  id: string;
+  name: string;
+  locked: boolean;
+  score: number;
+  team?: string;
+}
+
+export interface Team {
+  color: string;
+  name: string;
+  members: string[];
+}
+
 export interface GameState {
   players: {
-    [id: string]: {
-      id: string;
-      name: string;
-      locked: boolean;
-      score: number;
-    };
+    [id: string]: Player;
   };
+  teams: { [key: string]: Team };
   buzzer: {
     active: boolean;
     buzzes: Buzz[];

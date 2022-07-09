@@ -73,7 +73,6 @@ class Member {
     });
 
     this.sendState();
-    this.room.sendState();
   }
 
   send(eventName: string, payload: unknown) {

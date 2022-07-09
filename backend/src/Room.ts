@@ -6,13 +6,13 @@ import roomManager from "./RoomManager";
 class Room {
   id: string;
   host: Host;
-  state: object;
+  gameState: object;
   members: { [id: string]: Member };
 
   constructor(roomCode: string, host: Host) {
     this.id = roomCode;
     this.host = host;
-    this.state = {};
+    this.gameState = {};
     this.members = {};
   }
 
@@ -33,10 +33,20 @@ class Room {
 
     user.connect(socket);
     this.host.sendState();
+    this.sendGameStateToUser(user);
   }
 
-  sendState() {
-    roomManager.io?.to(this.id).emit("state.public", this.state);
+  updateGameState(payload: object) {
+    this.gameState = payload;
+    this.sendGameStateToRoom();
+  }
+
+  sendGameStateToUser(user: Member | Host) {
+    user.send("state.room", this.gameState);
+  }
+
+  sendGameStateToRoom() {
+    roomManager.io?.to(this.id).emit("state.room", this.gameState);
   }
 
   sendEventToRoom(payload: object) {

@@ -1,26 +1,40 @@
 <script setup lang="ts">
+import { v4 as uuid } from "uuid";
 import { reactive } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 import type { GameState } from "./bzzr/types";
 import { textLayout, buzzerLayout } from "./bzzr/layouts";
-import { getGameState, setGameState } from "@/lib/browserStorage";
 import type { Message } from "@/types";
 
 const roomCode = router.currentRoute.value.params.roomCode as string;
 
 const { socket, state } = initializeHostSocket(router);
-const defaultGameState = {
+const defaultColor = "#4254f4";
+
+const gameState: GameState = reactive({
   players: {},
+  teams: {},
   buzzer: {
     active: false,
     buzzes: [],
   },
-};
+});
 
-const gameState: GameState = reactive(
-  getGameState(roomCode) || defaultGameState
-);
+socket.on("state.room", (payload) => {
+  if (Object.keys(payload).length === 0) {
+    // Load the initial state of the room as it hasn't been set.
+    sendRoomState(gameState);
+  } else {
+    gameState.players = payload.players;
+    gameState.teams = payload.teams;
+    gameState.buzzer = payload.buzzer;
+  }
+});
+
+const sendRoomState = (gameState: GameState) => {
+  socket.emit("room.update", gameState);
+};
 
 socket.on("msg", (message: Message) => {
   if (
@@ -33,7 +47,7 @@ socket.on("msg", (message: Message) => {
       timestamp: message.timestamp,
     });
   }
-  setGameState(roomCode, gameState);
+  sendRoomState(gameState);
 });
 
 const addMemberToGame = (userId: string) => {
@@ -43,7 +57,7 @@ const addMemberToGame = (userId: string) => {
     locked: false,
     score: 0,
   };
-  setGameState(roomCode, gameState);
+  sendRoomState(gameState);
 
   socket.emit("member.update", {
     to: userId,
@@ -53,7 +67,7 @@ const addMemberToGame = (userId: string) => {
 
 const removePlayerFromGame = (userId: string) => {
   delete gameState.players[userId];
-  setGameState(roomCode, gameState);
+  sendRoomState(gameState);
   socket.emit("member.update", {
     to: userId,
     data: textLayout("Kicked from game."),
@@ -64,7 +78,7 @@ const unlockPlayers = async (userIds: string[]) => {
   userIds.forEach((playerId) => {
     gameState.players[playerId].locked = false;
   });
-  setGameState(roomCode, gameState);
+  sendRoomState(gameState);
   socket.emit("member.update", {
     to: userIds,
     data: buzzerLayout(gameState),
@@ -75,7 +89,7 @@ const lockPlayers = async (userIds: string[]) => {
   userIds.forEach((playerId) => {
     gameState.players[playerId].locked = true;
   });
-  setGameState(roomCode, gameState);
+  sendRoomState(gameState);
   socket.emit("member.update", {
     to: userIds,
     data: textLayout("You are locked out."),
@@ -91,7 +105,7 @@ const toggleLock = async (userId: string) => {
 const activateBuzzer = () => {
   gameState.buzzer.active = true;
   gameState.buzzer.buzzes = [];
-  setGameState(roomCode, gameState);
+  sendRoomState(gameState);
 
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
@@ -102,7 +116,7 @@ const activateBuzzer = () => {
 const deactivateBuzzer = () => {
   gameState.buzzer.active = false;
   gameState.buzzer.buzzes = [];
-  setGameState(roomCode, gameState);
+  sendRoomState(gameState);
 
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
@@ -116,12 +130,101 @@ const toggleBuzzer = () => {
 
 const increasePlayerScore = (userId: string) => {
   gameState.players[userId].score += 1;
-  setGameState(roomCode, gameState);
+  sendRoomState(gameState);
 };
 
 const decreasePlayerScore = (userId: string) => {
   gameState.players[userId].score -= 1;
-  setGameState(roomCode, gameState);
+  sendRoomState(gameState);
+};
+
+const updatePlayerTeam = (playerId: string, event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const teamId = target.value;
+  const player = gameState.players[playerId];
+  const team = gameState.teams[teamId];
+
+  player.team = teamId;
+
+  const teamColor = team ? team.color : defaultColor;
+  const headerText = team ? `${player.name} (${team.name})` : player.name;
+  socket.emit("member.update", {
+    to: playerId,
+    data: {
+      theme: {
+        header: {
+          backgroundColor: teamColor,
+        },
+      },
+      ui: {
+        header: {
+          text: headerText,
+        },
+      },
+    },
+  });
+  sendRoomState(gameState);
+};
+
+const teamInput = reactive({ name: "" });
+
+const addTeam = () => {
+  if (teamInput.name.trim() === "") return;
+  gameState.teams[uuid()] = {
+    name: teamInput.name,
+    color: "red",
+    members: [],
+  };
+  teamInput.name = "";
+  sendRoomState(gameState);
+};
+
+const removeTeam = (teamId: string) => {
+  const teamMembers = Object.keys(gameState.players).filter(
+    (playerId) => gameState.players[playerId].team === teamId
+  );
+
+  teamMembers.forEach((playerId) => {
+    const player = gameState.players[playerId];
+    player.team = undefined;
+    socket.emit("member.update", {
+      to: playerId,
+      data: {
+        theme: {
+          header: {
+            backgroundColor: defaultColor,
+          },
+        },
+        ui: {
+          header: {
+            text: player.name,
+          },
+        },
+      },
+    });
+  });
+
+  delete gameState.teams[teamId];
+  sendRoomState(gameState);
+};
+
+const updateTeamColor = (teamId: string, event: Event) => {
+  const target = event.target as HTMLInputElement;
+  gameState.teams[teamId].color = target.value;
+  sendRoomState(gameState);
+  const payload = {
+    to: Object.keys(gameState.players).filter(
+      (playerId) => gameState.players[playerId].team === teamId
+    ),
+    data: {
+      theme: {
+        header: {
+          backgroundColor: gameState.teams[teamId].color,
+        },
+      },
+    },
+  };
+  socket.emit("member.update", payload);
 };
 
 const timeDifferenceDisplay = (key: number): string => {
@@ -134,72 +237,139 @@ const timeDifferenceDisplay = (key: number): string => {
 };
 </script>
 
-<template>
-  <div class="about">
-    <h1>{{ roomCode }}</h1>
-    <h2>
-      Buzzer is {{ gameState.buzzer.active ? "ACTIVATED" : "DEACTIVATED" }}
-    </h2>
-    <button @click="toggleBuzzer">
-      {{ gameState.buzzer.active ? "Deactivate buzzer" : "Activate buzzer" }}
-    </button>
-    <h3>All Buzzes</h3>
-    <p v-if="!gameState.buzzer.buzzes.length">None</p>
-    <ol v-else>
-      <li v-for="(buzz, key) in gameState.buzzer.buzzes" :key="key">
-        <strong>{{ gameState.players[buzz.playerId].name }}</strong>
-        {{ timeDifferenceDisplay(key) }}
-      </li>
-    </ol>
-    <h3>Players</h3>
-    <p v-if="!Object.keys(gameState.players).length">None</p>
-    <table v-else>
-      <tr>
-        <th>Name</th>
-        <th>Score</th>
-        <th>Actions</th>
-      </tr>
-      <tr v-for="key in Object.keys(gameState.players)" :key="key">
-        <td>{{ gameState.players[key].name }}</td>
-        <td>
-          <button @click="() => decreasePlayerScore(key)">-</button>
-          {{ gameState.players[key].score }}
-          <button @click="() => increasePlayerScore(key)">+</button>
-        </td>
-        <td>
-          <button @click="() => toggleLock(key)">
-            {{ gameState.players[key].locked ? "Unlock" : "Lock" }}
-          </button>
-          <button @click="() => removePlayerFromGame(key)">Kick</button>
-        </td>
-      </tr>
-    </table>
+<template v-if="gameState !== {}">
+  <h1>{{ roomCode }}</h1>
+  <h2>Buzzer is {{ gameState.buzzer.active ? "ACTIVATED" : "DEACTIVATED" }}</h2>
+  <button @click="toggleBuzzer">
+    {{ gameState.buzzer.active ? "Deactivate buzzer" : "Activate buzzer" }}
+  </button>
+  <h3>All Buzzes</h3>
+  <p v-if="!gameState.buzzer.buzzes.length">None</p>
+  <ol v-else>
+    <li v-for="(buzz, key) in gameState.buzzer.buzzes" :key="key">
+      <strong>{{ gameState.players[buzz.playerId].name }}</strong>
+      {{ timeDifferenceDisplay(key) }}
+    </li>
+  </ol>
 
-    <h3>Waiting in lobby...</h3>
-    <p v-if="!Object.keys(state.members).length">None</p>
-    <table v-else>
-      <tr>
-        <th>Name</th>
-        <th>Toggle</th>
-      </tr>
-      <tr
-        v-for="key in Object.keys(state.members).filter(
-          (key) => !gameState.players[key]
-        )"
-        :key="key"
-      >
-        <td>{{ state.members[key].name }}</td>
-        <td>
-          <button
-            :disabled="!!gameState.players[key]"
-            @click="() => addMemberToGame(key)"
+  <h3>Teams</h3>
+  <p v-if="!Object.keys(gameState.teams).length">None</p>
+  <table v-else>
+    <tr>
+      <th>Name</th>
+      <th>Color</th>
+      <th>Members</th>
+      <th>Score</th>
+      <th>Actions</th>
+    </tr>
+    <tr v-for="teamId in Object.keys(gameState.teams)" :key="teamId">
+      <th>{{ gameState.teams[teamId].name }}</th>
+      <th>
+        <select
+          v-model="gameState.teams[teamId].color"
+          @change="(event) => updateTeamColor(teamId, event)"
+        >
+          <option value="red">Red</option>
+          <option value="blue">Blue</option>
+          <option value="purple">Purple</option>
+          <option value="black">Black</option>
+        </select>
+      </th>
+      <th>
+        {{
+          Object.keys(gameState.players)
+            .filter((playerId) => gameState.players[playerId].team === teamId)
+            .map((playerId) => gameState.players[playerId].name)
+            .join(", ")
+        }}
+      </th>
+      <th>
+        {{
+          Object.keys(gameState.players)
+            .filter((playerId) => gameState.players[playerId].team === teamId)
+            .reduce((acc, playerId) => {
+              acc += gameState.players[playerId].score;
+              return acc;
+            }, 0)
+        }}
+      </th>
+      <th>
+        <button @click="() => removeTeam(teamId)">Remove</button>
+      </th>
+    </tr>
+  </table>
+  <form @submit.prevent="addTeam">
+    <label>
+      New Team:
+      <input v-model="teamInput.name" type="text" />
+    </label>
+    <button type="submit">Add Team</button>
+  </form>
+
+  <h3>Players</h3>
+  <p v-if="!Object.keys(gameState.players).length">None</p>
+  <table v-else>
+    <tr>
+      <th>Name</th>
+      <th>Team</th>
+      <th>Score</th>
+      <th>Actions</th>
+    </tr>
+    <tr v-for="key in Object.keys(gameState.players)" :key="key">
+      <td>{{ gameState.players[key].name }}</td>
+      <td>
+        <select
+          v-model="gameState.players[key].team"
+          @change="(event) => updatePlayerTeam(key, event)"
+        >
+          <option :value="null">None</option>
+          <option
+            v-for="teamId in Object.keys(gameState.teams)"
+            :key="teamId"
+            :value="teamId"
           >
-            Add to game
-          </button>
-        </td>
-      </tr>
-    </table>
-  </div>
+            {{ gameState.teams[teamId].name }}
+          </option>
+        </select>
+      </td>
+      <td>
+        <button @click="() => decreasePlayerScore(key)">-</button>
+        {{ gameState.players[key].score }}
+        <button @click="() => increasePlayerScore(key)">+</button>
+      </td>
+      <td>
+        <button @click="() => toggleLock(key)">
+          {{ gameState.players[key].locked ? "Unlock" : "Lock" }}
+        </button>
+        <button @click="() => removePlayerFromGame(key)">Kick</button>
+      </td>
+    </tr>
+  </table>
+
+  <h3>Waiting in lobby...</h3>
+  <p v-if="!Object.keys(state.members).length">None</p>
+  <table v-else>
+    <tr>
+      <th>Name</th>
+      <th>Toggle</th>
+    </tr>
+    <tr
+      v-for="key in Object.keys(state.members).filter(
+        (key) => !gameState.players[key]
+      )"
+      :key="key"
+    >
+      <td>{{ state.members[key].name }}</td>
+      <td>
+        <button
+          :disabled="!!gameState.players[key]"
+          @click="() => addMemberToGame(key)"
+        >
+          Add to game
+        </button>
+      </td>
+    </tr>
+  </table>
 </template>
 
 <style></style>

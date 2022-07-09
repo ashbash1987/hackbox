@@ -29,8 +29,7 @@ class Host {
     });
 
     socket.on("room.update", async (payload) => {
-      this.room.state = payload;
-      this.room.sendState();
+      this.room.updateGameState(payload);
     });
 
     socket.on("event", async (payload) => {
