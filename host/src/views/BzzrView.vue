@@ -4,7 +4,12 @@ import { reactive } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 import type { GameState } from "./bzzr/types";
-import { textLayout, buzzerLayout } from "./bzzr/layouts";
+import {
+  textLayout,
+  buzzerLayout,
+  emptyLayout,
+  buzzedLayout,
+} from "./bzzr/layouts";
 import { teamTheme } from "./bzzr/themes";
 import type { Message } from "@/types";
 
@@ -36,6 +41,10 @@ const sendRoomState = (gameState: GameState) => {
   socket.emit("room.update", gameState);
 };
 
+const sendMemberState = (userId: string | string[], data: object) => {
+  socket.emit("member.update", { to: userId, data });
+};
+
 socket.on("msg", (message: Message) => {
   if (
     message.event === "buzz" &&
@@ -46,8 +55,9 @@ socket.on("msg", (message: Message) => {
       localSpeed: message.message.ms as number,
       timestamp: message.timestamp,
     });
+    sendRoomState(gameState);
+    sendMemberState(message.from, { ui: buzzedLayout() });
   }
-  sendRoomState(gameState);
 });
 
 const addMemberToGame = (userId: string) => {
@@ -58,25 +68,18 @@ const addMemberToGame = (userId: string) => {
     score: 0,
   };
   sendRoomState(gameState);
-
-  socket.emit("member.update", {
-    to: userId,
-    data: {
-      theme: teamTheme(""),
-      ui: buzzerLayout(gameState),
-    },
+  sendMemberState(userId, {
+    theme: teamTheme(""),
+    ui: buzzerLayout(gameState),
   });
 };
 
 const removePlayerFromGame = (userId: string) => {
   delete gameState.players[userId];
   sendRoomState(gameState);
-  socket.emit("member.update", {
-    to: userId,
-    data: {
-      theme: teamTheme(""),
-      ui: textLayout("Kicked from game."),
-    },
+  sendMemberState(userId, {
+    theme: teamTheme(""),
+    ui: emptyLayout(state.members[userId].name),
   });
 };
 
@@ -85,10 +88,7 @@ const unlockPlayers = async (userIds: string[]) => {
     gameState.players[playerId].locked = false;
   });
   sendRoomState(gameState);
-  socket.emit("member.update", {
-    to: userIds,
-    data: { ui: buzzerLayout(gameState) },
-  });
+  sendMemberState(userIds, { ui: buzzerLayout(gameState) });
 };
 
 const lockPlayers = async (userIds: string[]) => {
@@ -96,10 +96,7 @@ const lockPlayers = async (userIds: string[]) => {
     gameState.players[playerId].locked = true;
   });
   sendRoomState(gameState);
-  socket.emit("member.update", {
-    to: userIds,
-    data: { ui: textLayout("You are locked out.") },
-  });
+  sendMemberState(userIds, { ui: textLayout("You are locked out.") });
 };
 
 const toggleLock = async (userId: string) => {
@@ -116,7 +113,7 @@ const activateBuzzer = () => {
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
   );
-  socket.emit("member.update", { to, data: { ui: buzzerLayout(gameState) } });
+  sendMemberState(to, { ui: buzzerLayout(gameState) });
 };
 
 const deactivateBuzzer = () => {
@@ -127,7 +124,7 @@ const deactivateBuzzer = () => {
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
   );
-  socket.emit("member.update", { to, data: { ui: buzzerLayout(gameState) } });
+  sendMemberState(to, { ui: buzzerLayout(gameState) });
 };
 
 const toggleBuzzer = () => {
@@ -153,17 +150,15 @@ const updatePlayerTeam = (playerId: string, event: Event) => {
   player.team = teamId;
 
   const headerText = team ? `${team.name}: ${player.name}` : player.name;
-  socket.emit("member.update", {
-    to: playerId,
-    data: {
-      theme: teamTheme(team.color),
-      ui: {
-        header: {
-          text: headerText,
-        },
+  sendMemberState(playerId, {
+    theme: teamTheme(team.color),
+    ui: {
+      header: {
+        text: headerText,
       },
     },
   });
+
   sendRoomState(gameState);
 };
 
@@ -188,14 +183,12 @@ const removeTeam = (teamId: string) => {
   teamMembers.forEach((playerId) => {
     const player = gameState.players[playerId];
     player.team = undefined;
-    socket.emit("member.update", {
-      to: playerId,
-      data: {
-        theme: teamTheme(""),
-        ui: {
-          header: {
-            text: player.name,
-          },
+
+    sendMemberState(playerId, {
+      theme: teamTheme(""),
+      ui: {
+        header: {
+          text: player.name,
         },
       },
     });
@@ -208,16 +201,14 @@ const removeTeam = (teamId: string) => {
 const updateTeamColor = (teamId: string, event: Event) => {
   const target = event.target as HTMLInputElement;
   gameState.teams[teamId].color = target.value;
+  const to = Object.keys(gameState.players).filter(
+    (playerId) => gameState.players[playerId].team === teamId
+  );
+
   sendRoomState(gameState);
-  const payload = {
-    to: Object.keys(gameState.players).filter(
-      (playerId) => gameState.players[playerId].team === teamId
-    ),
-    data: {
-      theme: teamTheme(gameState.teams[teamId].color),
-    },
-  };
-  socket.emit("member.update", payload);
+  sendMemberState(to, {
+    theme: teamTheme(gameState.teams[teamId].color),
+  });
 };
 
 const timeDifferenceDisplay = (key: number): string => {
@@ -232,7 +223,7 @@ const timeDifferenceDisplay = (key: number): string => {
 <template v-if="gameState !== {}">
   <h1>{{ roomCode }}</h1>
   <h2>Buzzer is {{ gameState.buzzer.active ? "ACTIVATED" : "DEACTIVATED" }}</h2>
-  <button @click="toggleBuzzer">
+  <button class="buzzer-control" @click="toggleBuzzer">
     {{ gameState.buzzer.active ? "Deactivate buzzer" : "Activate buzzer" }}
   </button>
   <h3>All Buzzes</h3>
@@ -366,4 +357,8 @@ const timeDifferenceDisplay = (key: number): string => {
   </table>
 </template>
 
-<style></style>
+<style>
+.buzzer-control {
+  font-size: 24px;
+}
+</style>

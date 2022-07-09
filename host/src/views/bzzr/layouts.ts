@@ -10,6 +10,28 @@ const buzzerComponent = (gameState: GameState) => ({
   },
 });
 
+const buzzedLayout = () => ({
+  main: {
+    align: "center",
+    components: [
+      {
+        type: "TextBox",
+        props: { text: "BUZZED!" },
+      },
+    ],
+  },
+});
+
+const emptyLayout = (userName: string) => ({
+  header: {
+    text: userName,
+  },
+  main: {
+    align: "center",
+    components: [],
+  },
+});
+
 const buzzerLayout = (gameState: GameState) => ({
   main: {
     align: "center",
@@ -24,4 +46,4 @@ const textLayout = (text: string) => ({
   },
 });
 
-export { buzzerLayout, textLayout };
+export { buzzerLayout, textLayout, buzzedLayout, emptyLayout };
