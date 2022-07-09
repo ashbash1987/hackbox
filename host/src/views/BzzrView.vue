@@ -5,12 +5,12 @@ import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 import type { GameState } from "./bzzr/types";
 import { textLayout, buzzerLayout } from "./bzzr/layouts";
+import { teamTheme } from "./bzzr/themes";
 import type { Message } from "@/types";
 
 const roomCode = router.currentRoute.value.params.roomCode as string;
 
 const { socket, state } = initializeHostSocket(router);
-const defaultColor = "#4254f4";
 
 const gameState: GameState = reactive({
   players: {},
@@ -61,7 +61,10 @@ const addMemberToGame = (userId: string) => {
 
   socket.emit("member.update", {
     to: userId,
-    data: buzzerLayout(gameState),
+    data: {
+      theme: teamTheme(""),
+      ui: buzzerLayout(gameState),
+    },
   });
 };
 
@@ -70,7 +73,10 @@ const removePlayerFromGame = (userId: string) => {
   sendRoomState(gameState);
   socket.emit("member.update", {
     to: userId,
-    data: textLayout("Kicked from game."),
+    data: {
+      theme: teamTheme(""),
+      ui: textLayout("Kicked from game."),
+    },
   });
 };
 
@@ -81,7 +87,7 @@ const unlockPlayers = async (userIds: string[]) => {
   sendRoomState(gameState);
   socket.emit("member.update", {
     to: userIds,
-    data: buzzerLayout(gameState),
+    data: { ui: buzzerLayout(gameState) },
   });
 };
 
@@ -92,7 +98,7 @@ const lockPlayers = async (userIds: string[]) => {
   sendRoomState(gameState);
   socket.emit("member.update", {
     to: userIds,
-    data: textLayout("You are locked out."),
+    data: { ui: textLayout("You are locked out.") },
   });
 };
 
@@ -110,7 +116,7 @@ const activateBuzzer = () => {
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
   );
-  socket.emit("member.update", { to, data: buzzerLayout(gameState) });
+  socket.emit("member.update", { to, data: { ui: buzzerLayout(gameState) } });
 };
 
 const deactivateBuzzer = () => {
@@ -121,7 +127,7 @@ const deactivateBuzzer = () => {
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
   );
-  socket.emit("member.update", { to, data: buzzerLayout(gameState) });
+  socket.emit("member.update", { to, data: { ui: buzzerLayout(gameState) } });
 };
 
 const toggleBuzzer = () => {
@@ -146,16 +152,11 @@ const updatePlayerTeam = (playerId: string, event: Event) => {
 
   player.team = teamId;
 
-  const teamColor = team ? team.color : defaultColor;
-  const headerText = team ? `${player.name} (${team.name})` : player.name;
+  const headerText = team ? `${team.name}: ${player.name}` : player.name;
   socket.emit("member.update", {
     to: playerId,
     data: {
-      theme: {
-        header: {
-          backgroundColor: teamColor,
-        },
-      },
+      theme: teamTheme(team.color),
       ui: {
         header: {
           text: headerText,
@@ -190,11 +191,7 @@ const removeTeam = (teamId: string) => {
     socket.emit("member.update", {
       to: playerId,
       data: {
-        theme: {
-          header: {
-            backgroundColor: defaultColor,
-          },
-        },
+        theme: teamTheme(""),
         ui: {
           header: {
             text: player.name,
@@ -217,11 +214,7 @@ const updateTeamColor = (teamId: string, event: Event) => {
       (playerId) => gameState.players[playerId].team === teamId
     ),
     data: {
-      theme: {
-        header: {
-          backgroundColor: gameState.teams[teamId].color,
-        },
-      },
+      theme: teamTheme(gameState.teams[teamId].color),
     },
   };
   socket.emit("member.update", payload);
@@ -270,9 +263,11 @@ const timeDifferenceDisplay = (key: number): string => {
           @change="(event) => updateTeamColor(teamId, event)"
         >
           <option value="red">Red</option>
+          <option value="orange">Orange</option>
+          <option value="yellow">Yellow</option>
+          <option value="green">Green</option>
           <option value="blue">Blue</option>
           <option value="purple">Purple</option>
-          <option value="black">Black</option>
         </select>
       </th>
       <th>

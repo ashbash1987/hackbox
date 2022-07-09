@@ -11,20 +11,16 @@ const buzzerComponent = (gameState: GameState) => ({
 });
 
 const buzzerLayout = (gameState: GameState) => ({
-  ui: {
-    main: {
-      align: "center",
-      components: [buzzerComponent(gameState)],
-    },
+  main: {
+    align: "center",
+    components: [buzzerComponent(gameState)],
   },
 });
 
 const textLayout = (text: string) => ({
-  ui: {
-    main: {
-      align: "start",
-      components: [{ type: "TextBox", props: { text } }],
-    },
+  main: {
+    align: "start",
+    components: [{ type: "TextBox", props: { text } }],
   },
 });
 
