@@ -1,17 +1,20 @@
 <script setup lang="ts">
+import type { GameState } from "./bzzr/types";
+import type { Message } from "@/types";
+
 import { v4 as uuid } from "uuid";
 import { reactive } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
-import type { GameState } from "./bzzr/types";
+
+import { teamTheme } from "./bzzr/themes";
+import sounds from "./bzzr/sounds";
 import {
   textLayout,
   buzzerLayout,
   emptyLayout,
   buzzedLayout,
 } from "./bzzr/layouts";
-import { teamTheme } from "./bzzr/themes";
-import type { Message } from "@/types";
 
 const roomCode = router.currentRoute.value.params.roomCode as string;
 
@@ -21,7 +24,6 @@ const gameState: GameState = reactive({
   players: {},
   teams: {},
   buzzer: {
-    active: false,
     buzzes: [],
   },
 });
@@ -50,6 +52,9 @@ socket.on("msg", (message: Message) => {
     message.event === "buzz" &&
     !gameState.buzzer.buzzes.find((buzz) => buzz.playerId === message.from)
   ) {
+    if (gameState.buzzer.buzzes.length === 0) {
+      sounds.beep();
+    }
     gameState.buzzer.buzzes.push({
       playerId: message.from,
       localSpeed: message.message.ms as number,
@@ -70,7 +75,7 @@ const addMemberToGame = (userId: string) => {
   sendRoomState(gameState);
   sendMemberState(userId, {
     theme: teamTheme(""),
-    ui: buzzerLayout(gameState),
+    ui: buzzerLayout(),
   });
 };
 
@@ -88,7 +93,7 @@ const unlockPlayers = async (userIds: string[]) => {
     gameState.players[playerId].locked = false;
   });
   sendRoomState(gameState);
-  sendMemberState(userIds, { ui: buzzerLayout(gameState) });
+  sendMemberState(userIds, { ui: buzzerLayout() });
 };
 
 const lockPlayers = async (userIds: string[]) => {
@@ -106,29 +111,13 @@ const toggleLock = async (userId: string) => {
 };
 
 const activateBuzzer = () => {
-  gameState.buzzer.active = true;
   gameState.buzzer.buzzes = [];
   sendRoomState(gameState);
 
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
   );
-  sendMemberState(to, { ui: buzzerLayout(gameState) });
-};
-
-const deactivateBuzzer = () => {
-  gameState.buzzer.active = false;
-  gameState.buzzer.buzzes = [];
-  sendRoomState(gameState);
-
-  const to = Object.keys(gameState.players).filter(
-    (key: string) => !gameState.players[key].locked
-  );
-  sendMemberState(to, { ui: buzzerLayout(gameState) });
-};
-
-const toggleBuzzer = () => {
-  gameState.buzzer.active ? deactivateBuzzer() : activateBuzzer();
+  sendMemberState(to, { ui: buzzerLayout() });
 };
 
 const increasePlayerScore = (userId: string) => {
@@ -218,15 +207,30 @@ const timeDifferenceDisplay = (key: number): string => {
 
   return `+${(ms / 1000).toFixed(3)}s`;
 };
+
+const handleVolumeChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const value = parseFloat(target.value);
+  sounds.state.volume = value;
+};
 </script>
 
 <template v-if="gameState !== {}">
   <h1>{{ roomCode }}</h1>
-  <h2>Buzzer is {{ gameState.buzzer.active ? "ACTIVATED" : "DEACTIVATED" }}</h2>
-  <button class="buzzer-control" @click="toggleBuzzer">
-    {{ gameState.buzzer.active ? "Deactivate buzzer" : "Activate buzzer" }}
-  </button>
-  <h3>All Buzzes</h3>
+  <label>
+    Sound:
+    <select v-model="sounds.state.volume" @change="handleVolumeChange">
+      <option value="0">Off</option>
+      <option value="0.2">Quiet</option>
+      <option value="0.6">Medium</option>
+      <option value="1">Loud</option>
+    </select>
+  </label>
+
+  <h3>
+    Buzzes
+    <button class="buzzer-control" @click="activateBuzzer">Reset</button>
+  </h3>
   <p v-if="!gameState.buzzer.buzzes.length">None</p>
   <ol v-else>
     <li v-for="(buzz, key) in gameState.buzzer.buzzes" :key="key">

@@ -13,6 +13,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "howler": "^2.2.3",
     "socket.io-client": "^4.5.1",
     "uuid": "^8.3.2",
     "vue": "^3.2.37",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
+    "@types/howler": "^2.2.7",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^18.0.3",
     "@types/uuid": "^8.3.4",

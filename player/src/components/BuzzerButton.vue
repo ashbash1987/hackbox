@@ -14,12 +14,10 @@ const defaultProps = {
   label: "BUZZ",
   textColor: "white",
   backgroundColor: "red",
-  active: false,
 };
 const props = { ...defaultProps, ...customProps.custom };
 
 const respond = () => {
-  if (!props.active) return;
   buzzerState.buzzed = true;
   window.removeEventListener("keydown", handleKeydown);
   socket.emit("msg", { event: "buzz", ms: Date.now() - mountedAt });

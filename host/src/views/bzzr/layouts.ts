@@ -1,12 +1,9 @@
-import type { GameState } from "./types";
-
-const buzzerComponent = (gameState: GameState) => ({
+const buzzerComponent = () => ({
   type: "BuzzerButton",
   props: {
-    label: gameState.buzzer.active ? "BUZZ" : "Wait",
+    label: "BUZZ",
     textColor: "white",
-    backgroundColor: gameState.buzzer.active ? "red" : "black",
-    active: gameState.buzzer.active,
+    backgroundColor: "red",
   },
 });
 
@@ -32,10 +29,10 @@ const emptyLayout = (userName: string) => ({
   },
 });
 
-const buzzerLayout = (gameState: GameState) => ({
+const buzzerLayout = () => ({
   main: {
     align: "center",
-    components: [buzzerComponent(gameState)],
+    components: [buzzerComponent()],
   },
 });
 

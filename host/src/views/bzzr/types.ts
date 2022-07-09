@@ -24,7 +24,6 @@ export interface GameState {
   };
   teams: { [key: string]: Team };
   buzzer: {
-    active: boolean;
     buzzes: Buzz[];
   };
 }
