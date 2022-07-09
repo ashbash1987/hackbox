@@ -140,7 +140,7 @@ const updatePlayerTeam = (playerId: string, event: Event) => {
 
   const headerText = team ? `${team.name}: ${player.name}` : player.name;
   sendMemberState(playerId, {
-    theme: teamTheme(team.color),
+    theme: teamTheme(team),
     ui: {
       header: {
         text: headerText,
@@ -249,11 +249,11 @@ const handleVolumeChange = (event: Event) => {
       <th>Score</th>
       <th>Actions</th>
     </tr>
-    <tr v-for="teamId in Object.keys(gameState.teams)" :key="teamId">
-      <th>{{ gameState.teams[teamId].name }}</th>
+    <tr v-for="[teamId, team] in Object.entries(gameState.teams)" :key="teamId">
+      <th>{{ team.name }}</th>
       <th>
         <select
-          v-model="gameState.teams[teamId].color"
+          v-model="team.color"
           @change="(event) => updateTeamColor(teamId, event)"
         >
           <option value="red">Red</option>
@@ -266,18 +266,18 @@ const handleVolumeChange = (event: Event) => {
       </th>
       <th>
         {{
-          Object.keys(gameState.players)
-            .filter((playerId) => gameState.players[playerId].team === teamId)
-            .map((playerId) => gameState.players[playerId].name)
+          Object.values(gameState.players)
+            .filter((player) => player.team === teamId)
+            .map((player) => player.name)
             .join(", ")
         }}
       </th>
       <th>
         {{
-          Object.keys(gameState.players)
-            .filter((playerId) => gameState.players[playerId].team === teamId)
-            .reduce((acc, playerId) => {
-              acc += gameState.players[playerId].score;
+          Object.values(gameState.players)
+            .filter((player) => player.team === teamId)
+            .reduce((acc, player) => {
+              acc += player.score;
               return acc;
             }, 0)
         }}
@@ -304,33 +304,36 @@ const handleVolumeChange = (event: Event) => {
       <th>Score</th>
       <th>Actions</th>
     </tr>
-    <tr v-for="key in Object.keys(gameState.players)" :key="key">
-      <td>{{ gameState.players[key].name }}</td>
+    <tr
+      v-for="[playerId, player] in Object.entries(gameState.players)"
+      :key="playerId"
+    >
+      <td>{{ player.name }}</td>
       <td>
         <select
-          v-model="gameState.players[key].team"
-          @change="(event) => updatePlayerTeam(key, event)"
+          v-model="player.team"
+          @change="(event) => updatePlayerTeam(playerId, event)"
         >
           <option :value="null">None</option>
           <option
-            v-for="teamId in Object.keys(gameState.teams)"
+            v-for="[teamId, team] in Object.entries(gameState.teams)"
             :key="teamId"
             :value="teamId"
           >
-            {{ gameState.teams[teamId].name }}
+            {{ team.name }}
           </option>
         </select>
       </td>
       <td>
-        <button @click="() => decreasePlayerScore(key)">-</button>
-        {{ gameState.players[key].score }}
-        <button @click="() => increasePlayerScore(key)">+</button>
+        <button @click="() => decreasePlayerScore(playerId)">-</button>
+        {{ player.score }}
+        <button @click="() => increasePlayerScore(playerId)">+</button>
       </td>
       <td>
-        <button @click="() => toggleLock(key)">
-          {{ gameState.players[key].locked ? "Unlock" : "Lock" }}
+        <button @click="() => toggleLock(playerId)">
+          {{ player.locked ? "Unlock" : "Lock" }}
         </button>
-        <button @click="() => removePlayerFromGame(key)">Kick</button>
+        <button @click="() => removePlayerFromGame(playerId)">Kick</button>
       </td>
     </tr>
   </table>
@@ -343,16 +346,16 @@ const handleVolumeChange = (event: Event) => {
       <th>Toggle</th>
     </tr>
     <tr
-      v-for="key in Object.keys(state.members).filter(
-        (key) => !gameState.players[key]
+      v-for="[memberId, member] in Object.entries(state.members).filter(
+        ([memberId, member]) => !gameState.players[memberId]
       )"
-      :key="key"
+      :key="memberId"
     >
-      <td>{{ state.members[key].name }}</td>
+      <td>{{ member.name }}</td>
       <td>
         <button
-          :disabled="!!gameState.players[key]"
-          @click="() => addMemberToGame(key)"
+          :disabled="!!gameState.players[memberId]"
+          @click="() => addMemberToGame(memberId)"
         >
           Add to game
         </button>

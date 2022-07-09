@@ -1,10 +1,5 @@
 const buzzerComponent = () => ({
   type: "BuzzerButton",
-  props: {
-    label: "BUZZ",
-    textColor: "white",
-    backgroundColor: "red",
-  },
 });
 
 const buzzedLayout = () => ({

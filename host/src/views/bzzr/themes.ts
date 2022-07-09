@@ -1,3 +1,5 @@
+import type { Team } from "./types";
+
 const defaultTheme = {
   header: {
     backgroundColor: "#000000",
@@ -65,8 +67,9 @@ const teamThemes: { [key: string]: object } = {
   },
 };
 
-const teamTheme = (color: string) => {
-  return teamThemes[color] || defaultTheme;
+const teamTheme = (team: Team) => {
+  if (!team) return defaultTheme;
+  return teamThemes[team.color];
 };
 
 export { defaultTheme, teamTheme };

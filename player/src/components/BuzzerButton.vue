@@ -14,6 +14,7 @@ const defaultProps = {
   label: "BUZZ",
   textColor: "white",
   backgroundColor: "red",
+  shadow: "3px 3px #000000",
 };
 const props = { ...defaultProps, ...customProps.custom };
 
@@ -52,6 +53,6 @@ onUnmounted(() => {
   font-size: 75px;
   height: 300px;
   margin: 0;
-  box-shadow: 3px 3px #000000;
+  box-shadow: v-bind("props.shadow");
 }
 </style>
