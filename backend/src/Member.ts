@@ -72,20 +72,16 @@ class Member {
       this.room.host.send("msg", message);
     });
 
-    this.sendSelfState();
-    this.sendRoomState();
+    this.sendState();
+    this.room.sendState();
   }
 
   send(eventName: string, payload: unknown) {
     this.socket?.emit(eventName, payload);
   }
 
-  sendSelfState() {
-    this.send("self", this.state);
-  }
-
-  sendRoomState() {
-    this.send("room", this.room.state);
+  sendState() {
+    this.send("state.member", this.state);
   }
 
   updateState(newState: Partial<MemberState> = {}) {
@@ -93,7 +89,7 @@ class Member {
     this.state.ui.main.components = this.state.ui.main.components.map(
       (component) => ({ ...component, key: randomUUID() })
     );
-    this.sendSelfState();
+    this.sendState();
   }
 
   get room() {

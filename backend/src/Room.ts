@@ -1,10 +1,7 @@
 import { Socket } from "socket.io";
 import Host from "./Host";
-import Member, { SanitizedMember } from "./Member";
-import type { MemberState } from "../types";
+import Member from "./Member";
 import roomManager from "./RoomManager";
-
-type SanitizedMembers = { [id: string]: SanitizedMember };
 
 class Room {
   id: string;
@@ -12,7 +9,7 @@ class Room {
   state: object;
   members: { [id: string]: Member };
 
-  constructor(roomCode: string, host: Host, state: Partial<MemberState> = {}) {
+  constructor(roomCode: string, host: Host) {
     this.id = roomCode;
     this.host = host;
     this.state = {};
@@ -22,36 +19,28 @@ class Room {
   join(userId: string, userName: string, socket: Socket) {
     socket.join(this.id);
 
+    let user: Host | Member;
+
     if (userId === this.host.id) {
-      this.host.connect(socket);
+      user = this.host;
     } else {
-      let player = this.members[userId];
-      if (!!player) {
-        player.connect(socket);
-      } else {
-        player = new Member(userId, userName, this.id);
-        this.members[userId] = player;
-        player.connect(socket);
+      user = this.members[userId];
+      if (!user) {
+        user = new Member(userId, userName, this.id);
+        this.members[userId] = user;
       }
     }
 
-    this.sendMembersToHost();
+    user.connect(socket);
+    this.host.sendState();
   }
 
-  updateState(state: object) {
-    this.state = state;
-    roomManager.io?.to(this.id).emit("update state", this.state);
+  sendState() {
+    roomManager.io?.to(this.id).emit("state.public", this.state);
   }
 
-  sendMembersToHost() {
-    const sanitizedMembers = Object.values(this.members).reduce(
-      (acc: SanitizedMembers, player) => {
-        acc[player.id] = player.sanitized;
-        return acc;
-      },
-      {}
-    );
-    this.host.send("members", { members: sanitizedMembers });
+  sendEventToRoom(payload: object) {
+    roomManager.io?.to(this.id).emit("event", payload);
   }
 }
 

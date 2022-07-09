@@ -3,8 +3,8 @@
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
-    "target": "ES2019",
-    "lib": ["ES2019"],
+    "target": "ES2022",
+    "lib": ["ES2022"],
     "composite": true,
     "baseUrl": ".",
     "paths": {

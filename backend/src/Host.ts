@@ -21,20 +21,45 @@ class Host {
   connect(socket: Socket) {
     this.socket = socket;
 
-    socket.on("update player", async (payload) => {
+    socket.on("member.update", async (payload) => {
       await forAllRecipients(payload.to, (recipientId) => {
         const player = this.room.members[recipientId];
         player?.updateState(payload.data);
       });
     });
 
-    socket.on("update room", async (payload) => {
-      this.room.updateState(payload);
+    socket.on("room.update", async (payload) => {
+      this.room.state = payload;
+      this.room.sendState();
+    });
+
+    socket.on("event", async (payload) => {
+      this.room.sendEventToRoom(payload);
     });
   }
 
   send(eventName: string, payload: unknown) {
     this.socket?.emit(eventName, payload);
+  }
+
+  sendState() {
+    this.send("state.host", this.privateState);
+  }
+
+  get privateState() {
+    const room = this.room;
+
+    return {
+      roomCode: this.id,
+      members: Object.entries(room.members).reduce((acc, [userId, member]) => {
+        acc[userId] = {
+          id: userId,
+          name: member.name,
+          messages: member.messages,
+        };
+        return acc;
+      }, {} as { [key: string]: object }),
+    };
   }
 
   get room() {

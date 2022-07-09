@@ -25,7 +25,7 @@ const attachPlayerEvents = (
     alert(payload.message);
   });
 
-  socket.on("self", (payload) => {
+  socket.on("state.member", (payload) => {
     const newState = expandStatePresets(payload);
     state.theme = newState.theme;
     state.ui = newState.ui;

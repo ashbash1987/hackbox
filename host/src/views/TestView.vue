@@ -92,7 +92,7 @@ const linterUrl = computed(() => {
 
 const updateMemberState = (userId: string) => {
   const json = JSON.parse(playerStateInput.input);
-  socket?.emit("update player", {
+  socket?.emit("member.update", {
     to: userId,
     data: json,
   });
@@ -104,7 +104,9 @@ const members = computed(() =>
 
 const latestMessages = computed(() =>
   Object.keys(state.members).reduce((acc, key) => {
-    acc[key] = state.messages.find((msg) => msg.from === key);
+    const userMessages = state.messages.filter((msg) => msg.from === key);
+    const latestMessage = userMessages.at(-1);
+    acc[key] = latestMessage;
     return acc;
   }, {} as { [key: string]: Message | undefined })
 );

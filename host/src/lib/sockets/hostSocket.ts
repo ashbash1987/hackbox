@@ -10,7 +10,7 @@ const attachHostEvents = (socket: Socket, state: HostState, router: Router) => {
     state.messages.push(message);
   });
 
-  socket.on("members", (payload) => {
+  socket.on("state.host", (payload) => {
     state.members = payload.members;
   });
 

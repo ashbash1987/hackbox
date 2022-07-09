@@ -45,13 +45,16 @@ const addMemberToGame = (userId: string) => {
   };
   setGameState(roomCode, gameState);
 
-  socket.emit("update player", { to: userId, data: buzzerLayout(gameState) });
+  socket.emit("member.update", {
+    to: userId,
+    data: buzzerLayout(gameState),
+  });
 };
 
 const removePlayerFromGame = (userId: string) => {
   delete gameState.players[userId];
   setGameState(roomCode, gameState);
-  socket.emit("update player", {
+  socket.emit("member.update", {
     to: userId,
     data: textLayout("Kicked from game."),
   });
@@ -62,7 +65,10 @@ const unlockPlayers = async (userIds: string[]) => {
     gameState.players[playerId].locked = false;
   });
   setGameState(roomCode, gameState);
-  socket.emit("update player", { to: userIds, data: buzzerLayout(gameState) });
+  socket.emit("member.update", {
+    to: userIds,
+    data: buzzerLayout(gameState),
+  });
 };
 
 const lockPlayers = async (userIds: string[]) => {
@@ -70,7 +76,7 @@ const lockPlayers = async (userIds: string[]) => {
     gameState.players[playerId].locked = true;
   });
   setGameState(roomCode, gameState);
-  socket.emit("update player", {
+  socket.emit("member.update", {
     to: userIds,
     data: textLayout("You are locked out."),
   });
@@ -90,7 +96,7 @@ const activateBuzzer = () => {
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
   );
-  socket.emit("update player", { to, data: buzzerLayout(gameState) });
+  socket.emit("member.update", { to, data: buzzerLayout(gameState) });
 };
 
 const deactivateBuzzer = () => {
@@ -101,7 +107,7 @@ const deactivateBuzzer = () => {
   const to = Object.keys(gameState.players).filter(
     (key: string) => !gameState.players[key].locked
   );
-  socket.emit("update player", { to, data: buzzerLayout(gameState) });
+  socket.emit("member.update", { to, data: buzzerLayout(gameState) });
 };
 
 const toggleBuzzer = () => {
