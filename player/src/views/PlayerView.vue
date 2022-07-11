@@ -25,6 +25,15 @@ const defaultState: PlayerState = {
   },
 };
 
+const getComponentType = (type: string) => {
+  const newTypes = ["Text", "Buzzer", "Button"];
+  if (newTypes.includes(type)) {
+    return `${type}Component`;
+  } else {
+    return type;
+  }
+};
+
 const { socket, state } = initializePlayerSocket(router, defaultState);
 provide("socket", socket);
 </script>
@@ -38,7 +47,7 @@ provide("socket", socket);
       <div class="player-main" v-if="state.ui.main.components">
         <component
           v-for="comp in state.ui.main.components"
-          :is="comp.type"
+          :is="getComponentType(comp.type)"
           :key="comp.key"
           :custom="comp.props"
           class="player-component"

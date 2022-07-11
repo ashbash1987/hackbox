@@ -42,7 +42,7 @@ class Member {
           align: "start" as "start",
           components: [
             {
-              type: "TextBox",
+              type: "Text",
               props: {
                 text: "Waiting for the host to let you in...",
                 align: "center",

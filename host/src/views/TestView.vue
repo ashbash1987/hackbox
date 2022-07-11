@@ -19,7 +19,7 @@ const playerStateInput = reactive({
     },
     "presets": {
       "Question": {
-        "type": "TextBox",
+        "type": "Text",
         "props": {
           "textColor": "white",
           "backgroundColor": "black",
@@ -27,7 +27,7 @@ const playerStateInput = reactive({
         }
       },
       "Answer": {
-        "type": "SelectButton",
+        "type": "Button",
         "props": {
           "align": "start",
           "textColor": "white",

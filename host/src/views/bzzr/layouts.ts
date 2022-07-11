@@ -11,7 +11,7 @@ const themeLayout = (theme: ColorTheme) => ({
 });
 
 const buzzerComponent = (theme: ColorTheme) => ({
-  type: "BuzzerButton",
+  type: "Buzzer",
   props: {
     backgroundColor: theme.primary,
     textColor: theme.text,
@@ -40,7 +40,7 @@ const textLayout = (theme: ColorTheme, text: string) => ({
     align: "start",
     components: [
       {
-        type: "TextBox",
+        type: "Text",
         props: {
           text,
           backgroundColor: theme.primary,
