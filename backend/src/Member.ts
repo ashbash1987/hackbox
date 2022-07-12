@@ -46,9 +46,9 @@ class Member {
               props: {
                 text: "Waiting for the host to let you in...",
                 align: "center",
-                borderColor: "white",
-                textColor: "white",
-                backgroundColor: "#4254f4",
+                border: "none",
+                textColor: "black",
+                backgroundColor: "transparent",
               },
             },
           ],

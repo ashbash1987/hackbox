@@ -1,80 +1,36 @@
-export interface ColorTheme {
-  primary: string;
-  secondary: string;
-  text: string;
-}
+import { getColorTheme } from "./colorThemes";
 
-const defaultTheme: ColorTheme = {
-  primary: "#000000",
-  secondary: "#3f3f3f",
-  text: "white",
+const getThemeAndPresets = (themeName?: string) => {
+  const colorTheme = getColorTheme(themeName);
+
+  return {
+    theme: {
+      header: {
+        backgroundColor: colorTheme.primary,
+        textColor: colorTheme.text,
+      },
+      main: {
+        backgroundColor: colorTheme.secondary,
+      },
+    },
+    presets: {
+      bzzrbzzr: {
+        type: "Buzzer",
+        props: {
+          backgroundColor: colorTheme.primary,
+          textColor: colorTheme.text,
+        },
+      },
+      bzzrtext: {
+        type: "Text",
+        props: {
+          backgroundColor: colorTheme.primary,
+          textColor: colorTheme.text,
+          border: `2px solid ${colorTheme.text}`,
+        },
+      },
+    },
+  };
 };
 
-const teamThemes: { [key: string]: ColorTheme } = {
-  red: {
-    primary: "hsl(0, 100%, 50%)",
-    secondary: "hsl(0, 60%, 30%)",
-    text: "white",
-  },
-  orange: {
-    primary: "hsl(30, 100%, 50%)",
-    secondary: "hsl(30, 60%, 30%)",
-    text: "white",
-  },
-  yellow: {
-    primary: "hsl(60, 100%, 50%)",
-    secondary: "hsl(60, 60%, 30%)",
-    text: "black",
-  },
-  chartreuse: {
-    primary: "hsl(90, 100%, 50%)",
-    secondary: "hsl(90, 60%, 30%)",
-    text: "black",
-  },
-  green: {
-    primary: "hsl(120, 100%, 50%)",
-    secondary: "hsl(120, 60%, 30%)",
-    text: "black",
-  },
-  springgreen: {
-    primary: "hsl(150, 100%, 50%)",
-    secondary: "hsl(150, 60%, 30%)",
-    text: "black",
-  },
-  cyan: {
-    primary: "hsl(180, 100%, 50%)",
-    secondary: "hsl(180, 60%, 30%)",
-    text: "black",
-  },
-  azure: {
-    primary: "hsl(210, 100%, 50%)",
-    secondary: "hsl(210, 60%, 30%)",
-    text: "white",
-  },
-  blue: {
-    primary: "hsl(240, 100%, 50%)",
-    secondary: "hsl(240, 60%, 30%)",
-    text: "white",
-  },
-  purple: {
-    primary: "hsl(270, 100%, 50%)",
-    secondary: "hsl(270, 60%, 30%)",
-    text: "white",
-  },
-  pink: {
-    primary: "hsl(300, 100%, 50%)",
-    secondary: "hsl(300, 60%, 30%)",
-    text: "black",
-  },
-  rose: {
-    primary: "hsl(330, 100%, 50%)",
-    secondary: "hsl(330, 60%, 30%)",
-    text: "black",
-  },
-};
-
-const getColorTheme = (color?: string): ColorTheme => {
-  return teamThemes[color || ""] || defaultTheme;
-};
-
-export { getColorTheme };
+export { getThemeAndPresets };

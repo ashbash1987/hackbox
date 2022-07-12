@@ -7,14 +7,9 @@ import { reactive } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 
-import { getColorTheme } from "./bzzr/themes";
+import { getThemeAndPresets } from "./bzzr/themes";
 import sounds from "./bzzr/sounds";
-import {
-  textLayout,
-  buzzerLayout,
-  emptyLayout,
-  themeLayout,
-} from "./bzzr/layouts";
+import { textLayout, buzzerLayout, emptyLayout } from "./bzzr/layouts";
 
 const roomCode = router.currentRoute.value.params.roomCode as string;
 
@@ -63,10 +58,9 @@ socket.on("msg", (message: Message) => {
       localSpeed: message.message.ms as number,
       timestamp: message.timestamp,
     });
-    const team = gameState.teams[player.team || ""];
-    const colorTheme = getColorTheme(team?.color);
+
     sendRoomState(gameState);
-    sendMemberState(message.from, { ui: textLayout(colorTheme, "Buzzed in!") });
+    sendMemberState(message.from, { ui: textLayout("Buzzed in!") });
   }
 });
 
@@ -78,20 +72,25 @@ const addMemberToGame = (userId: string) => {
     score: 0,
   };
 
-  const colorTheme = getColorTheme();
+  const { theme, presets } = getThemeAndPresets("default");
 
   sendRoomState(gameState);
   sendMemberState(userId, {
-    theme: themeLayout(colorTheme),
-    ui: buzzerLayout(colorTheme),
+    theme,
+    presets,
+    ui: buzzerLayout(),
   });
 };
 
 const removePlayerFromGame = (userId: string) => {
   delete gameState.players[userId];
+
+  const { theme, presets } = getThemeAndPresets("default");
+
   sendRoomState(gameState);
   sendMemberState(userId, {
-    theme: themeLayout(getColorTheme()),
+    theme,
+    presets,
     ui: emptyLayout(state.members[userId].name),
   });
 };
@@ -99,20 +98,18 @@ const removePlayerFromGame = (userId: string) => {
 const unlockPlayer = async (userId: string) => {
   const player = gameState.players[userId];
   player.locked = false;
-  const team = gameState.teams[player.team || ""];
-  const colorTheme = getColorTheme(team?.color);
+
   sendRoomState(gameState);
-  sendMemberState(userId, { ui: buzzerLayout(colorTheme) });
+  sendMemberState(userId, { ui: buzzerLayout() });
 };
 
 const lockPlayer = async (userId: string) => {
   const player = gameState.players[userId];
   player.locked = true;
-  const team = gameState.teams[player.team || ""];
-  const colorTheme = getColorTheme(team?.color);
+
   sendRoomState(gameState);
   sendMemberState(userId, {
-    ui: textLayout(colorTheme, "You are locked out."),
+    ui: textLayout("You are locked out."),
   });
 };
 
@@ -124,13 +121,11 @@ const activateBuzzer = () => {
   gameState.buzzer.buzzes = [];
   sendRoomState(gameState);
 
-  Object.entries(gameState.players)
-    .filter(([_playerId, player]) => !player.locked)
-    .map(([playerId, player]) => {
-      const team = gameState.teams[player.team || ""];
-      const colorTheme = getColorTheme(team?.color);
-      sendMemberState(playerId, { ui: buzzerLayout(colorTheme) });
-    });
+  const playerIds = Object.keys(gameState.players).filter(
+    (playerId) => !gameState.players[playerId].locked
+  );
+
+  sendMemberState(playerIds, { ui: buzzerLayout() });
 };
 
 const increasePlayerScore = (userId: string) => {
@@ -150,12 +145,13 @@ const updatePlayerTeam = (playerId: string, event: Event) => {
   const team = gameState.teams[teamId];
 
   player.team = teamId;
-  const colorTheme = getColorTheme(team?.color);
+  const { theme, presets } = getThemeAndPresets(team?.color);
 
   sendRoomState(gameState);
   sendMemberState(playerId, {
-    theme: themeLayout(colorTheme),
-    ui: player.locked ? emptyLayout() : buzzerLayout(colorTheme),
+    theme,
+    presets,
+    ui: player.locked ? emptyLayout() : buzzerLayout(),
   });
 };
 
@@ -181,10 +177,11 @@ const removeTeam = (teamId: string) => {
     const player = gameState.players[playerId];
     player.team = undefined;
 
-    const colorTheme = getColorTheme();
+    const { theme, presets } = getThemeAndPresets("default");
 
     sendMemberState(playerId, {
-      theme: themeLayout(colorTheme),
+      theme,
+      presets,
       ui: {
         header: {
           text: player.name,
@@ -203,16 +200,16 @@ const updateTeamColor = (teamId: string, event: Event) => {
   gameState.teams[teamId].color = color;
   sendRoomState(gameState);
 
-  Object.entries(gameState.players)
-    .filter(([_playerId, player]) => player.team === teamId)
-    .map(([playerId, player]) => {
-      const colorTheme = getColorTheme(color);
+  const playerIds = Object.keys(gameState.players).filter(
+    (playerId) => gameState.players[playerId].team === teamId
+  );
 
-      sendMemberState(playerId, {
-        theme: themeLayout(colorTheme),
-        ui: player.locked ? emptyLayout() : buzzerLayout(colorTheme),
-      });
-    });
+  const { theme, presets } = getThemeAndPresets(color);
+
+  sendMemberState(playerIds, {
+    theme,
+    presets,
+  });
 };
 
 const timeDifferenceDisplay = (key: number): string => {
@@ -359,8 +356,16 @@ const handleVolumeChange = (event: Event) => {
     </tr>
   </table>
 
-  <h3>Waiting in lobby...</h3>
-  <p v-if="!Object.keys(state.members).length">None</p>
+  <h3>Lobby</h3>
+  <p
+    v-if="
+      Object.keys(state.members).filter(
+        (memberId) => !gameState.players[memberId]
+      ).length === 0
+    "
+  >
+    None
+  </p>
   <table v-else>
     <tr>
       <th>Name</th>

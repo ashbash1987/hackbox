@@ -1,21 +1,5 @@
-import type { ColorTheme } from "./themes";
-
-const themeLayout = (theme: ColorTheme) => ({
-  header: {
-    backgroundColor: theme.primary,
-    textColor: theme.text,
-  },
-  main: {
-    backgroundColor: theme.secondary,
-  },
-});
-
-const buzzerComponent = (theme: ColorTheme) => ({
-  type: "Buzzer",
-  props: {
-    backgroundColor: theme.primary,
-    textColor: theme.text,
-  },
+const buzzerComponent = () => ({
+  type: "bzzrbzzr",
 });
 
 const emptyLayout = (userName?: string) => ({
@@ -28,28 +12,25 @@ const emptyLayout = (userName?: string) => ({
   },
 });
 
-const buzzerLayout = (theme: ColorTheme) => ({
+const buzzerLayout = () => ({
   main: {
     align: "center",
-    components: [buzzerComponent(theme)],
+    components: [buzzerComponent()],
   },
 });
 
-const textLayout = (theme: ColorTheme, text: string) => ({
+const textLayout = (text: string) => ({
   main: {
-    align: "start",
+    align: "center",
     components: [
       {
-        type: "Text",
+        type: "bzzrtext",
         props: {
           text,
-          backgroundColor: theme.primary,
-          textColor: theme.text,
-          border: `4px solid ${theme.text}`,
         },
       },
     ],
   },
 });
 
-export { buzzerLayout, textLayout, emptyLayout, themeLayout };
+export { buzzerLayout, textLayout, emptyLayout };
