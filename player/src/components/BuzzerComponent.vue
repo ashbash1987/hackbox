@@ -12,6 +12,7 @@ const socket = inject("socket") as Socket;
 const customProps = defineProps(["custom"]);
 const defaultProps = {
   label: "BUZZ",
+  event: "buzz",
   textColor: "white",
   backgroundColor: "red",
   shadow: "5px 5px #000000",
@@ -25,7 +26,11 @@ const props = { ...defaultProps, ...customProps.custom };
 const respond = () => {
   buzzerState.buzzed = true;
   window.removeEventListener("keydown", handleKeydown);
-  socket.emit("msg", { event: "buzz", ms: Date.now() - mountedAt });
+  socket.emit("msg", {
+    event: props.event,
+    ms: Date.now() - mountedAt,
+    value: null,
+  });
 };
 
 const handleKeydown = (event: KeyboardEvent) => {

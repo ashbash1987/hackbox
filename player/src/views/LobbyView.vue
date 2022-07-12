@@ -63,6 +63,7 @@ updateRoomExists();
         <div class="input-area">
           <label>ROOM CODE</label>
           <input
+            class="lobby-text-input"
             type="text"
             maxlength="4"
             :value="state.roomCode"
@@ -73,6 +74,7 @@ updateRoomExists();
         <div class="input-area">
           <label>NAME</label>
           <input
+            class="lobby-text-input"
             type="text"
             maxlength="12"
             :value="state.userName"
@@ -144,7 +146,7 @@ label {
   color: #444444;
 }
 
-input {
+.lobby-text-input {
   border: 0;
   font-size: 18px;
   background-color: #dddddd;
