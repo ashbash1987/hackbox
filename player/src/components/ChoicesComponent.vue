@@ -27,6 +27,7 @@ const defaultProps = {
   align: "center",
   backgroundColor: "#AAAAAA",
   border: "2px solid black",
+  width: "100%",
 };
 
 const providedProps = defineProps(["custom"]);
@@ -75,24 +76,34 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <button
-    v-for="choice in props.choices"
-    :key="choice.value"
-    @click="() => respond(choice.value)"
-    :class="`choice ${state.selection === choice.value && 'choice--selected'} ${
-      selectionMade &&
-      state.selection !== choice.value &&
-      'choice--not-selected'
-    }`"
-    :disabled="!!state.selection"
-  >
-    {{ choice.label }}
-  </button>
+  <div class="choices">
+    <button
+      v-for="choice in props.choices"
+      :key="choice.value"
+      @click="() => respond(choice.value)"
+      :class="`choice ${
+        state.selection === choice.value && 'choice--selected'
+      } ${
+        selectionMade &&
+        state.selection !== choice.value &&
+        'choice--not-selected'
+      }`"
+      :disabled="!!state.selection"
+    >
+      {{ choice.label }}
+    </button>
+  </div>
 </template>
 
 <style scoped>
+.choices {
+  display: flex;
+  flex-direction: column;
+}
+
 .choice {
   display: flex;
+  width: v-bind("props.width");
   border: v-bind("props.border");
   justify-content: v-bind("props.align");
   color: v-bind("props.textColor");
