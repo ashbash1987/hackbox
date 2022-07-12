@@ -23,16 +23,16 @@ const playerStateInput = reactive({
         "props": {
           "textColor": "white",
           "backgroundColor": "black",
-          "borderColor": "#7391CA"
+          "border": "4px solid #7391CA"
         }
       },
-      "Answer": {
-        "type": "Button",
+      "Answers": {
+        "type": "Choices",
         "props": {
           "align": "start",
           "textColor": "white",
           "backgroundColor": "black",
-          "borderColor": "#7391CA",
+          "border": "2px solid #7391CA",
           "hoverBackgroundColor": "#FAA516",
           "hoverTextColor": "black"
         }
@@ -52,31 +52,14 @@ const playerStateInput = reactive({
             }
           },
           {
-            "type": "Answer",
+            "type": "Answers",
             "props": {
-              "label": "A: Lyndon Johnson",
-              "value": "A"
-            }
-          },
-          {
-            "type": "Answer",
-            "props": {
-              "label": "B: Richard Nixon",
-              "value": "B"
-            }
-          },
-          {
-            "type": "Answer",
-            "props": {
-              "label": "C: Jimmy Carter",
-              "value": "C"
-            }
-          },
-          {
-            "type": "Answer",
-            "props": {
-              "label": "D: Gerald Ford",
-              "value": "D"
+              "choices": [
+                { "label": "A: Lyndon Johnson", "value": "A", "keys": ["A", "1"] },
+                { "label": "B: Richard Nixon", "value": "B", "keys": ["B", "2"] },
+                { "label": "C: Jimmy Carter", "value": "C", "keys": ["C", "3"] },
+                { "label": "D: Gerald Ford", "value": "D", "keys": ["D", "4"] }
+              ]
             }
           }
         ]

@@ -1,25 +1,49 @@
 <script setup lang="ts">
 import type { Socket } from "socket.io-client";
-import { inject } from "vue";
+import { inject, onMounted, onUnmounted } from "vue";
 const socket: Socket = inject("socket") as Socket;
+
+let mountedAt: number;
 
 const defaultProps = {
   label: "A: 42",
+  value: "A",
+  keys: ["A", "1"],
   textColor: "black",
   align: "center",
   backgroundColor: "#AAAAAA",
   borderColor: "black",
 };
 
-const providedProps = defineProps(["custom", "socket"]);
+const providedProps = defineProps(["custom"]);
 const props = {
   ...defaultProps,
   ...providedProps.custom,
 };
 
 const respond = () => {
-  socket.emit("msg", { value: props.value });
+  socket.emit("msg", {
+    event: props.event,
+    value: props.value,
+    ms: Date.now() - mountedAt,
+  });
 };
+
+const handleKeydown = (event: KeyboardEvent) => {
+  const eventKey = event.key.toLowerCase();
+  const keys = [props.keys].flat().map((key) => key.toLowerCase());
+
+  if (keys.includes(eventKey)) respond();
+};
+
+onMounted(() => {
+  mountedAt = Date.now();
+  window.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleKeydown);
+});
 </script>
 
 <template>
