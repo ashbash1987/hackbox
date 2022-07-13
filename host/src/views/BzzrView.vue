@@ -9,7 +9,12 @@ import initializeHostSocket from "@/lib/sockets/hostSocket";
 
 import { getThemeAndPresets } from "./bzzr/themes";
 import sounds from "./bzzr/sounds";
-import { textLayout, buzzerLayout, emptyLayout } from "./bzzr/layouts";
+import {
+  textLayout,
+  buzzerLayout,
+  choicesLayout,
+  emptyLayout,
+} from "./bzzr/layouts";
 
 const roomCode = router.currentRoute.value.params.roomCode as string;
 
@@ -20,8 +25,33 @@ const gameState: GameState = reactive({
   teams: {},
   buzzer: {
     buzzes: [],
+    component: {
+      type: "Buzzer",
+    },
   },
 });
+
+const handleBuzzerTypeChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const value = target.value as string;
+
+  gameState.buzzer.component = {
+    type: value,
+  };
+
+  activateBuzzer();
+};
+
+const getLayout = () => {
+  switch (gameState.buzzer.component.type) {
+    case "Buzzer":
+      return buzzerLayout();
+    case "Choices":
+      return choicesLayout();
+    default:
+      return buzzerLayout();
+  }
+};
 
 socket.on("state.room", (payload) => {
   if (Object.keys(payload).length === 0) {
@@ -33,14 +63,6 @@ socket.on("state.room", (payload) => {
     gameState.buzzer = payload.buzzer;
   }
 });
-
-const sendRoomState = (gameState: GameState) => {
-  socket.emit("room.update", gameState);
-};
-
-const sendMemberState = (userId: string | string[], data: object) => {
-  socket.emit("member.update", { to: userId, data });
-};
 
 socket.on("msg", (message: Message) => {
   const player = gameState.players[message.from];
@@ -55,6 +77,7 @@ socket.on("msg", (message: Message) => {
     }
     gameState.buzzer.buzzes.push({
       playerId: player.id,
+      value: (message.message.value as string) || "buzz",
       localSpeed: message.message.ms as number,
       timestamp: message.timestamp,
     });
@@ -63,6 +86,14 @@ socket.on("msg", (message: Message) => {
     sendMemberState(message.from, { ui: textLayout("Buzzed in!") });
   }
 });
+
+const sendRoomState = (gameState: GameState) => {
+  socket.emit("room.update", gameState);
+};
+
+const sendMemberState = (userId: string | string[], data: object) => {
+  socket.emit("member.update", { to: userId, data });
+};
 
 const addMemberToGame = (userId: string) => {
   gameState.players[userId] = {
@@ -78,7 +109,7 @@ const addMemberToGame = (userId: string) => {
   sendMemberState(userId, {
     theme,
     presets,
-    ui: buzzerLayout(),
+    ui: getLayout(),
   });
 };
 
@@ -100,7 +131,7 @@ const unlockPlayer = async (userId: string) => {
   player.locked = false;
 
   sendRoomState(gameState);
-  sendMemberState(userId, { ui: buzzerLayout() });
+  sendMemberState(userId, { ui: getLayout() });
 };
 
 const lockPlayer = async (userId: string) => {
@@ -125,7 +156,7 @@ const activateBuzzer = () => {
     (playerId) => !gameState.players[playerId].locked
   );
 
-  sendMemberState(playerIds, { ui: buzzerLayout() });
+  sendMemberState(playerIds, { ui: getLayout() });
 };
 
 const increasePlayerScore = (userId: string) => {
@@ -151,7 +182,6 @@ const updatePlayerTeam = (playerId: string, event: Event) => {
   sendMemberState(playerId, {
     theme,
     presets,
-    ui: player.locked ? emptyLayout() : buzzerLayout(),
   });
 };
 
@@ -239,6 +269,17 @@ const handleVolumeChange = (event: Event) => {
     </select>
   </label>
 
+  <label>
+    Buzzer Type:
+    <select
+      v-model="gameState.buzzer.component.type"
+      @change="handleBuzzerTypeChange"
+    >
+      <option value="Buzzer">Classic</option>
+      <option value="Choices">Multiple Choice</option>
+    </select>
+  </label>
+
   <h3>
     Buzzes
     <button class="buzzer-control" @click="activateBuzzer">Reset</button>
@@ -247,6 +288,9 @@ const handleVolumeChange = (event: Event) => {
   <ol v-else>
     <li v-for="(buzz, key) in gameState.buzzer.buzzes" :key="key">
       <strong>{{ gameState.players[buzz.playerId].name }}</strong>
+      <span v-if="gameState.buzzer.buzzes[key].value !== 'buzz'">
+        {{ ` ${gameState.buzzer.buzzes[key].value}` }}
+      </span>
       {{ timeDifferenceDisplay(key) }}
     </li>
   </ol>

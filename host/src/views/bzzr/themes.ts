@@ -17,13 +17,24 @@ const getThemeAndPresets = (themeName?: string) => {
       bzzrbzzr: {
         type: "Buzzer",
         props: {
+          event: "buzz",
           backgroundColor: colorTheme.primary,
           textColor: colorTheme.text,
+          border: `2px solid ${colorTheme.text}`,
         },
       },
       bzzrtext: {
         type: "Text",
         props: {
+          backgroundColor: colorTheme.primary,
+          textColor: colorTheme.text,
+          border: `2px solid ${colorTheme.text}`,
+        },
+      },
+      bzzrchoices: {
+        type: "Choices",
+        props: {
+          event: "buzz",
           backgroundColor: colorTheme.primary,
           textColor: colorTheme.text,
           border: `2px solid ${colorTheme.text}`,

@@ -2,6 +2,7 @@ export interface Buzz {
   playerId: string;
   timestamp: number;
   localSpeed: number;
+  value: string;
 }
 
 export interface Player {
@@ -18,12 +19,22 @@ export interface Team {
   members: string[];
 }
 
+export interface Choice {
+  value: string;
+  label: string;
+  keys: string[];
+}
+
 export interface GameState {
   players: {
     [id: string]: Player;
   };
   teams: { [key: string]: Team };
   buzzer: {
+    component: {
+      type: string;
+      choices?: Choice[];
+    };
     buzzes: Buzz[];
   };
 }

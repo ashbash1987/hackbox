@@ -19,6 +19,25 @@ const buzzerLayout = () => ({
   },
 });
 
+const choicesLayout = () => ({
+  main: {
+    align: "start",
+    components: [
+      {
+        type: "bzzrchoices",
+        props: {
+          choices: [
+            { label: "A", value: "A", keys: ["A", "1"] },
+            { label: "B", value: "B", keys: ["B", "2"] },
+            { label: "C", value: "C", keys: ["C", "3"] },
+            { label: "D", value: "D", keys: ["D", "4"] },
+          ],
+        },
+      },
+    ],
+  },
+});
+
 const textLayout = (text: string) => ({
   main: {
     align: "center",
@@ -33,4 +52,4 @@ const textLayout = (text: string) => ({
   },
 });
 
-export { buzzerLayout, textLayout, emptyLayout };
+export { buzzerLayout, textLayout, emptyLayout, choicesLayout };
