@@ -51,7 +51,6 @@ const choicesLayout = () => ({
 
 const textLayout = (text: string) => ({
   main: {
-    align: "center",
     components: [
       {
         type: "bzzrtext",
