@@ -76,7 +76,7 @@ socket.on("msg", (message: Message) => {
     !gameState.buzzer.buzzes.find((buzz) => buzz.playerId === player.id)
   ) {
     if (gameState.buzzer.buzzes.length === 0) {
-      sounds.beep();
+      sounds.hackBuzz();
     }
     gameState.buzzer.buzzes.push({
       playerId: player.id,
