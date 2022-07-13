@@ -285,15 +285,24 @@ const handleVolumeChange = (event: Event) => {
     <button class="buzzer-control" @click="activateBuzzer">Reset</button>
   </h3>
   <p v-if="!gameState.buzzer.buzzes.length">None</p>
-  <ol v-else>
-    <li v-for="(buzz, key) in gameState.buzzer.buzzes" :key="key">
-      <strong>{{ state.members[buzz.playerId].name }}</strong>
-      <span v-if="gameState.buzzer.buzzes[key].value !== 'buzz'">
-        {{ ` ${gameState.buzzer.buzzes[key].value}` }}
-      </span>
-      {{ timeDifferenceDisplay(key) }}
-    </li>
-  </ol>
+  <table v-else>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+      <th>Time</th>
+    </tr>
+    <tr v-for="(buzz, key) in gameState.buzzer.buzzes" :key="key">
+      <td>
+        <strong>{{ state.members[buzz.playerId].name }}</strong>
+      </td>
+      <td>
+        {{ `${gameState.buzzer.buzzes[key].value}` }}
+      </td>
+      <td>
+        {{ timeDifferenceDisplay(key) }}
+      </td>
+    </tr>
+  </table>
 
   <h3>Teams</h3>
   <p v-if="!Object.keys(gameState.teams).length">None</p>
