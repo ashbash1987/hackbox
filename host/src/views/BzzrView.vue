@@ -287,7 +287,7 @@ const handleVolumeChange = (event: Event) => {
   <p v-if="!gameState.buzzer.buzzes.length">None</p>
   <ol v-else>
     <li v-for="(buzz, key) in gameState.buzzer.buzzes" :key="key">
-      <strong>{{ gameState.players[buzz.playerId].name }}</strong>
+      <strong>{{ state.members[buzz.playerId].name }}</strong>
       <span v-if="gameState.buzzer.buzzes[key].value !== 'buzz'">
         {{ ` ${gameState.buzzer.buzzes[key].value}` }}
       </span>
