@@ -19,6 +19,17 @@ const buzzerLayout = () => ({
   },
 });
 
+const textInputLayout = () => ({
+  main: {
+    align: "start",
+    components: [
+      {
+        type: "bzzrtextinput",
+      },
+    ],
+  },
+});
+
 const choicesLayout = () => ({
   main: {
     align: "start",
@@ -52,4 +63,10 @@ const textLayout = (text: string) => ({
   },
 });
 
-export { buzzerLayout, textLayout, emptyLayout, choicesLayout };
+export {
+  buzzerLayout,
+  textLayout,
+  emptyLayout,
+  choicesLayout,
+  textInputLayout,
+};

@@ -58,9 +58,14 @@ onUnmounted(() => {
       :disabled="inputState.submitted"
     />
     <button @click="respond" class="submit-button">
-      <font-awesome-icon v-if="inputState.submitted" icon="fa-solid fa-check" />
+      <font-awesome-icon
+        v-if="inputState.submitted"
+        class="submit-icon"
+        icon="fa-solid fa-check"
+      />
       <font-awesome-icon
         v-if="!inputState.submitted"
+        class="submit-icon"
         icon="fa-solid fa-paper-plane"
       />
     </button>
@@ -95,5 +100,9 @@ onUnmounted(() => {
   border: none;
   background-color: v-bind("props.backgroundColor");
   padding: 10px;
+}
+
+.submit-icon {
+  color: v-bind("props.textColor");
 }
 </style>

@@ -11,6 +11,7 @@ import { getThemeAndPresets } from "./bzzr/themes";
 import sounds from "./bzzr/sounds";
 import {
   textLayout,
+  textInputLayout,
   buzzerLayout,
   choicesLayout,
   emptyLayout,
@@ -48,6 +49,8 @@ const getLayout = () => {
       return buzzerLayout();
     case "Choices":
       return choicesLayout();
+    case "TextInput":
+      return textInputLayout();
     default:
       return buzzerLayout();
   }
@@ -277,6 +280,7 @@ const handleVolumeChange = (event: Event) => {
     >
       <option value="Buzzer">Classic</option>
       <option value="Choices">Multiple Choice</option>
+      <option value="TextInput">Text Input</option>
     </select>
   </label>
 

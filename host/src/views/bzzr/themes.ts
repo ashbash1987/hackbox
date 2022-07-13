@@ -40,6 +40,15 @@ const getThemeAndPresets = (themeName?: string) => {
           border: `2px solid ${colorTheme.text}`,
         },
       },
+      bzzrtextinput: {
+        type: "TextInput",
+        props: {
+          event: "buzz",
+          backgroundColor: colorTheme.primary,
+          textColor: colorTheme.text,
+          border: `2px solid ${colorTheme.text}`,
+        },
+      },
     },
   };
 };
