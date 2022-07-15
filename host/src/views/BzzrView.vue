@@ -3,7 +3,7 @@ import type { GameState } from "./bzzr/types";
 import type { Message } from "@/types";
 
 import { v4 as uuid } from "uuid";
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 
@@ -25,12 +25,18 @@ const gameState: GameState = reactive({
   players: {},
   teams: {},
   buzzer: {
-    buzzes: [],
+    buzzes: {},
     component: {
       type: "Buzzer",
     },
   },
 });
+
+const buzzes = computed(() =>
+  Object.values(gameState.buzzer.buzzes).sort(
+    (a, b) => a.timestamp - b.timestamp
+  )
+);
 
 const handleBuzzerTypeChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -71,19 +77,16 @@ socket.on("msg", (message: Message) => {
   const player = gameState.players[message.from];
   if (!player) return;
 
-  if (
-    message.event === "buzz" &&
-    !gameState.buzzer.buzzes.find((buzz) => buzz.playerId === player.id)
-  ) {
-    if (gameState.buzzer.buzzes.length === 0) {
+  if (message.event === "buzz" && !gameState.buzzer.buzzes[player.id]) {
+    if (buzzes.value.length === 0) {
       sounds.hackBuzz();
     }
-    gameState.buzzer.buzzes.push({
+    gameState.buzzer.buzzes[player.id] = {
       playerId: player.id,
       value: (message.message.value as string) || "buzz",
       localSpeed: message.message.ms as number,
       timestamp: message.timestamp,
-    });
+    };
 
     sendRoomState(gameState);
     sendMemberState(message.from, { ui: textLayout("Buzzed in!") });
@@ -152,7 +155,7 @@ const toggleLock = async (userId: string) => {
 };
 
 const activateBuzzer = () => {
-  gameState.buzzer.buzzes = [];
+  gameState.buzzer.buzzes = {};
   sendRoomState(gameState);
 
   const playerIds = Object.keys(gameState.players).filter(
@@ -246,8 +249,8 @@ const updateTeamColor = (teamId: string, event: Event) => {
 };
 
 const timeDifferenceDisplay = (key: number): string => {
-  const current = gameState.buzzer.buzzes[key].timestamp;
-  const first = gameState.buzzer.buzzes[0].timestamp;
+  const current = buzzes.value[key].timestamp;
+  const first = buzzes.value[0].timestamp;
   const ms = current - first;
 
   return `+${(ms / 1000).toFixed(3)}s`;
@@ -288,19 +291,19 @@ const handleVolumeChange = (event: Event) => {
     Buzzes
     <button class="buzzer-control" @click="activateBuzzer">Reset</button>
   </h3>
-  <p v-if="!gameState.buzzer.buzzes.length">None</p>
+  <p v-if="!buzzes.length">None</p>
   <table v-else>
     <tr>
       <th>Name</th>
       <th>Value</th>
       <th>Time</th>
     </tr>
-    <tr v-for="(buzz, key) in gameState.buzzer.buzzes" :key="key">
+    <tr v-for="(buzz, key) in buzzes" :key="key">
       <td>
         <strong>{{ state.members[buzz.playerId].name }}</strong>
       </td>
       <td>
-        {{ `${gameState.buzzer.buzzes[key].value}` }}
+        {{ `${buzz.value}` }}
       </td>
       <td>
         {{ timeDifferenceDisplay(key) }}

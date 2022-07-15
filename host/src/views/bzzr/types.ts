@@ -35,6 +35,6 @@ export interface GameState {
       type: string;
       choices?: Choice[];
     };
-    buzzes: Buzz[];
+    buzzes: { [playerId: string]: Buzz };
   };
 }
