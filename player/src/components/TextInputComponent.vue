@@ -7,9 +7,9 @@ let mountedAt: number;
 
 const defaultProps = {
   event: "text",
-  textColor: "black",
+  color: "black",
   align: "left",
-  backgroundColor: "white",
+  background: "white",
   border: "2px solid black",
   fontSize: "30px",
 };
@@ -77,13 +77,13 @@ onUnmounted(() => {
   display: flex;
   flex-direction: row;
   border: v-bind("props.border");
-  background-color: v-bind("props.backgroundColor");
+  background: v-bind("props.background");
 }
 
 .text-input {
   border: none;
-  color: v-bind("props.textColor");
-  background-color: transparent;
+  color: v-bind("props.color");
+  background: transparent;
   font-size: v-bind("props.fontSize");
   margin: 0;
   width: 100%;
@@ -98,11 +98,11 @@ onUnmounted(() => {
 .submit-button {
   font-size: v-bind("props.fontSize");
   border: none;
-  background-color: v-bind("props.backgroundColor");
+  background: v-bind("props.background");
   padding: 10px;
 }
 
 .submit-icon {
-  color: v-bind("props.textColor");
+  color: v-bind("props.color");
 }
 </style>

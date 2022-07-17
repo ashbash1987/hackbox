@@ -102,7 +102,7 @@ updateRoomExists();
   justify-content: center;
   height: 50px;
   color: white;
-  background-color: #4254f4;
+  background: #4254f4;
 }
 
 .lobby-nav {
@@ -149,7 +149,7 @@ label {
 .lobby-text-input {
   border: 0;
   font-size: 18px;
-  background-color: #dddddd;
+  background: #dddddd;
   padding: 10px;
   border-radius: 5px;
   font-weight: 800;
@@ -165,14 +165,14 @@ button {
   margin-inline: 40px;
   padding: 20px;
   color: white;
-  background-color: #4254f4;
+  background: #4254f4;
   opacity: 0.9;
-  transition: color 0.2s, background-color 0.2s, opacity 0.2s;
+  transition: color 0.2s, background 0.2s, opacity 0.2s;
 }
 
 button:disabled {
   color: #777777;
-  background-color: #eeeeee;
+  background: #eeeeee;
 }
 
 button:hover {

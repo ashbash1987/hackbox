@@ -29,11 +29,11 @@ export interface Component {
 export interface ThemeState {
   header: {
     text: string;
-    textColor: string;
-    backgroundColor: string;
+    color: string;
+    background: string;
   };
   main: {
-    backgroundColor: string;
+    background: string;
   };
 }
 

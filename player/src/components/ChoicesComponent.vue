@@ -1,33 +1,40 @@
 <script setup lang="ts">
 import type { Socket } from "socket.io-client";
-import { computed, inject, onMounted, onUnmounted, reactive } from "vue";
+import { inject, onMounted, onUnmounted, reactive } from "vue";
 const socket: Socket = inject("socket") as Socket;
 
 let mountedAt: number;
-
-interface State {
-  selection: string | null;
-}
-const state: State = reactive({
-  selection: null,
-});
 
 interface Choice {
   label: string;
   value: string;
   keys: string[];
+  selected?: boolean;
 }
+
 const defaultProps = {
+  event: "answer",
+  multiSelect: false,
   choices: [
     { label: "A: Hydrogen", value: "A", keys: ["A", "1"] },
     { label: "B: Oxygen", value: "B", keys: ["B", "2"] },
   ],
-  event: "answer",
-  textColor: "black",
+  submit: {
+    label: "Submit",
+  },
+  hover: {
+    color: "black",
+    background: "#AAAAAA",
+  },
+  color: "black",
   align: "center",
-  backgroundColor: "#AAAAAA",
+  background: "#AAAAAA",
   border: "2px solid black",
   width: "100%",
+  fontSize: "20px",
+  padding: "20px",
+  margin: "10px 0px",
+  borderRadius: "10px",
 };
 
 const providedProps = defineProps(["custom"]);
@@ -36,17 +43,57 @@ const props = {
   ...providedProps.custom,
 };
 
-const respond = (value: string) => {
-  state.selection = value;
+interface State {
+  choices: Choice[];
+  selections: string[];
+  submitted: boolean;
+}
+
+const state: State = reactive({
+  choices: props.choices.map((choice: Choice) => ({
+    ...choice,
+    selected: false,
+  })),
+  selections: [],
+  submitted: false,
+});
+
+const submitResponse = () => {
+  state.submitted = true;
   window.removeEventListener("keydown", handleKeydown);
+  const response = props.multiSelect ? state.selections : state.selections[0];
+
   socket.emit("msg", {
     event: props.event,
-    value: value,
+    value: response,
     ms: Date.now() - mountedAt,
   });
 };
 
-const keystrokes = props.choices.reduce(
+const isSelected = (value: string) => state.selections.includes(value);
+
+const addSelection = (value: string) => {
+  state.selections.push(value);
+};
+
+const removeSelection = (value: string) => {
+  const index = state.selections.indexOf(value);
+  if (index === -1) return;
+
+  state.selections.splice(index, 1);
+};
+
+const toggleSelection = (value: string) => {
+  state.selections.includes(value)
+    ? removeSelection(value)
+    : addSelection(value);
+
+  if (state.selections.length === 0) return;
+  if (props.multiSelect) return;
+  submitResponse();
+};
+
+const choicesKeystrokes = props.choices.reduce(
   (acc: { [key: string]: string }, choice: Choice) => {
     choice.keys.forEach(
       (key: string) => (acc[key.toLowerCase()] = choice.value)
@@ -56,13 +103,13 @@ const keystrokes = props.choices.reduce(
   {}
 );
 
-const selectionMade = computed(() => !!state.selection);
-
 const handleKeydown = (event: KeyboardEvent) => {
-  const eventKey = event.key.toLowerCase();
-  const responseValue = keystrokes[eventKey];
+  if (event.key === "Enter") submitResponse();
 
-  if (responseValue) respond(responseValue);
+  const eventKey = event.key.toLowerCase();
+  const responseValue = choicesKeystrokes[eventKey];
+
+  if (responseValue) toggleSelection(responseValue);
 };
 
 onMounted(() => {
@@ -78,19 +125,21 @@ onUnmounted(() => {
 <template>
   <div class="choices">
     <button
-      v-for="choice in props.choices"
+      v-for="choice in state.choices"
       :key="choice.value"
-      @click="() => respond(choice.value)"
-      :class="`choice ${
-        state.selection === choice.value && 'choice--selected'
-      } ${
-        selectionMade &&
-        state.selection !== choice.value &&
-        'choice--not-selected'
-      }`"
-      :disabled="!!state.selection"
+      @click="() => toggleSelection(choice.value)"
+      :class="`choice ${isSelected(choice.value) && 'choice--selected'}`"
+      :disabled="state.submitted"
     >
       {{ choice.label }}
+    </button>
+    <button
+      v-if="props.multiSelect"
+      @click="submitResponse"
+      class="submit-button"
+      :disabled="state.submitted"
+    >
+      {{ props.submit.label }}
     </button>
   </div>
 </template>
@@ -106,19 +155,17 @@ onUnmounted(() => {
   width: v-bind("props.width");
   border: v-bind("props.border");
   justify-content: v-bind("props.align");
-  color: v-bind("props.textColor");
-  background-color: v-bind("props.backgroundColor");
-  font-size: 20px;
-  padding: 20px;
-  margin: 10px 0px;
-  border-radius: 10px;
+  color: v-bind("props.color");
+  background: v-bind("props.background");
+  font-size: v-bind("props.fontSize");
+  padding: v-bind("props.padding");
+  margin: v-bind("props.margin");
+  border-radius: v-bind("props.borderRadius");
 }
 
 .choice--selected {
-  color: v-bind("props.hoverTextColor || props.textColor");
-  background-color: v-bind(
-    "props.hoverBackgroundColor || props.backgroundColor"
-  );
+  color: v-bind("props.hover.color || props.color");
+  background: v-bind("props.hover.background || props.hover.background");
 }
 
 .choice--not-selected {
@@ -126,9 +173,42 @@ onUnmounted(() => {
 }
 
 .choice:hover:not(:disabled) {
-  color: v-bind("props.hoverTextColor || props.textColor");
-  background-color: v-bind(
-    "props.hoverBackgroundColor || props.backgroundColor"
-  );
+  color: v-bind("props.hover.color || props.hover.color");
+  background: v-bind("props.hover.background || props.hover.background");
+}
+
+.choice:disabled {
+  opacity: 0.6;
+}
+
+.choice--not-selected {
+  opacity: 0.6;
+}
+
+.submit-button {
+  display: flex;
+  width: v-bind("props.submit.width || props.width");
+  border: v-bind("props.submit.border || props.border");
+  justify-content: v-bind("props.submit.align || props.align");
+  color: v-bind("props.submit.color || props.color");
+  background: v-bind("props.submit.background || props.background");
+  font-size: v-bind("props.submit.fontSize || props.fontSize");
+  padding: v-bind("props.submit.padding || props.padding");
+  margin: v-bind("props.submit.margin || props.margin");
+  border-radius: v-bind("props.submit.borderRadius || props.borderRadius");
+}
+
+.submit-button--selected {
+  color: v-bind("props.submit.color || props.color");
+  background: v-bind("props.submit.background || props.submit.background");
+}
+
+.submit-button:hover:not(:disabled) {
+  color: v-bind("props.hover.color || props.hover.color");
+  background: v-bind("props.hover.background || props.hover.background");
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
 }
 </style>

@@ -6,11 +6,11 @@ export interface Component {
 
 export interface ThemeState {
   header: {
-    textColor: string;
-    backgroundColor: string;
+    color: string;
+    background: string;
   };
   main: {
-    backgroundColor: string;
+    background: string;
   };
 }
 

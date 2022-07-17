@@ -13,8 +13,8 @@ const customProps = defineProps(["custom"]);
 const defaultProps = {
   label: "BUZZ",
   event: "buzz",
-  textColor: "white",
-  backgroundColor: "red",
+  color: "white",
+  background: "red",
   shadow: "5px 5px #000000",
   radius: "70px",
   fontSize: "70px",
@@ -57,8 +57,8 @@ onUnmounted(() => {
 
 <style scoped>
 .buzzer-button {
-  color: v-bind("props.textColor");
-  background-color: v-bind("props.backgroundColor");
+  color: v-bind("props.color");
+  background: v-bind("props.background");
   font-size: v-bind("props.fontSize");
   height: v-bind("props.height");
   margin: 0;

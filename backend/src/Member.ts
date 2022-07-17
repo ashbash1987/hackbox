@@ -27,11 +27,11 @@ class Member {
     this.state = {
       theme: {
         header: {
-          textColor: "white",
-          backgroundColor: "#4254f4",
+          color: "white",
+          background: "#4254f4",
         },
         main: {
-          backgroundColor: "white",
+          background: "white",
         },
       },
       ui: {
@@ -47,8 +47,8 @@ class Member {
                 text: "Waiting for the host to let you in...",
                 align: "center",
                 border: "none",
-                textColor: "black",
-                backgroundColor: "transparent",
+                color: "black",
+                background: "transparent",
               },
             },
           ],

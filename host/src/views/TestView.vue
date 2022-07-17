@@ -10,37 +10,44 @@ const playerStateInput = reactive({
   input: `{
     "theme": {
       "header": {
-        "textColor": "black",
-        "backgroundColor": "#FAA516"
+        "color": "black",
+        "background": "#FAA516"
       },
       "main": {
-        "backgroundColor": "black"
+        "background": "black"
       }
     },
     "presets": {
       "Question": {
         "type": "Text",
         "props": {
-          "textColor": "white",
-          "backgroundColor": "black",
+          "color": "white",
+          "background": "black",
           "border": "4px solid #7391CA"
         }
       },
       "Answers": {
         "type": "Choices",
         "props": {
+          "multiSelect": true,
           "align": "start",
-          "textColor": "white",
-          "backgroundColor": "black",
+          "color": "white",
+          "background": "black",
           "border": "2px solid #7391CA",
-          "hoverBackgroundColor": "#FAA516",
-          "hoverTextColor": "black"
+          "submit": {
+            "label": "Final Answer",
+            "align": "center"
+          },
+          "hover": {
+            "background": "#FAA516",
+            "color": "black"
+          }
         }
       }
     },
     "ui": {
       "header": {
-        "text": "CARPENTER"
+        "text": "CAPTAIN"
       },
       "main": {
         "align": "start",
@@ -48,17 +55,17 @@ const playerStateInput = reactive({
           {
             "type": "Question",
             "props": {
-              "text": "Which of these US presidents appeared on the television series 'Laugh-In'?"
+              "text": "Put these words in alphabetical order."
             }
           },
           {
             "type": "Answers",
             "props": {
               "choices": [
-                { "label": "A: Lyndon Johnson", "value": "A", "keys": ["A", "1"] },
-                { "label": "B: Richard Nixon", "value": "B", "keys": ["B", "2"] },
-                { "label": "C: Jimmy Carter", "value": "C", "keys": ["C", "3"] },
-                { "label": "D: Gerald Ford", "value": "D", "keys": ["D", "4"] }
+                { "label": "A: Great", "value": "A", "keys": ["A", "1"] },
+                { "label": "B: Zebra", "value": "B", "keys": ["B", "2"] },
+                { "label": "C: London", "value": "C", "keys": ["C", "3"] },
+                { "label": "D: Country", "value": "D", "keys": ["D", "4"] }
               ]
             }
           }

@@ -6,11 +6,11 @@ const getThemeAndPresets = (themeName?: string) => {
   return {
     theme: {
       header: {
-        backgroundColor: colorTheme.primary,
-        textColor: colorTheme.text,
+        background: colorTheme.primary,
+        color: colorTheme.text,
       },
       main: {
-        backgroundColor: colorTheme.secondary,
+        background: colorTheme.secondary,
       },
     },
     presets: {
@@ -18,16 +18,16 @@ const getThemeAndPresets = (themeName?: string) => {
         type: "Buzzer",
         props: {
           event: "buzz",
-          backgroundColor: colorTheme.primary,
-          textColor: colorTheme.text,
+          background: colorTheme.primary,
+          color: colorTheme.text,
           border: `2px solid ${colorTheme.text}`,
         },
       },
       bzzrtext: {
         type: "Text",
         props: {
-          backgroundColor: colorTheme.primary,
-          textColor: colorTheme.text,
+          background: colorTheme.primary,
+          color: colorTheme.text,
           border: `2px solid ${colorTheme.text}`,
         },
       },
@@ -35,8 +35,8 @@ const getThemeAndPresets = (themeName?: string) => {
         type: "Choices",
         props: {
           event: "buzz",
-          backgroundColor: colorTheme.primary,
-          textColor: colorTheme.text,
+          background: colorTheme.primary,
+          color: colorTheme.text,
           border: `2px solid ${colorTheme.text}`,
         },
       },
@@ -44,8 +44,8 @@ const getThemeAndPresets = (themeName?: string) => {
         type: "TextInput",
         props: {
           event: "buzz",
-          backgroundColor: colorTheme.primary,
-          textColor: colorTheme.text,
+          background: colorTheme.primary,
+          color: colorTheme.text,
           border: `2px solid ${colorTheme.text}`,
         },
       },

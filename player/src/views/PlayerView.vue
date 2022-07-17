@@ -7,11 +7,11 @@ import type { PlayerState } from "@/types";
 const defaultState: PlayerState = {
   theme: {
     header: {
-      textColor: "black",
-      backgroundColor: "black",
+      color: "black",
+      background: "black",
     },
     main: {
-      backgroundColor: "black",
+      background: "black",
     },
   },
   ui: {
@@ -60,8 +60,8 @@ provide("socket", socket);
   justify-content: center;
   height: 50px;
   z-index: 10;
-  color: v-bind("state.theme.header.textColor");
-  background-color: v-bind("state.theme.header.backgroundColor");
+  color: v-bind("state.theme.header.color");
+  background: v-bind("state.theme.header.background");
 }
 
 .player-nav {
@@ -81,7 +81,7 @@ provide("socket", socket);
   margin-top: -50px;
   height: 100vh;
   max-height: -webkit-fill-available;
-  background-color: v-bind("state.theme.main.backgroundColor");
+  background: v-bind("state.theme.main.background");
 }
 
 .player-main {
@@ -118,7 +118,7 @@ label {
 input {
   border: 0;
   font-size: 18px;
-  background-color: #dddddd;
+  background: #dddddd;
   padding: 10px;
   border-radius: 5px;
   font-weight: 800;
@@ -134,14 +134,14 @@ button {
   margin-inline: 40px;
   padding: 20px;
   color: white;
-  background-color: #4254f4;
+  background: #4254f4;
   opacity: 0.9;
-  transition: color 0.2s, background-color 0.2s, opacity 0.2s;
+  transition: color 0.2s, background 0.2s, opacity 0.2s;
 }
 
 button:disabled {
   color: #777777;
-  background-color: #eeeeee;
+  background: #eeeeee;
 }
 
 button:hover {

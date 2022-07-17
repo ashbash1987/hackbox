@@ -9,10 +9,10 @@ const defaultProps = {
   label: "A: 42",
   value: "A",
   keys: ["A", "1"],
-  textColor: "black",
+  color: "black",
   align: "center",
-  backgroundColor: "#AAAAAA",
-  borderColor: "black",
+  background: "#AAAAAA",
+  border: "2px solid black",
 };
 
 const providedProps = defineProps(["custom"]);
@@ -53,18 +53,16 @@ onUnmounted(() => {
 <style scoped>
 .select-button {
   display: flex;
-  border: 2px solid v-bind("props.borderColor");
+  border: v-bind("props.border");
   justify-content: v-bind("props.align");
-  color: v-bind("props.textColor");
-  background-color: v-bind("props.backgroundColor");
+  color: v-bind("props.color");
+  background: v-bind("props.background");
   font-size: 20px;
   margin: 0;
 }
 
 .select-button:hover {
-  color: v-bind("props.hoverTextColor || props.textColor");
-  background-color: v-bind(
-    "props.hoverBackgroundColor || props.backgroundColor"
-  );
+  color: v-bind("props.hover.color || props.color");
+  background: v-bind("props.hover.background || props.background");
 }
 </style>

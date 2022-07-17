@@ -2,9 +2,9 @@
 const customProps = defineProps(["custom"]);
 
 const defaultProps = {
-  backgroundColor: "white",
+  background: "white",
   border: "4px solid black",
-  textColor: "black",
+  color: "black",
   align: "center",
 };
 
@@ -24,8 +24,8 @@ const props = { ...defaultProps, ...customProps.custom };
   border-radius: 10px;
   justify-content: v-bind("props.align");
   text-align: v-bind("props.align");
-  color: v-bind("props.textColor");
-  background-color: v-bind("props.backgroundColor");
+  color: v-bind("props.color");
+  background: v-bind("props.background");
   border: v-bind("props.border");
 }
 </style>
