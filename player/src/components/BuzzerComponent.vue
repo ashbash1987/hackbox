@@ -34,7 +34,7 @@ const respond = () => {
 };
 
 const handleKeydown = (event: KeyboardEvent) => {
-  if (event.code === "Space" || event.code === "Enter") {
+  if (event.key === " " || event.key === "Enter") {
     respond();
   }
 };
