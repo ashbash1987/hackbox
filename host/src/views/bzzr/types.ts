@@ -16,7 +16,6 @@ export interface Player {
 export interface Team {
   color: string;
   name: string;
-  members: string[];
 }
 
 export interface Choice {
@@ -26,15 +25,10 @@ export interface Choice {
 }
 
 export interface GameState {
-  players: {
-    [id: string]: Player;
-  };
-  teams: { [key: string]: Team };
+  players: { [playerId: string]: Player };
+  teams: { [teamId: string]: Team };
   buzzer: {
-    component: {
-      type: string;
-      choices?: Choice[];
-    };
+    type: string;
     buzzes: { [playerId: string]: Buzz };
   };
 }

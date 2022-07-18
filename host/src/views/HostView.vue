@@ -26,9 +26,7 @@ const gameState: GameState = reactive({
   teams: {},
   buzzer: {
     buzzes: {},
-    component: {
-      type: "Buzzer",
-    },
+    type: "Buzzer",
   },
 });
 
@@ -42,15 +40,13 @@ const handleBuzzerTypeChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const value = target.value as string;
 
-  gameState.buzzer.component = {
-    type: value,
-  };
+  gameState.buzzer.type = value;
 
   activateBuzzer();
 };
 
 const getLayout = () => {
-  switch (gameState.buzzer.component.type) {
+  switch (gameState.buzzer.type) {
     case "Buzzer":
       return buzzerLayout();
     case "Choices":
@@ -63,7 +59,7 @@ const getLayout = () => {
 };
 
 // This listener will listen for this first state.room event.
-// If the state is empty, the room must be new, and the default state will be sent back.
+// If the state is empty, the room must be new, and the default state will be sent to the server.
 // If it is not empty, the room must have already existed, and this client will inherit it.
 socket.once("state.room", (payload) => {
   if (Object.keys(payload).length === 0) {
@@ -205,7 +201,6 @@ const addTeam = () => {
   gameState.teams[uuid()] = {
     name: teamInput.name,
     color: "red",
-    members: [],
   };
   teamInput.name = "";
   sendRoomState(gameState);
@@ -272,7 +267,7 @@ const handleVolumeChange = (event: Event) => {
 <template v-if="gameState !== {}">
   <h1>{{ roomCode }}</h1>
   <label>
-    Sound:
+    Volume:
     <select v-model="sounds.state.volume" @change="handleVolumeChange">
       <option value="off">Off</option>
       <option value="quiet">Quiet</option>
@@ -280,14 +275,11 @@ const handleVolumeChange = (event: Event) => {
       <option value="loud">Loud</option>
     </select>
   </label>
-
+  <br />
   <label>
-    Buzzer Type:
-    <select
-      v-model="gameState.buzzer.component.type"
-      @change="handleBuzzerTypeChange"
-    >
-      <option value="Buzzer">Classic</option>
+    Input Type:
+    <select v-model="gameState.buzzer.type" @change="handleBuzzerTypeChange">
+      <option value="Buzzer">Buzzer</option>
       <option value="Choices">Multiple Choice</option>
       <option value="TextInput">Text Input</option>
     </select>

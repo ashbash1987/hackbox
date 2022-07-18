@@ -9,7 +9,7 @@ const startTestGame = async () => {
 
 const startBzzrGame = async () => {
   const roomCode = await createRoom();
-  router.push(`/bzzr/${roomCode}`);
+  router.push(`/host/${roomCode}`);
 };
 </script>
 
