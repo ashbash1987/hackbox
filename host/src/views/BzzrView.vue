@@ -260,8 +260,7 @@ const timeDifferenceDisplay = (key: number): string => {
 
 const handleVolumeChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  const value = parseFloat(target.value);
-  sounds.state.volume = value;
+  sounds.updateVolume(target.value);
 };
 </script>
 
@@ -270,10 +269,10 @@ const handleVolumeChange = (event: Event) => {
   <label>
     Sound:
     <select v-model="sounds.state.volume" @change="handleVolumeChange">
-      <option value="0">Off</option>
-      <option value="0.2">Quiet</option>
-      <option value="0.6">Medium</option>
-      <option value="1">Loud</option>
+      <option value="off">Off</option>
+      <option value="quiet">Quiet</option>
+      <option value="medium">Medium</option>
+      <option value="loud">Loud</option>
     </select>
   </label>
 
