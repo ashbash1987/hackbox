@@ -62,9 +62,11 @@ const getLayout = () => {
   }
 };
 
-socket.on("state.room", (payload) => {
+// This listener will listen for this first state.room event.
+// If the state is empty, the room must be new, and the default state will be sent back.
+// If it is not empty, the room must have already existed, and this client will inherit it.
+socket.once("state.room", (payload) => {
   if (Object.keys(payload).length === 0) {
-    // Load the initial state of the room as it hasn't been set.
     sendRoomState(gameState);
   } else {
     gameState.players = payload.players;
