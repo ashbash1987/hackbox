@@ -28,10 +28,6 @@ class Host {
       });
     });
 
-    socket.on("room.update", async (payload) => {
-      this.room.updateGameState(payload);
-    });
-
     socket.on("event", async (payload) => {
       this.room.sendEventToRoom(payload);
     });
@@ -39,26 +35,6 @@ class Host {
 
   send(eventName: string, payload: unknown) {
     this.socket?.emit(eventName, payload);
-  }
-
-  sendState() {
-    this.send("state.host", this.privateState);
-  }
-
-  get privateState() {
-    const room = this.room;
-
-    return {
-      roomCode: this.id,
-      members: Object.entries(room.members).reduce((acc, [userId, member]) => {
-        acc[userId] = {
-          id: userId,
-          name: member.name,
-          messages: member.messages,
-        };
-        return acc;
-      }, {} as { [key: string]: object }),
-    };
   }
 
   get room() {

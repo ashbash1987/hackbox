@@ -3,13 +3,8 @@ export interface Member {
   name: string;
 }
 
-interface MemberMap {
-  [id: string]: Member;
-}
-
-export interface HostState {
-  members: MemberMap;
-  messages: unknown[];
+export interface PrivateRoomState {
+  members: { [id: string]: Member };
 }
 
 export interface Component {

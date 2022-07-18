@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GameState } from "./bzzr/types";
+import GameState from "@/lib/gameState";
 import type { Message } from "@/types";
 
 import { v4 as uuid } from "uuid";
@@ -19,16 +19,8 @@ import {
 
 const roomCode = router.currentRoute.value.params.roomCode as string;
 
-const { socket, state } = initializeHostSocket(router);
-
-const gameState: GameState = reactive({
-  players: {},
-  teams: {},
-  buzzer: {
-    buzzes: {},
-    type: "Buzzer",
-  },
-});
+const gameState = reactive(new GameState(roomCode));
+const { socket } = initializeHostSocket(router, gameState);
 
 const buzzes = computed(() =>
   Object.values(gameState.buzzer.buzzes).sort(
@@ -41,6 +33,7 @@ const handleBuzzerTypeChange = (event: Event) => {
   const value = target.value as string;
 
   gameState.buzzer.type = value;
+  gameState.save();
 
   activateBuzzer();
 };
@@ -57,19 +50,6 @@ const getLayout = () => {
       return buzzerLayout();
   }
 };
-
-// This listener will listen for this first state.room event.
-// If the state is empty, the room must be new, and the default state will be sent to the server.
-// If it is not empty, the room must have already existed, and this client will inherit it.
-socket.once("state.room", (payload) => {
-  if (Object.keys(payload).length === 0) {
-    sendRoomState(gameState);
-  } else {
-    gameState.players = payload.players;
-    gameState.teams = payload.teams;
-    gameState.buzzer = payload.buzzer;
-  }
-});
 
 socket.on("msg", (message: Message) => {
   const player = gameState.players[message.from];
@@ -91,14 +71,10 @@ socket.on("msg", (message: Message) => {
     const response = value
       ? `You answered ${Array.isArray(value) ? value.join(", ") : value}.`
       : "You buzzed in!";
-    sendRoomState(gameState);
+    gameState.save();
     sendMemberState(message.from, { ui: textLayout(response) });
   }
 });
-
-const sendRoomState = (gameState: GameState) => {
-  socket.emit("room.update", gameState);
-};
 
 const sendMemberState = (userId: string | string[], data: object) => {
   socket.emit("member.update", { to: userId, data });
@@ -107,14 +83,14 @@ const sendMemberState = (userId: string | string[], data: object) => {
 const addMemberToGame = (userId: string) => {
   gameState.players[userId] = {
     id: userId,
-    name: state.members[userId].name,
+    name: gameState.members[userId].name,
     locked: false,
     score: 0,
   };
 
   const { theme, presets } = getThemeAndPresets("default");
 
-  sendRoomState(gameState);
+  gameState.save();
   sendMemberState(userId, {
     theme,
     presets,
@@ -127,11 +103,11 @@ const removePlayerFromGame = (userId: string) => {
 
   const { theme, presets } = getThemeAndPresets("default");
 
-  sendRoomState(gameState);
+  gameState.save();
   sendMemberState(userId, {
     theme,
     presets,
-    ui: emptyLayout(state.members[userId].name),
+    ui: emptyLayout(gameState.members[userId].name),
   });
 };
 
@@ -139,7 +115,7 @@ const unlockPlayer = async (userId: string) => {
   const player = gameState.players[userId];
   player.locked = false;
 
-  sendRoomState(gameState);
+  gameState.save();
   sendMemberState(userId, { ui: getLayout() });
 };
 
@@ -147,7 +123,7 @@ const lockPlayer = async (userId: string) => {
   const player = gameState.players[userId];
   player.locked = true;
 
-  sendRoomState(gameState);
+  gameState.save();
   sendMemberState(userId, {
     ui: textLayout("You are locked out."),
   });
@@ -159,7 +135,7 @@ const toggleLock = async (userId: string) => {
 
 const activateBuzzer = () => {
   gameState.buzzer.buzzes = {};
-  sendRoomState(gameState);
+  gameState.save();
 
   const playerIds = Object.keys(gameState.players).filter(
     (playerId) => !gameState.players[playerId].locked
@@ -170,12 +146,12 @@ const activateBuzzer = () => {
 
 const increasePlayerScore = (userId: string) => {
   gameState.players[userId].score += 1;
-  sendRoomState(gameState);
+  gameState.save();
 };
 
 const decreasePlayerScore = (userId: string) => {
   gameState.players[userId].score -= 1;
-  sendRoomState(gameState);
+  gameState.save();
 };
 
 const updatePlayerTeam = (playerId: string, event: Event) => {
@@ -187,7 +163,7 @@ const updatePlayerTeam = (playerId: string, event: Event) => {
   player.team = teamId;
   const { theme, presets } = getThemeAndPresets(team?.color);
 
-  sendRoomState(gameState);
+  gameState.save();
   sendMemberState(playerId, {
     theme,
     presets,
@@ -203,7 +179,7 @@ const addTeam = () => {
     color: "red",
   };
   teamInput.name = "";
-  sendRoomState(gameState);
+  gameState.save();
 };
 
 const removeTeam = (teamId: string) => {
@@ -229,14 +205,14 @@ const removeTeam = (teamId: string) => {
   });
 
   delete gameState.teams[teamId];
-  sendRoomState(gameState);
+  gameState.save();
 };
 
 const updateTeamColor = (teamId: string, event: Event) => {
   const target = event.target as HTMLInputElement;
   const color = target.value;
   gameState.teams[teamId].color = color;
-  sendRoomState(gameState);
+  gameState.save();
 
   const playerIds = Object.keys(gameState.players).filter(
     (playerId) => gameState.players[playerId].team === teamId
@@ -299,7 +275,7 @@ const handleVolumeChange = (event: Event) => {
     </tr>
     <tr v-for="(buzz, key) in buzzes" :key="key">
       <td>
-        <strong>{{ state.members[buzz.playerId].name }}</strong>
+        <strong>{{ gameState.members[buzz.playerId].name }}</strong>
       </td>
       <td>
         {{ `${buzz.value}` }}
@@ -423,7 +399,7 @@ const handleVolumeChange = (event: Event) => {
   <h3>Lobby</h3>
   <p
     v-if="
-      Object.keys(state.members).filter(
+      Object.keys(gameState.members).filter(
         (memberId) => !gameState.players[memberId]
       ).length === 0
     "
@@ -436,7 +412,7 @@ const handleVolumeChange = (event: Event) => {
       <th>Toggle</th>
     </tr>
     <tr
-      v-for="[memberId, member] in Object.entries(state.members).filter(
+      v-for="[memberId, member] in Object.entries(gameState.members).filter(
         ([memberId, member]) => !gameState.players[memberId]
       )"
       :key="memberId"

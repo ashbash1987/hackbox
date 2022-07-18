@@ -4,10 +4,6 @@ export interface Member {
   messages: [];
 }
 
-interface MemberMap {
-  [id: string]: Member;
-}
-
 export interface Message {
   id: string;
   from: string;
@@ -16,8 +12,8 @@ export interface Message {
   message: { [key: string]: unknown };
 }
 
-export interface HostState {
-  members: MemberMap;
+export interface PrivateRoomState {
+  members: { [id: string]: Member };
   messages: Message[];
 }
 

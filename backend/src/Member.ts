@@ -4,12 +4,6 @@ import type { MemberState } from "../types";
 import { mergeStates } from "./helpers/stateHelpers";
 import { randomUUID } from "crypto";
 
-export interface SanitizedMember {
-  id: string;
-  name: string;
-  state: MemberState;
-}
-
 class Member {
   socket: Socket | null;
   id: string;
@@ -93,14 +87,6 @@ class Member {
 
   get room() {
     return roomManager.findRoom(this.roomCode);
-  }
-
-  get sanitized(): SanitizedMember {
-    return {
-      id: this.id,
-      name: this.name,
-      state: this.state,
-    };
   }
 }
 

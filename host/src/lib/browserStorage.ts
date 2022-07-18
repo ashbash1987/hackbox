@@ -2,7 +2,6 @@ import { v4 as uuid } from "uuid";
 
 const APP_PREFIX = "hackbox-host";
 const USERID_KEY = `${APP_PREFIX}-userId`;
-const GAME_STATE_KEY = `${APP_PREFIX}-gameState`;
 const VOLUME_KEY = `${APP_PREFIX}-volume`;
 
 const getUserId = () => {
@@ -13,18 +12,6 @@ const getUserId = () => {
     window.localStorage.setItem(key, userId);
   }
   return userId;
-};
-
-const getGameState = (roomCode: string) => {
-  const key = `${GAME_STATE_KEY}-${roomCode}`;
-  const stateString = window.localStorage.getItem(key);
-  return stateString ? JSON.parse(stateString) : null;
-};
-
-const setGameState = (roomCode: string, state: object) => {
-  const key = `${GAME_STATE_KEY}-${roomCode}`;
-  const stateString = JSON.stringify(state);
-  window.localStorage.setItem(key, stateString);
 };
 
 const getVolume = () => {
@@ -41,4 +28,4 @@ const setVolume = (volume: string) => {
   window.localStorage.setItem(VOLUME_KEY, volume);
 };
 
-export { getUserId, getGameState, setGameState, getVolume, setVolume };
+export { getUserId, getVolume, setVolume };

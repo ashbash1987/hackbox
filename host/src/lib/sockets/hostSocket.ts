@@ -1,17 +1,21 @@
 import { io, Socket } from "socket.io-client";
-import { reactive } from "vue";
 import type { Router } from "vue-router";
 import { getUserId } from "@/lib/browserStorage";
-import type { HostState, Message } from "@/types";
+import type GameState from "@/lib/gameState";
+import type { Message } from "@/types";
 import config from "@/config";
 
-const attachHostEvents = (socket: Socket, state: HostState, router: Router) => {
+const attachHostEvents = (
+  socket: Socket,
+  gameState: GameState,
+  router: Router
+) => {
   socket.on("msg", (message: Message) => {
-    state.messages.push(message);
+    gameState.messages.push(message);
   });
 
   socket.on("state.host", (payload) => {
-    state.members = payload.members;
+    gameState.members = payload.members;
   });
 
   socket.on("disconnect", (reason: string) => {
@@ -29,7 +33,7 @@ const attachHostEvents = (socket: Socket, state: HostState, router: Router) => {
   });
 };
 
-const initializeHostSocket = (router: Router) => {
+const initializeHostSocket = (router: Router, gameState: GameState) => {
   const socket = io(config.backendUri, {
     query: {
       userId: getUserId(),
@@ -37,14 +41,9 @@ const initializeHostSocket = (router: Router) => {
     },
   });
 
-  const state: HostState = reactive({
-    members: {},
-    messages: [],
-  });
+  attachHostEvents(socket, gameState, router);
 
-  attachHostEvents(socket, state, router);
-
-  return { socket, state };
+  return { socket };
 };
 
 export default initializeHostSocket;
