@@ -83,15 +83,20 @@ socket.on("msg", (message: Message) => {
     if (buzzes.value.length === 0) {
       sounds.hackBuzz();
     }
+
     gameState.buzzer.buzzes[player.id] = {
       playerId: player.id,
-      value: (message.message.value as string) || "buzz",
+      value: message.message.value as string,
       localSpeed: message.message.ms as number,
       timestamp: message.timestamp,
     };
 
+    const value = message.message.value;
+    const response = value
+      ? `You answered ${Array.isArray(value) ? value.join(", ") : value}.`
+      : "You buzzed in!";
     sendRoomState(gameState);
-    sendMemberState(message.from, { ui: textLayout("Buzzed in!") });
+    sendMemberState(message.from, { ui: textLayout(response) });
   }
 });
 
@@ -298,6 +303,7 @@ const handleVolumeChange = (event: Event) => {
       <th>Name</th>
       <th>Value</th>
       <th>Time</th>
+      <th>Score</th>
     </tr>
     <tr v-for="(buzz, key) in buzzes" :key="key">
       <td>
@@ -308,6 +314,11 @@ const handleVolumeChange = (event: Event) => {
       </td>
       <td>
         {{ timeDifferenceDisplay(key) }}
+      </td>
+      <td>
+        <button @click="() => decreasePlayerScore(buzz.playerId)">-</button>
+        {{ gameState.players[buzz.playerId].score }}
+        <button @click="() => increasePlayerScore(buzz.playerId)">+</button>
       </td>
     </tr>
   </table>
