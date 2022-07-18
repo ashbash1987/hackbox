@@ -28,7 +28,7 @@ class Member {
       theme: {
         header: {
           color: "white",
-          background: "#4254f4",
+          background: "#ed729f",
         },
         main: {
           background: "white",

@@ -134,7 +134,7 @@ button {
   margin-inline: 40px;
   padding: 20px;
   color: white;
-  background: #4254f4;
+  background: #ed729f;
   opacity: 0.9;
   transition: color 0.2s, background 0.2s, opacity 0.2s;
 }
@@ -156,7 +156,7 @@ button:hover:not(:disabled) {
   display: flex;
   justify-content: center;
   margin-top: 30px;
-  color: #4254f4;
+  color: #ed729f;
   font-size: 12px;
   text-decoration: none;
 }
