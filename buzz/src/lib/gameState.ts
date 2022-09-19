@@ -1,7 +1,7 @@
 import type { Player, Team, Buzz } from "../views/helpers/types";
 import type { Message } from "@/types";
 
-const APP_PREFIX = "hackbox-host";
+const APP_PREFIX = "hackbox-buzz";
 const GAME_STATE_KEY = `${APP_PREFIX}-gameState`;
 
 const defaults = {

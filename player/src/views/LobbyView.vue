@@ -83,8 +83,6 @@ updateRoomExists();
         </div>
 
         <button @click="joinGame" :disabled="!canJoin">PLAY</button>
-
-        <a class="host-link" :href="config.hostUri">Host your own game</a>
       </div>
     </section>
   </div>

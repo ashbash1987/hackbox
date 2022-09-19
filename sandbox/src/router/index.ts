@@ -20,25 +20,14 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "lobby",
-      component: () => import("../views/LobbyView.vue"),
+      name: "home",
+      component: () => import("../views/HomeView.vue"),
     },
     {
-      path: "/test/:roomCode",
-      name: "test",
-      component: () => import("../views/TestView.vue"),
+      path: "/:roomCode",
+      name: "sandbox",
+      component: () => import("../views/SandboxView.vue"),
       beforeEnter: authorizeHost,
-    },
-    {
-      path: "/host/:roomCode",
-      name: "host",
-      component: () => import("../views/HostView.vue"),
-      beforeEnter: authorizeHost,
-    },
-    {
-      path: "/watch/:roomCode",
-      name: "watch",
-      component: () => import("../views/WatchView.vue"),
     },
     { path: "/:pathMatch(.*)*", redirect: "/" },
   ],

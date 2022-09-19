@@ -15,4 +15,11 @@ body {
   box-sizing: border-box;
   font-family: Helvetica, sans-serif;
 }
+
+#app {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+}
 </style>
