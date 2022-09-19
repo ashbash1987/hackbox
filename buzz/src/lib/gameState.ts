@@ -13,6 +13,7 @@ const defaults = {
 };
 
 class GameState {
+  gameId: string;
   roomCode: string;
   members: { [id: string]: Player };
   players: { [id: string]: Player };
@@ -23,10 +24,12 @@ class GameState {
     buzzes: { [playerId: string]: Buzz };
   };
 
-  constructor(roomCode: string) {
-    this.roomCode = roomCode;
+  constructor(gameId: string) {
+    this.gameId = gameId;
 
     const data = this.get() || defaults;
+
+    this.roomCode = data.roomCode;
     this.members = data.members;
     this.players = data.players;
     this.teams = data.teams;
@@ -37,7 +40,7 @@ class GameState {
   }
 
   get storageKey() {
-    return `${GAME_STATE_KEY}-${this.roomCode}`;
+    return `${GAME_STATE_KEY}-${this.gameId}`;
   }
 
   get() {

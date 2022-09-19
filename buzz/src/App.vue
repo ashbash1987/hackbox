@@ -6,7 +6,9 @@ getUserId();
 </script>
 
 <template>
-  <RouterView />
+  <Suspense>
+    <template #default><RouterView /></template>
+  </Suspense>
 </template>
 
 <style>

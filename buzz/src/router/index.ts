@@ -1,19 +1,4 @@
-import {
-  createRouter,
-  createWebHistory,
-  type RouteLocationNormalized,
-} from "vue-router";
-import { authorizedToHost } from "@/lib/rooms";
-import { getUserId } from "@/lib/browserStorage";
-
-const authorizeHost = async (to: RouteLocationNormalized) => {
-  const userId = getUserId();
-  const roomCode = to.params.roomCode as string;
-  if (!(await authorizedToHost(userId, roomCode))) {
-    alert("You are not the host of this room.");
-    router.push("/");
-  }
-};
+import { createRouter, createWebHistory } from "vue-router";
 
 // The route should be a game ID, not a room code.
 // The room should be capable of swapping to a new room, just in case.
@@ -29,10 +14,9 @@ const router = createRouter({
       component: () => import("../views/HomeView.vue"),
     },
     {
-      path: "/host/:gameId",
+      path: "/:gameId",
       name: "host",
       component: () => import("../views/HostView.vue"),
-      beforeEnter: authorizeHost,
     },
     { path: "/:pathMatch(.*)*", redirect: "/" },
   ],

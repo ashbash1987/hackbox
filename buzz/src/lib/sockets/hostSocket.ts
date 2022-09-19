@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import type { Router } from "vue-router";
 import { getUserId } from "@/lib/browserStorage";
-import type GameState from "@/lib/gameState";
+import type GameState from "@/lib/GameState";
 import type { Message } from "@/types";
 import config from "@/config";
 
@@ -37,7 +37,7 @@ const initializeHostSocket = (router: Router, gameState: GameState) => {
   const socket = io(config.backendUri, {
     query: {
       userId: getUserId(),
-      roomCode: router.currentRoute.value.params.roomCode,
+      roomCode: gameState.roomCode,
     },
   });
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GameState from "@/lib/gameState";
+import GameState from "@/lib/GameState";
 import type { Message } from "@/types";
 
 import { v4 as uuid } from "uuid";
@@ -10,10 +10,16 @@ import initializeHostSocket from "@/lib/sockets/hostSocket";
 import { getThemeAndPresets } from "./helpers/themes";
 import sounds from "./helpers/sounds";
 import layouts from "./helpers/layouts";
+import { createRoom } from "@/lib/rooms";
 
-const roomCode = router.currentRoute.value.params.roomCode as string;
+const gameId = router.currentRoute.value.params.gameId as string;
 
-const gameState = reactive(new GameState(roomCode));
+const gameState = reactive(new GameState(gameId));
+
+while (!gameState.roomCode) {
+  gameState.roomCode = await createRoom();
+}
+
 const { socket } = initializeHostSocket(router, gameState);
 
 const buzzes = computed(() =>
@@ -234,8 +240,8 @@ const handleVolumeChange = (event: Event) => {
 };
 </script>
 
-<template v-if="gameState !== {}">
-  <h1>{{ roomCode }}</h1>
+<template v-if="gameState">
+  <h1>{{ gameState.roomCode }}</h1>
   <label>
     Volume:
     <select v-model="sounds.state.volume" @change="handleVolumeChange">
@@ -423,7 +429,6 @@ const handleVolumeChange = (event: Event) => {
     </tr>
   </table>
 </template>
-
 <style>
 .buzzer-control {
   font-size: 24px;
