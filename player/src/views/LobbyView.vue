@@ -83,6 +83,9 @@ updateRoomExists();
         </div>
 
         <button @click="joinGame" :disabled="!canJoin">PLAY</button>
+
+        <a class="host-link" :href="config.buzzUri">Host a game of BUZZ</a>
+        <a class="host-link" :href="config.sandboxUri">Play in the sandbox</a>
       </div>
     </section>
   </div>
