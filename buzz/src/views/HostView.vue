@@ -17,7 +17,11 @@ const gameId = router.currentRoute.value.params.gameId as string;
 const gameState = reactive(new GameState(gameId));
 
 while (!gameState.roomCode) {
-  gameState.roomCode = await createRoom();
+  const roomCode = await createRoom();
+  if (roomCode) {
+    gameState.roomCode = roomCode;
+    gameState.save();
+  }
 }
 
 const { socket } = initializeHostSocket(router, gameState);
