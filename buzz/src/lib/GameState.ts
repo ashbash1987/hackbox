@@ -1,8 +1,8 @@
 import type { Player, Team, Buzz } from "../views/helpers/types";
 import type { Message } from "@/types";
 
-const APP_PREFIX = "hackbox-buzz";
-const GAME_STATE_KEY = `${APP_PREFIX}-gameState`;
+const APP_PREFIX = "hackbox-buzz-";
+const GAME_STATE_PREFIX = `${APP_PREFIX}gameState-`;
 
 const defaults = {
   players: {},
@@ -24,6 +24,12 @@ class GameState {
     buzzes: { [playerId: string]: Buzz };
   };
 
+  static getAll() {
+    return Object.keys(window.localStorage)
+      .filter((key) => key.startsWith(GAME_STATE_PREFIX))
+      .map((key) => key.slice(GAME_STATE_PREFIX.length));
+  }
+
   constructor(gameId: string) {
     this.gameId = gameId;
 
@@ -40,7 +46,7 @@ class GameState {
   }
 
   get storageKey() {
-    return `${GAME_STATE_KEY}-${this.gameId}`;
+    return `${GAME_STATE_PREFIX}${this.gameId}`;
   }
 
   get() {
