@@ -9,19 +9,34 @@ const buzzerState = reactive({
 
 const socket = inject("socket") as Socket;
 
-const customProps = defineProps(["custom"]);
 const defaultProps = {
   label: "BUZZ",
   event: "buzz",
-  color: "white",
-  background: "red",
-  shadow: "5px 5px #000000",
-  radius: "70px",
-  fontSize: "70px",
-  height: "300px",
-  border: "2px solid white",
+  style: {
+    color: "white",
+    background: "red",
+    shadow: "5px 5px #000000",
+    radius: "70px",
+    fontSize: "70px",
+    height: "300px",
+    border: "2px solid white",
+    hover: {},
+  },
 };
-const props = { ...defaultProps, ...customProps.custom };
+
+const customProps = defineProps(["custom"]);
+const props = {
+  ...defaultProps,
+  ...(customProps.custom || {}),
+  style: {
+    ...defaultProps.style,
+    ...(customProps.custom?.style || {}),
+    hover: {
+      ...defaultProps.style.hover,
+      ...(customProps.custom?.style?.hover || {}),
+    },
+  },
+};
 
 const respond = () => {
   buzzerState.buzzed = true;

@@ -2,13 +2,23 @@
 const customProps = defineProps(["custom"]);
 
 const defaultProps = {
-  background: "white",
-  border: "4px solid black",
-  color: "black",
-  align: "center",
+  text: "Sample Text",
+  style: {
+    background: "white",
+    border: "4px solid black",
+    color: "black",
+    align: "center",
+  },
 };
 
-const props = { ...defaultProps, ...customProps.custom };
+const props = {
+  ...defaultProps,
+  ...customProps.custom,
+  style: {
+    ...defaultProps.style,
+    ...customProps.custom?.style,
+  },
+};
 </script>
 
 <template>
@@ -22,10 +32,10 @@ const props = { ...defaultProps, ...customProps.custom };
   display: flex;
   padding: 10px;
   border-radius: 10px;
-  justify-content: v-bind("props.align");
-  text-align: v-bind("props.align");
-  color: v-bind("props.color");
-  background: v-bind("props.background");
-  border: v-bind("props.border");
+  justify-content: v-bind("props.style.align");
+  text-align: v-bind("props.style.align");
+  color: v-bind("props.style.color");
+  background: v-bind("props.style.background");
+  border: v-bind("props.style.border");
 }
 </style>

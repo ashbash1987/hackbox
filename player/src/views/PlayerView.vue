@@ -53,6 +53,8 @@ provide("socket", socket);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background: v-bind("state.theme.main.background");
+  height: 100vh;
 }
 
 .player-nav--wrapper {
@@ -79,9 +81,9 @@ provide("socket", socket);
   display: flex;
   justify-content: center;
   margin-top: -50px;
-  height: 100vh;
   max-height: -webkit-fill-available;
-  background: v-bind("state.theme.main.background");
+  height: 100vh;
+  overflow: scroll;
 }
 
 .player-main {

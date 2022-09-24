@@ -1,4 +1,4 @@
-export default `{
+{
   "theme": {
     "header": {
       "color": "black",
@@ -16,6 +16,7 @@ export default `{
           "color": "white",
           "background": "black",
           "border": "4px solid #7391CA"
+
         }
       }
     },
@@ -56,6 +57,16 @@ export default `{
           }
         },
         {
+          "type": "Button",
+          "props": {
+            "label": "Something",
+            "value": "A",
+            "style": {
+              "background": "pink"
+            }
+          }
+        },
+        {
           "type": "Answers",
           "props": {
             "choices": [
@@ -69,4 +80,4 @@ export default `{
       ]
     }
   }
-}`;
+}

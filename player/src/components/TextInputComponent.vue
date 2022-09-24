@@ -7,17 +7,20 @@ let mountedAt: number;
 
 const defaultProps = {
   event: "text",
-  color: "black",
-  align: "left",
-  background: "white",
-  border: "2px solid black",
-  fontSize: "30px",
+  style: {
+    color: "black",
+    align: "left",
+    background: "white",
+    border: "2px solid black",
+    fontSize: "30px",
+  },
 };
 
-const providedProps = defineProps(["custom"]);
+const customProps = defineProps(["custom"]);
 const props = {
   ...defaultProps,
-  ...providedProps.custom,
+  ...customProps.custom,
+  style: { ...defaultProps.style, ...customProps.custom },
 };
 
 const inputState = reactive({
@@ -76,15 +79,15 @@ onUnmounted(() => {
 .text-input-wrapper {
   display: flex;
   flex-direction: row;
-  border: v-bind("props.border");
-  background: v-bind("props.background");
+  border: v-bind("props.style.border");
+  background: v-bind("props.style.background");
 }
 
 .text-input {
   border: none;
   color: v-bind("props.color");
   background: transparent;
-  font-size: v-bind("props.fontSize");
+  font-size: v-bind("props.style.fontSize");
   margin: 0;
   width: 100%;
   padding: 10px;
@@ -96,13 +99,13 @@ onUnmounted(() => {
 }
 
 .submit-button {
-  font-size: v-bind("props.fontSize");
+  font-size: v-bind("props.style.fontSize");
   border: none;
-  background: v-bind("props.background");
+  background: v-bind("props.style.background");
   padding: 10px;
 }
 
 .submit-icon {
-  color: v-bind("props.color");
+  color: v-bind("props.style.color");
 }
 </style>

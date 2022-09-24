@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import ChoiceButton from "./Choices/ChoiceButton.vue";
 import type { Socket } from "socket.io-client";
-import { inject, onMounted, onUnmounted, reactive } from "vue";
+import { inject, onMounted, onUnmounted, reactive, ref } from "vue";
 const socket: Socket = inject("socket") as Socket;
 
 let mountedAt: number;
@@ -9,6 +10,7 @@ interface Choice {
   label: string;
   value: string;
   keys: string[];
+  style?: object;
   selected?: boolean;
 }
 
@@ -16,31 +18,55 @@ const defaultProps = {
   event: "answer",
   multiSelect: false,
   choices: [
-    { label: "A: Hydrogen", value: "A", keys: ["A", "1"] },
-    { label: "B: Oxygen", value: "B", keys: ["B", "2"] },
+    {
+      label: "A: Hydrogen",
+      value: "A",
+      keys: ["A", "1"],
+      style: {
+        hover: {},
+      },
+    },
   ],
   submit: {
     label: "Submit",
+    style: {
+      margin: "50px 0px",
+      hover: {},
+    },
   },
-  hover: {
-    color: "black",
-    background: "#AAAAAA",
+  style: {
+    hover: {},
   },
-  color: "black",
-  align: "center",
-  background: "#AAAAAA",
-  border: "2px solid black",
-  width: "100%",
-  fontSize: "20px",
-  padding: "20px",
-  margin: "10px 0px",
-  borderRadius: "10px",
 };
 
-const providedProps = defineProps(["custom"]);
+const customProps = defineProps(["custom"]);
 const props = {
   ...defaultProps,
-  ...providedProps.custom,
+  ...customProps.custom,
+  submit: {
+    ...defaultProps.submit,
+    ...(customProps.custom?.submit || {}),
+    style: {
+      ...defaultProps.style,
+      ...defaultProps.submit.style,
+      ...(customProps.custom?.style || {}),
+      ...(customProps.custom?.submit?.style || {}),
+      hover: {
+        ...defaultProps.style.hover,
+        ...defaultProps.submit.style.hover,
+        ...(customProps.custom?.style?.hover || {}),
+        ...(customProps.custom?.submit?.style?.hover || {}),
+      },
+    },
+  },
+  style: {
+    ...defaultProps.style,
+    ...(customProps.custom?.style || {}),
+    hover: {
+      ...defaultProps.style.hover,
+      ...(customProps.custom?.style?.hover || {}),
+    },
+  },
 };
 
 interface State {
@@ -70,8 +96,6 @@ const submitResponse = () => {
   });
 };
 
-const isSelected = (value: string) => state.selections.includes(value);
-
 const addSelection = (value: string) => {
   state.selections.push(value);
 };
@@ -88,7 +112,6 @@ const toggleSelection = (value: string) => {
     ? removeSelection(value)
     : addSelection(value);
 
-  if (state.selections.length === 0) return;
   if (props.multiSelect) return;
   submitResponse();
 };
@@ -124,23 +147,23 @@ onUnmounted(() => {
 
 <template>
   <div class="choices">
-    <button
+    <choice-button
       v-for="choice in state.choices"
       :key="choice.value"
-      @click="() => toggleSelection(choice.value)"
-      :class="`choice ${isSelected(choice.value) && 'choice--selected'}`"
+      :onSelect="() => toggleSelection(choice.value)"
       :disabled="state.submitted"
-    >
-      {{ choice.label }}
-    </button>
-    <button
+      :label="choice.label"
+      :keys="choice.keys"
+      :style="{ ...props.style, ...choice.style }"
+    ></choice-button>
+    <choice-button
       v-if="props.multiSelect"
-      @click="submitResponse"
-      class="submit-button"
+      key="submit-button"
+      :onSelect="submitResponse"
       :disabled="state.submitted"
-    >
-      {{ props.submit.label }}
-    </button>
+      :label="props.submit.label"
+      :style="{ ...props.style, ...props.submit.style }"
+    ></choice-button>
   </div>
 </template>
 
@@ -148,67 +171,5 @@ onUnmounted(() => {
 .choices {
   display: flex;
   flex-direction: column;
-}
-
-.choice {
-  display: flex;
-  width: v-bind("props.width");
-  border: v-bind("props.border");
-  justify-content: v-bind("props.align");
-  color: v-bind("props.color");
-  background: v-bind("props.background");
-  font-size: v-bind("props.fontSize");
-  padding: v-bind("props.padding");
-  margin: v-bind("props.margin");
-  border-radius: v-bind("props.borderRadius");
-}
-
-.choice--selected {
-  color: v-bind("props.hover.color || props.color");
-  background: v-bind("props.hover.background || props.hover.background");
-}
-
-.choice--not-selected {
-  opacity: 0.6;
-}
-
-.choice:hover:not(:disabled) {
-  color: v-bind("props.hover.color || props.hover.color");
-  background: v-bind("props.hover.background || props.hover.background");
-}
-
-.choice:disabled {
-  opacity: 0.6;
-}
-
-.choice--not-selected {
-  opacity: 0.6;
-}
-
-.submit-button {
-  display: flex;
-  width: v-bind("props.submit.width || props.width");
-  border: v-bind("props.submit.border || props.border");
-  justify-content: v-bind("props.submit.align || props.align");
-  color: v-bind("props.submit.color || props.color");
-  background: v-bind("props.submit.background || props.background");
-  font-size: v-bind("props.submit.fontSize || props.fontSize");
-  padding: v-bind("props.submit.padding || props.padding");
-  margin: v-bind("props.submit.margin || props.margin");
-  border-radius: v-bind("props.submit.borderRadius || props.borderRadius");
-}
-
-.submit-button--selected {
-  color: v-bind("props.submit.color || props.color");
-  background: v-bind("props.submit.background || props.submit.background");
-}
-
-.submit-button:hover:not(:disabled) {
-  color: v-bind("props.hover.color || props.hover.color");
-  background: v-bind("props.hover.background || props.hover.background");
-}
-
-.submit-button:disabled {
-  opacity: 0.6;
 }
 </style>
