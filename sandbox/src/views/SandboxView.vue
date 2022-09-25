@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
 import router from "@/router";
+import { json } from "@codemirror/lang-json";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 import type { Message } from "@/types";
 import presets from "./presets";
@@ -41,8 +42,6 @@ const latestMessages = computed(() =>
 
 <template>
   <h1>Sandbox {{ router.currentRoute.value.params.roomCode }}</h1>
-  <textarea v-model="playerStateInput"></textarea>
-  <a class="lint-link" :href="linterUrl" target="_blank"> Validate JSON </a>
 
   <label for="presets">Presets</label>
   <select id="presets" v-model="playerStateInput">
@@ -50,6 +49,17 @@ const latestMessages = computed(() =>
       {{ preset.name }}
     </option>
   </select>
+
+  <codemirror
+    v-model="playerStateInput"
+    placeholder="Add your layout here, or pick a preset..."
+    :autofocus="true"
+    :indent-with-tab="true"
+    :tab-size="2"
+    :extensions="json()"
+    style="text-align: start"
+  />
+  <a class="lint-link" :href="linterUrl" target="_blank"> Validate JSON </a>
 
   <h3>Members</h3>
   <p v-if="!Object.keys(state.members).length">None</p>
