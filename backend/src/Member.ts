@@ -19,6 +19,7 @@ class Member {
     this.socket = null;
     this.messages = [];
     this.state = {
+      version: 2,
       theme: {
         header: {
           color: "white",

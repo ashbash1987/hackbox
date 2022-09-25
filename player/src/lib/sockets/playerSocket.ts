@@ -30,6 +30,7 @@ const attachPlayerEvents = (
 
   socket.on("state.member", (payload: PlayerStatePayload) => {
     const newState = expandStatePresets(payload);
+
     state.version = getVersion(payload);
     state.theme = newState.theme;
     state.ui = newState.ui;

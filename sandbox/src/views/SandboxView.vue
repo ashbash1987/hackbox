@@ -18,9 +18,7 @@ const linterUrl = computed(() => {
 });
 
 const updateMemberState = (userId: string) => {
-  console.log(playerStateInput);
   const json = JSON.parse(playerStateInput.value);
-  console.log(json);
   socket?.emit("member.update", {
     to: userId,
     data: json,

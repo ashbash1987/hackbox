@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ChoiceButton from "./Choices/ChoiceButton.vue";
 import type { Socket } from "socket.io-client";
-import { inject, onMounted, onUnmounted, reactive } from "vue";
+import { inject, onMounted, reactive } from "vue";
 const socket: Socket = inject("socket") as Socket;
 
 let mountedAt: number;

@@ -5,6 +5,9 @@ const mergeStates = (
   newState: Partial<MemberState>
 ): MemberState => {
   const combinedState = oldState;
+  if (newState.version) {
+    combinedState.version = newState.version;
+  }
   if (newState.theme) {
     if (newState.theme.header)
       combinedState.theme.header = {

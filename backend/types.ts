@@ -33,6 +33,7 @@ export interface UiState {
 }
 
 export interface MemberState {
+  version: number;
   theme: ThemeState;
   ui: UiState;
   presets?: { [key: string]: Component };
