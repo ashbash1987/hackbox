@@ -1,6 +1,6 @@
-import type { PlayerStatePayload, PlayerState } from "@/types";
+import type { PlayerStatePayload } from "@/types";
 
-const expandStatePresets = (state: PlayerStatePayload): PlayerState => {
+const expandStatePresets = (state: PlayerStatePayload): PlayerStatePayload => {
   const presets = state.presets || {};
   const components = state.ui.main.components.map((component) => {
     const preset = presets[component.type];

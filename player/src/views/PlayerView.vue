@@ -5,6 +5,7 @@ import router from "@/router";
 import type { PlayerState } from "@/types";
 
 const defaultState: PlayerState = {
+  version: 2,
   theme: {
     header: {
       color: "black",
@@ -38,7 +39,7 @@ provide("socket", socket);
       <div class="player-main" v-if="state.ui.main.components">
         <component
           v-for="comp in state.ui.main.components"
-          :is="`${comp.type}Component`"
+          :is="`V${state.version}${comp.type}Component`"
           :key="comp.key"
           :custom="comp.props"
           class="player-component"

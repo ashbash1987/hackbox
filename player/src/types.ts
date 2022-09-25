@@ -25,11 +25,13 @@ export interface UiState {
 }
 
 export interface PlayerState {
+  version: number;
   theme: ThemeState;
   ui: UiState;
 }
 
 export interface PlayerStatePayload {
+  version?: number;
   theme: ThemeState;
   ui: UiState;
   presets: { [key: string]: Component };

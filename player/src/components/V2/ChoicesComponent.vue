@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ChoiceButton from "./Choices/ChoiceButton.vue";
 import type { Socket } from "socket.io-client";
-import { inject, onMounted, onUnmounted, reactive, ref } from "vue";
+import { inject, onMounted, onUnmounted, reactive } from "vue";
 const socket: Socket = inject("socket") as Socket;
 
 let mountedAt: number;
@@ -86,7 +86,6 @@ const state: State = reactive({
 
 const submitResponse = () => {
   state.submitted = true;
-  window.removeEventListener("keydown", handleKeydown);
   const response = props.multiSelect ? state.selections : state.selections[0];
 
   socket.emit("msg", {
@@ -116,32 +115,8 @@ const toggleSelection = (value: string) => {
   submitResponse();
 };
 
-const choicesKeystrokes = props.choices.reduce(
-  (acc: { [key: string]: string }, choice: Choice) => {
-    choice.keys.forEach(
-      (key: string) => (acc[key.toLowerCase()] = choice.value)
-    );
-    return acc;
-  },
-  {}
-);
-
-const handleKeydown = (event: KeyboardEvent) => {
-  if (event.key === "Enter") submitResponse();
-
-  const eventKey = event.key.toLowerCase();
-  const responseValue = choicesKeystrokes[eventKey];
-
-  if (responseValue) toggleSelection(responseValue);
-};
-
 onMounted(() => {
   mountedAt = Date.now();
-  window.addEventListener("keydown", handleKeydown);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("keydown", handleKeydown);
 });
 </script>
 
@@ -160,8 +135,9 @@ onUnmounted(() => {
       v-if="props.multiSelect"
       key="submit-button"
       :onSelect="submitResponse"
-      :disabled="state.submitted"
+      :disabled="state.submitted || state.selections.length === 0"
       :label="props.submit.label"
+      :keys="['Enter']"
       :style="{ ...props.style, ...props.submit.style }"
     ></choice-button>
   </div>

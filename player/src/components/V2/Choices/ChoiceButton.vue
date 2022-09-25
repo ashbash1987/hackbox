@@ -1,18 +1,7 @@
-<!-- eslint-disable vue/require-valid-default-prop -->
-<!-- eslint-disable @typescript-eslint/no-empty-function -->
-
 <script setup lang="ts">
-import { reactive, onUnmounted, onMounted } from "vue";
+import { ref, reactive, onUnmounted, onMounted } from "vue";
 
-interface State {
-  selected: boolean;
-}
-
-const state: State = reactive({
-  selected: false,
-});
-
-interface StyleProps {
+export interface StyleProps {
   color: string;
   align: string;
   background: string;
@@ -22,15 +11,23 @@ interface StyleProps {
   padding: string;
   margin: string;
   borderRadius: string;
-  hover: StyleProps;
+  hover: Partial<StyleProps>;
 }
 
-interface Props {
+export interface Props {
   label: string;
   keys: string[];
-  style: StyleProps;
+  style: Partial<StyleProps>;
   onSelect: () => void;
 }
+
+export interface State {
+  selected: boolean;
+}
+
+const state: State = reactive({
+  selected: false,
+});
 
 const defaultProps = {
   style: {
@@ -51,10 +48,12 @@ const defaultProps = {
 };
 
 const customProps = withDefaults(defineProps<Props>(), {
-  onSelect: () => {},
-  label: "",
-  keys: [],
-  style: {},
+  onSelect: () => {
+    return;
+  },
+  label: () => "",
+  keys: () => [],
+  style: () => ({}),
 });
 
 const props = {
@@ -70,10 +69,14 @@ const props = {
   },
 };
 
+const button = ref<HTMLButtonElement>();
+
 const handleKeydown = (event: KeyboardEvent) => {
+  if (event.repeat) return;
+
   const eventKey = event.key.toLowerCase();
   if (props.keys.map((k: string) => k.toLowerCase()).includes(eventKey)) {
-    handleSelect();
+    button.value?.click();
   }
 };
 
@@ -93,7 +96,9 @@ onUnmounted(() => {
 
 <template>
   <button
+    ref="button"
     @click="handleSelect"
+    :disabled="state.selected"
     :class="`choice ${state.selected ? 'choice--selected' : ''}`"
   >
     {{ props.label }}

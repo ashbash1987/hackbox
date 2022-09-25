@@ -1,4 +1,5 @@
 export default `{
+  "version": 2,
   "theme": {
     "header": {
       "color": "black",

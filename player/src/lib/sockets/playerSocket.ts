@@ -2,9 +2,12 @@ import config from "@/config";
 import { io, Socket } from "socket.io-client";
 import { reactive } from "vue";
 import type { Router } from "vue-router";
-import type { PlayerState } from "@/types";
+import type { PlayerState, PlayerStatePayload } from "@/types";
 import { getUserId, getUserName, getRoomCode } from "@/lib/browserStorage";
 import { expandStatePresets } from "../stateHelpers";
+
+const getVersion = (payload: PlayerStatePayload) =>
+  payload.version ? payload.version : 2;
 
 const attachPlayerEvents = (
   socket: Socket,
@@ -25,8 +28,9 @@ const attachPlayerEvents = (
     alert(payload.message);
   });
 
-  socket.on("state.member", (payload) => {
+  socket.on("state.member", (payload: PlayerStatePayload) => {
     const newState = expandStatePresets(payload);
+    state.version = getVersion(payload);
     state.theme = newState.theme;
     state.ui = newState.ui;
   });
