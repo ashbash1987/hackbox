@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import DOMPurify from "dompurify";
+import { marked } from "marked";
+import { computed } from "vue";
+
 const customProps = defineProps(["custom"]);
 
 const defaultProps = {
@@ -19,12 +23,17 @@ const props = {
     ...customProps.custom?.style,
   },
 };
+
+const text = computed(() => {
+  const parsedMarkdown = marked.parse(props.text);
+  const purifiedText = DOMPurify.sanitize(parsedMarkdown);
+
+  return purifiedText;
+});
 </script>
 
 <template>
-  <div class="textbox">
-    <p>{{ props.text }}</p>
-  </div>
+  <div class="textbox" v-html="text"></div>
 </template>
 
 <style scoped>

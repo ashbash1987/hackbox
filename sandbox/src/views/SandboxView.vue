@@ -43,24 +43,6 @@ const latestMessages = computed(() =>
 <template>
   <h1>Sandbox {{ router.currentRoute.value.params.roomCode }}</h1>
 
-  <label for="presets">Presets</label>
-  <select id="presets" v-model="playerStateInput">
-    <option v-for="preset in presets" :value="preset.value" :key="preset.name">
-      {{ preset.name }}
-    </option>
-  </select>
-
-  <codemirror
-    v-model="playerStateInput"
-    placeholder="Add your layout here, or pick a preset..."
-    :autofocus="true"
-    :indent-with-tab="true"
-    :tab-size="2"
-    :extensions="json()"
-    style="text-align: start"
-  />
-  <a class="lint-link" :href="linterUrl" target="_blank"> Validate JSON </a>
-
   <h3>Members</h3>
   <p v-if="!Object.keys(state.members).length">None</p>
   <table v-else>
@@ -85,6 +67,28 @@ const latestMessages = computed(() =>
       </td>
     </tr>
   </table>
+  <br />
+  <br />
+  <label for="presets">Presets</label>
+  <select id="presets" v-model="playerStateInput">
+    <option v-for="preset in presets" :value="preset.value" :key="preset.name">
+      {{ preset.name }}
+    </option>
+  </select>
+  <br />
+  <br />
+  <a class="lint-link" :href="linterUrl" target="_blank"> Validate JSON </a>
+  <br />
+  <br />
+  <codemirror
+    v-model="playerStateInput"
+    placeholder="Add your layout here, or pick a preset..."
+    :autofocus="true"
+    :indent-with-tab="true"
+    :tab-size="2"
+    :extensions="json()"
+    style="text-align: start"
+  />
 </template>
 
 <style>
