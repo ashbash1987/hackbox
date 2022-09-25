@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed } from "vue";
+import { ref, reactive, computed } from "vue";
 import router from "@/router";
 import initializeHostSocket from "@/lib/sockets/hostSocket";
 import type { Message } from "@/types";
@@ -10,17 +10,17 @@ const roomCode = router.currentRoute.value.params.roomCode as string;
 const state = reactive(new GameState(roomCode));
 const { socket } = initializeHostSocket(router, state);
 
-const playerStateInput = reactive({
-  input: presets.fastestFinger,
-});
+const playerStateInput = ref("");
 
 const linterUrl = computed(() => {
-  const encodedJson = encodeURIComponent(playerStateInput.input);
+  const encodedJson = encodeURIComponent(playerStateInput.value);
   return `https://jsonlint.com/?json=${encodedJson}`;
 });
 
 const updateMemberState = (userId: string) => {
-  const json = JSON.parse(playerStateInput.input);
+  console.log(playerStateInput);
+  const json = JSON.parse(playerStateInput.value);
+  console.log(json);
   socket?.emit("member.update", {
     to: userId,
     data: json,
@@ -43,8 +43,16 @@ const latestMessages = computed(() =>
 
 <template>
   <h1>Sandbox {{ router.currentRoute.value.params.roomCode }}</h1>
-  <textarea v-model="playerStateInput.input"></textarea>
+  <textarea v-model="playerStateInput"></textarea>
   <a class="lint-link" :href="linterUrl" target="_blank"> Validate JSON </a>
+
+  <label for="presets">Presets</label>
+  <select id="presets" v-model="playerStateInput">
+    <option v-for="preset in presets" :value="preset.value" :key="preset.name">
+      {{ preset.name }}
+    </option>
+  </select>
+
   <h3>Members</h3>
   <p v-if="!Object.keys(state.members).length">None</p>
   <table v-else>

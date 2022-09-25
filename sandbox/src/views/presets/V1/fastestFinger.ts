@@ -1,4 +1,5 @@
-{
+export default `{
+  "version": 1,
   "theme": {
     "header": {
       "color": "black",
@@ -12,33 +13,26 @@
     "Question": {
       "type": "Text",
       "props": {
-        "style": {
-          "color": "white",
-          "background": "black",
-          "border": "4px solid #7391CA"
-
-        }
+        "color": "white",
+        "background": "black",
+        "border": "4px solid #7391CA"
       }
     },
     "Answers": {
       "type": "Choices",
       "props": {
         "multiSelect": true,
-        "style": {
-          "align": "start",
-          "color": "white",
-          "background": "black",
-          "border": "2px solid #7391CA",
-          "hover": {
-            "background": "#FAA516",
-            "color": "black"
-          }
-        },
+        "align": "start",
+        "color": "white",
+        "background": "black",
+        "border": "2px solid #7391CA",
         "submit": {
           "label": "Final Answer",
-          "style": {
-            "align": "center"
-          }
+          "align": "center"
+        },
+        "hover": {
+          "background": "#FAA516",
+          "color": "black"
         }
       }
     }
@@ -57,16 +51,6 @@
           }
         },
         {
-          "type": "Button",
-          "props": {
-            "label": "Something",
-            "value": "A",
-            "style": {
-              "background": "pink"
-            }
-          }
-        },
-        {
           "type": "Answers",
           "props": {
             "choices": [
@@ -80,4 +64,4 @@
       ]
     }
   }
-}
+}`;
