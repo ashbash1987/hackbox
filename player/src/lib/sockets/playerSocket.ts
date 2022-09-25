@@ -7,7 +7,7 @@ import { getUserId, getUserName, getRoomCode } from "@/lib/browserStorage";
 import { expandStatePresets } from "../stateHelpers";
 
 const getVersion = (payload: PlayerStatePayload) =>
-  payload.version ? payload.version : 2;
+  payload.version ? payload.version : 1;
 
 const attachPlayerEvents = (
   socket: Socket,

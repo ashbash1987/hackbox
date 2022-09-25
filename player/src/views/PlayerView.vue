@@ -5,7 +5,7 @@ import router from "@/router";
 import type { PlayerState } from "@/types";
 
 const defaultState: PlayerState = {
-  version: 2,
+  version: 1,
   theme: {
     header: {
       color: "black",
