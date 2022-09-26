@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import DOMPurify from "dompurify";
-import { marked } from "marked";
+import markdown from "@/lib/markdown";
 import { computed } from "vue";
 
 const customProps = defineProps(["custom"]);
@@ -24,12 +23,7 @@ const props = {
   },
 };
 
-const text = computed(() => {
-  const parsedMarkdown = marked.parse(props.text);
-  const purifiedText = DOMPurify.sanitize(parsedMarkdown);
-
-  return purifiedText;
-});
+const text = computed(() => markdown(props.text));
 </script>
 
 <template>
@@ -46,5 +40,9 @@ const text = computed(() => {
   color: v-bind("props.style.color");
   background: v-bind("props.style.background");
   border: v-bind("props.style.border");
+}
+
+p {
+  margin: 0;
 }
 </style>

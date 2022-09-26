@@ -37,7 +37,13 @@ export default `{
         "submit": {
           "label": "Final Answer",
           "style": {
-            "align": "center"
+            "align": "center",
+            "background": "#FAA516",
+            "color": "black",
+            "hover": {
+              "background": "#0BDA51",
+              "color": "white"
+            }
           }
         }
       }
@@ -53,17 +59,45 @@ export default `{
         {
           "type": "Question",
           "props": {
-            "text": "Put these words in alphabetical order."
+            "text": "Put these words <br> in **alphabetical** order."
           }
         },
         {
           "type": "Answers",
           "props": {
             "choices": [
-              { "label": "A: Great", "value": "A", "keys": ["A", "1"] },
-              { "label": "B: Zebra", "value": "B", "keys": ["B", "2"] },
-              { "label": "C: London", "value": "C", "keys": ["C", "3"] },
-              { "label": "D: Country", "value": "D", "keys": ["D", "4"] }
+              {
+                "label": "**A:** Great",
+                "value": "A",
+                "keys": ["A", "1"],
+                "style": {
+                  "background": "#111111"
+                }
+              },
+              {
+                "label": "**B:** Zebra",
+                "value": "B",
+                "keys": ["B", "2"],
+                "style": {
+                  "background": "#222222"
+                }
+              },
+              {
+                "label": "**C:** London",
+                "value": "C",
+                "keys": ["C", "3"],
+                "style": {
+                  "background": "#333333"
+                }
+              },
+              {
+                "label": "**D:** Country",
+                "value": "D",
+                "keys": ["D", "4"],
+                "style": {
+                  "background": "#444444"
+                }
+              }
             ]
           }
         }

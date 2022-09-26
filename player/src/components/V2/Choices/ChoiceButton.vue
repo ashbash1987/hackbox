@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, reactive, onUnmounted, onMounted } from "vue";
+import markdown from "@/lib/markdown";
+import { ref, reactive, onUnmounted, onMounted, computed } from "vue";
 
 export interface StyleProps {
   color: string;
@@ -37,7 +38,7 @@ const defaultProps = {
     border: "2px solid black",
     width: "100%",
     fontSize: "20px",
-    padding: "20px",
+    padding: "0 20px",
     margin: "10px 0px",
     borderRadius: "10px",
     hover: {
@@ -70,6 +71,7 @@ const props = {
 };
 
 const button = ref<HTMLButtonElement>();
+const label = computed(() => markdown(props.label));
 
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.repeat) return;
@@ -100,9 +102,8 @@ onUnmounted(() => {
     @click="handleSelect"
     :disabled="state.selected"
     :class="`choice ${state.selected ? 'choice--selected' : ''}`"
-  >
-    {{ props.label }}
-  </button>
+    v-html="label"
+  ></button>
 </template>
 
 <style scoped>
