@@ -76,7 +76,7 @@ socket.on("msg", (message: Message) => {
       ? `You answered ${Array.isArray(value) ? value.join(", ") : value}.`
       : "You buzzed in!";
     gameState.save();
-    sendMemberState(message.from, { ui: layouts.empty(response) });
+    sendMemberState(message.from, { ui: layouts.text(response) });
   }
 });
 
@@ -111,7 +111,7 @@ const removePlayerFromGame = (userId: string) => {
   sendMemberState(userId, {
     theme,
     presets,
-    ui: layouts.empty(gameState.members[userId].name),
+    ui: layouts.empty(),
   });
 };
 
@@ -129,7 +129,7 @@ const lockPlayer = async (userId: string) => {
 
   gameState.save();
   sendMemberState(userId, {
-    ui: layouts.empty("You are locked out."),
+    ui: layouts.text("You are locked out."),
   });
 };
 
