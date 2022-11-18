@@ -1,0 +1,50 @@
+services:
+  - name: hackbox - backend
+    type: web
+    env: node
+    rootDir: backend
+    branch: main
+    region: ohio
+    plan: starter
+    buildCommand: "npm run build"
+    startCommand: "npm run start"
+    envVars:
+      - fromGroup: hackbox
+  - name: hackbox - player
+    type: web
+    env: static
+    rootDir: player
+    branch: main
+    buildCommand: "npm run build"
+    staticPublishPath: ./dist
+    envVars:
+      - fromGroup: hackbox
+  - name: hackbox - sandbox
+    type: web
+    env: static
+    rootDir: sandbox
+    branch: main
+    buildCommand: "npm run build"
+    staticPublishPath: ./dist
+    envVars:
+      - fromGroup: hackbox
+  - name: hackbox - buzz
+    type: web
+    env: static
+    rootDir: buzz
+    branch: main
+    buildCommand: "npm run build"
+    staticPublishPath: ./dist
+    envVars:
+      - fromGroup: hackbox
+envVarGroups:
+  - name: hackbox
+    envVars:
+      - key: VITE_PORT
+        value: 3000
+      - key: VITE_BACKEND_URI
+        value: "https://hackbox-backend.onrender.com"
+      - key: VITE_SANDBOX_URI
+        value: "https://hackbox-sandbox.onrender.com"
+      - key: VITE_BUZZ_URI
+        value: "https://hackbox-buzz.onrender.com"
