@@ -43,8 +43,8 @@ envVarGroups:
       - key: VITE_PORT
         value: 3000
       - key: VITE_BACKEND_URI
-        value: "https://hackbox-backend.onrender.com"
+        value: "https://app.hackbox.ca"
       - key: VITE_SANDBOX_URI
-        value: "https://hackbox-sandbox.onrender.com"
+        value: "https://sandbox.hackbox.ca"
       - key: VITE_BUZZ_URI
-        value: "https://hackbox-buzz.onrender.com"
+        value: "https://buzz.hackbox.ca"
