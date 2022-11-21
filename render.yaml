@@ -10,6 +10,8 @@ services:
     startCommand: "npm run start"
     envVars:
       - fromGroup: hackbox
+    domains:
+      - app.hackbox.ca
   - name: hackbox - player
     type: web
     env: static
@@ -19,6 +21,8 @@ services:
     staticPublishPath: ./dist
     envVars:
       - fromGroup: hackbox
+    domains:
+      - hackbox.ca
   - name: hackbox - sandbox
     type: web
     env: static
@@ -26,6 +30,8 @@ services:
     branch: main
     buildCommand: "npm run build"
     staticPublishPath: ./dist
+    domains:
+      - sandbox.hackbox.ca
     envVars:
       - fromGroup: hackbox
   - name: hackbox - buzz
@@ -37,6 +43,8 @@ services:
     staticPublishPath: ./dist
     envVars:
       - fromGroup: hackbox
+    domains:
+      - buzz.hackbox.ca
 envVarGroups:
   - name: hackbox
     envVars:
