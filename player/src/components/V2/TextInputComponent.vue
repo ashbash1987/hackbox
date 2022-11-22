@@ -29,7 +29,7 @@ const inputState = reactive({
 });
 
 const handleKeydown = (event: KeyboardEvent) => {
-  if (event.code === "Enter") respond();
+  if (event.key === "Enter") respond();
 };
 
 const respond = () => {
