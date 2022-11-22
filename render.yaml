@@ -1,8 +1,8 @@
 services:
-  - name: hackbox - backend
+  - name: hackbox - game server
     type: web
     env: node
-    rootDir: backend
+    rootDir: game-server
     branch: main
     region: ohio
     plan: starter
@@ -12,10 +12,10 @@ services:
       - fromGroup: hackbox
     domains:
       - app.hackbox.ca
-  - name: hackbox - player
+  - name: hackbox - player client
     type: web
     env: static
-    rootDir: player
+    rootDir: player-client
     branch: main
     buildCommand: "npm run build"
     staticPublishPath: ./dist
