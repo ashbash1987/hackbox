@@ -81,7 +81,7 @@ class Member {
   updateState(newState: Partial<MemberState> = {}) {
     this.state = mergeStates(this.state, newState);
     this.state.ui.main.components = this.state.ui.main.components.map(
-      (component) => ({ ...component, key: randomUUID() })
+      (component) => ({ key: randomUUID(), ...component })
     );
     this.sendState();
   }
