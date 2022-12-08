@@ -54,7 +54,6 @@ provide("socket", socket);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: v-bind("state.theme.main.background");
   height: 100vh;
 }
 
@@ -81,17 +80,16 @@ provide("socket", socket);
 .player-main--wrapper {
   display: flex;
   justify-content: center;
-  margin-top: -50px;
   max-height: -webkit-fill-available;
   height: 100vh;
   overflow: scroll;
+  background: v-bind("state.theme.main.background");
 }
 
 .player-main {
   display: flex;
   flex-direction: column;
   justify-content: v-bind("state.ui.main.align");
-  margin-top: 60px;
   margin-bottom: 10px;
   width: 100%;
   min-width: 300px;
