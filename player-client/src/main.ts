@@ -22,7 +22,7 @@ app.component("font-awesome-icon", FontAwesomeIcon);
 app.directive("focus", {
   mounted(el) {
     el.focus();
-    el.click();
+    el.setSelectionRange(0, 0);
   },
 });
 
