@@ -18,4 +18,11 @@ Object.entries(components).map(([name, component]) => {
 });
 
 app.component("font-awesome-icon", FontAwesomeIcon);
+
+app.directive("focus", {
+  mounted(el) {
+    el.focus();
+  },
+});
+
 app.mount("#app");
