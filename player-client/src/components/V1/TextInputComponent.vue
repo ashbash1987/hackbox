@@ -53,7 +53,6 @@ onUnmounted(() => {
 <template>
   <div class="text-input-wrapper">
     <input
-      v-focus
       class="text-input"
       type="text"
       v-model="inputState.value"
