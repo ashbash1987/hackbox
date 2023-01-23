@@ -54,7 +54,7 @@ onUnmounted(() => {
   <div class="text-input-wrapper">
     <input
       class="text-input"
-      autofocus
+      type="text"
       v-model="inputState.value"
       :disabled="inputState.submitted"
     />

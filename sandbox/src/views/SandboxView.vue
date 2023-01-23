@@ -20,10 +20,12 @@ const linterUrl = computed(() => {
 
 const updateMemberState = (userId: string) => {
   const json = JSON.parse(playerStateInput.value);
-  socket?.emit("member.update", {
-    to: userId,
-    data: json,
-  });
+  window.setTimeout(() => {
+    socket?.emit("member.update", {
+      to: userId,
+      data: json,
+    });
+  }, 500);
 };
 
 const members = computed(() =>

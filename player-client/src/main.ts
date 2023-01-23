@@ -18,4 +18,15 @@ Object.entries(components).map(([name, component]) => {
 });
 
 app.component("font-awesome-icon", FontAwesomeIcon);
+
+// This shouldn't be used until it works for all devices.
+// On iOS, the keyboard does not appear until the user
+// interacts with page.
+app.directive("focus", {
+  mounted(el) {
+    el.focus();
+    el.setSelectionRange(0, 0);
+  },
+});
+
 app.mount("#app");
