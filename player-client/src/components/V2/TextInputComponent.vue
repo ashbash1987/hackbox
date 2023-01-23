@@ -20,7 +20,7 @@ const customProps = defineProps(["custom"]);
 const props = {
   ...defaultProps,
   ...customProps.custom,
-  style: { ...defaultProps.style, ...customProps.custom },
+  style: { ...defaultProps.style, ...customProps.custom.style },
 };
 
 const inputState = reactive({
@@ -86,7 +86,7 @@ onUnmounted(() => {
 
 .text-input {
   border: none;
-  color: v-bind("props.color");
+  color: v-bind("props.style.color");
   background: transparent;
   font-size: v-bind("props.style.fontSize");
   margin: 0;
