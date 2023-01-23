@@ -13,6 +13,7 @@ const defaultProps = {
     background: "white",
     border: "2px solid black",
     fontSize: "30px",
+    borderRadius: "0px"
   },
 };
 
@@ -81,6 +82,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: row;
   border: v-bind("props.style.border");
+  border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
 }
 
@@ -102,6 +104,7 @@ onUnmounted(() => {
 .submit-button {
   font-size: v-bind("props.style.fontSize");
   border: none;
+  border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
   padding: 10px;
 }
