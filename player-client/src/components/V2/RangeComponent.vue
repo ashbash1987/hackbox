@@ -70,7 +70,6 @@ onUnmounted(() => {
     <input
       class="range-text-input"
       type="number"
-      autofocus
       v-model="inputState.value"
       :min="props.min"
       :max="props.max"
