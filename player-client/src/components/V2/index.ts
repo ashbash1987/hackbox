@@ -3,6 +3,7 @@ import ChoicesComponent from "./ChoicesComponent.vue";
 import TextComponent from "./TextComponent.vue";
 import ButtonComponent from "./ButtonComponent.vue";
 import TextInputComponent from "./TextInputComponent.vue";
+import RangeComponent from "./RangeComponent.vue";
 
 export default {
   BuzzerComponent,
@@ -10,4 +11,5 @@ export default {
   TextComponent,
   ButtonComponent,
   TextInputComponent,
+  RangeComponent,
 };
