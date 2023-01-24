@@ -6,14 +6,17 @@ const socket: Socket = inject("socket") as Socket;
 let mountedAt: number;
 
 const defaultProps = {
-  event: "text",
+  event: "range",
+  min: 0,
+  max: 100,
+  step: 1,
   style: {
     color: "black",
     align: "left",
     background: "white",
     border: "2px solid black",
-    fontSize: "30px",
-    borderRadius: "0px"
+    fontSize: "16px",
+    borderRadius: "0px",
   },
 };
 
@@ -25,7 +28,7 @@ const props = {
 };
 
 const inputState = reactive({
-  value: "",
+  value: 0,
   submitted: false,
 });
 
@@ -34,12 +37,11 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 const respond = () => {
-  if (inputState.value.length === 0) return;
   inputState.submitted = true;
   window.removeEventListener("keydown", handleKeydown);
   socket.emit("msg", {
     event: props.event,
-    value: inputState.value,
+    value: String(inputState.value),
     ms: Date.now() - mountedAt,
   });
 };
@@ -55,11 +57,23 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="text-input-wrapper">
+  <div class="range-input-wrapper">
     <input
-      class="text-input"
-      type="text"
+      class="range-input"
+      type="range"
       v-model="inputState.value"
+      :min="props.min"
+      :max="props.max"
+      :step="props.step"
+      :disabled="inputState.submitted"
+    />
+    <input
+      class="range-text-input"
+      type="number"
+      v-model="inputState.value"
+      :min="props.min"
+      :max="props.max"
+      :step="props.step"
       :disabled="inputState.submitted"
     />
     <button @click="respond" class="submit-button">
@@ -78,7 +92,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.text-input-wrapper {
+.range-input-wrapper {
   display: flex;
   flex-direction: row;
   border: v-bind("props.style.border");
@@ -86,18 +100,33 @@ onUnmounted(() => {
   background: v-bind("props.style.background");
 }
 
-.text-input {
+.range-input {  
+  margin: 0;
+  padding: 10px 0;
+  flex-grow: 1;
+}
+
+.range-input:disabled {
+  opacity: 0.6;
+}
+
+.range-text-input {
+  display: flex;
   border: none;
   color: v-bind("props.style.color");
   background: transparent;
   font-size: v-bind("props.style.fontSize");
   margin: 0;
-  width: 100%;
-  padding: 10px;
-  flex-grow: 1;
+  padding: 10px 5px;
+  width: 25%;
+  text-align: center;  
 }
 
-.text-input:disabled {
+.range-text-input::-webkit-inner-spin-button {
+  opacity:1;
+}
+
+.range-text-input:disabled {
   opacity: 0.6;
 }
 
