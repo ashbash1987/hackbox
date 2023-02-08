@@ -10,7 +10,7 @@ import router from "@/router";
 import roomExists from "@/lib/roomExists";
 
 const props = defineProps({
-  windowHeight: Number,
+  windowHeight: String,
 });
 
 const updateRoomExists = async () => {
@@ -104,7 +104,8 @@ updateRoomExists();
 .lobby-nav--wrapper {
   display: flex;
   justify-content: center;
-  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
   color: white;
   background: #7c2fec;
 }
@@ -127,6 +128,7 @@ updateRoomExists();
 .lobby-main--wrapper {
   display: flex;
   justify-content: center;
+  overflow: scroll;
 }
 
 .lobby-main {

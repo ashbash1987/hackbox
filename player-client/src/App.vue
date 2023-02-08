@@ -17,7 +17,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <RouterView :window-height="windowHeight + 'px'" />
+  <RouterView :window-height="windowHeight + 1 + 'px'" />
 </template>
 
 <style>
@@ -25,5 +25,6 @@ body {
   margin: 0;
   box-sizing: border-box;
   font-family: Helvetica, sans-serif;
+  overflow: hidden;
 }
 </style>
