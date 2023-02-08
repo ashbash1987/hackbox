@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import config from "@/config";
 import { reactive, computed, onMounted, ref } from "vue";
 import {
   getRoomCode,
@@ -108,7 +109,7 @@ updateRoomExists();
         <div class="lobby-nav--right">
           <div v-if="!twitchData" class="twitch-icon--container__logged-out">
             <a
-              href="https://id.twitch.tv/oauth2/authorize?client_id=qlfz8nlzzkq20jhl1xuawhza5xa3fm&redirect_uri=http://localhost:9001/twitch-auth-callback&response_type=token"
+              :href="`https://id.twitch.tv/oauth2/authorize?client_id=qlfz8nlzzkq20jhl1xuawhza5xa3fm&redirect_uri=${config.playerClientUri}/twitch-auth-callback&response_type=token`"
             >
               <font-awesome-icon
                 icon="fa-brands fa-twitch"
