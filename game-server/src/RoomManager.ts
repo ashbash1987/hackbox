@@ -1,4 +1,5 @@
 import { Server, Socket } from "socket.io";
+import axios from "axios";
 import Room from "./Room";
 import Host from "./Host";
 
@@ -52,7 +53,13 @@ class RoomManager {
     return newRoom;
   }
 
-  joinRoom(socket: Socket, userId: string, userName: string, roomCode: string) {
+  async joinRoom(
+    socket: Socket,
+    userId: string,
+    userName: string,
+    roomCode: string,
+    twitchAccessToken: string | undefined
+  ) {
     let room = this.findRoom(roomCode);
     if (!room) {
       socket.emit("error", { message: "This room does not exist." });
@@ -60,7 +67,30 @@ class RoomManager {
       return;
     }
 
-    room.join(userId, userName, socket);
+    let twitchData;
+
+    if (twitchAccessToken) {
+      const response = await axios({
+        method: "GET",
+        url: "https://api.twitch.tv/helix/users",
+        headers: {
+          Authorization: "Bearer " + twitchAccessToken,
+          "Client-Id": "qlfz8nlzzkq20jhl1xuawhza5xa3fm",
+        },
+      });
+
+      if (response.status === 200) {
+        const userData = response.data.data[0];
+
+        twitchData = {
+          id: userData.id,
+          username: userData.display_name,
+          photo: userData.profile_image_url,
+        };
+      }
+    }
+
+    room.join(userId, userName, socket, twitchData);
   }
 }
 

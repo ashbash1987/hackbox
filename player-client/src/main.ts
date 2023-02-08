@@ -6,8 +6,9 @@ import components from "@/components";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faPaperPlane, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faTwitch } from "@fortawesome/free-brands-svg-icons";
 
-library.add(faPaperPlane, faCheck);
+library.add(faPaperPlane, faCheck, faTwitch);
 
 const app = createApp(App);
 

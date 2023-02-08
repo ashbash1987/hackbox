@@ -1,8 +1,9 @@
 import { v4 as uuid } from "uuid";
 
-const USERID_KEY = "bzzrtv-player-userid";
-const USERNAME_KEY = "bzzrtv-player-username";
-const ROOMCODE_KEY = "bzzrtv-player-roomcode";
+const USERID_KEY = "hackbox-player-userid";
+const USERNAME_KEY = "hackbox-player-username";
+const ROOMCODE_KEY = "hackbox-player-roomcode";
+const TWITCH_ACCESS_TOKEN = "hackbox-player-twitch-access-token";
 
 const getUserId = () => {
   let userId = window.localStorage.getItem(USERID_KEY);
@@ -23,4 +24,21 @@ const setRoomCode = (code: string) => {
   window.localStorage.setItem(ROOMCODE_KEY, code.slice(0, 4).toUpperCase());
 };
 
-export { getUserId, getUserName, setUserName, getRoomCode, setRoomCode };
+const getTwitchAccessToken = () =>
+  window.localStorage.getItem(TWITCH_ACCESS_TOKEN) || "";
+const setTwitchAccessToken = (token: string) => {
+  window.localStorage.setItem(TWITCH_ACCESS_TOKEN, token);
+};
+const deleteTwitchAccessToken = () =>
+  window.localStorage.removeItem(TWITCH_ACCESS_TOKEN);
+
+export {
+  getUserId,
+  getUserName,
+  setUserName,
+  getRoomCode,
+  setRoomCode,
+  getTwitchAccessToken,
+  setTwitchAccessToken,
+  deleteTwitchAccessToken,
+};

@@ -1,16 +1,64 @@
 <script setup lang="ts">
-import { reactive, computed } from "vue";
+import { reactive, computed, onMounted, ref } from "vue";
 import {
   getRoomCode,
   getUserName,
   setRoomCode,
   setUserName,
+  getTwitchAccessToken,
+  deleteTwitchAccessToken,
 } from "@/lib/browserStorage";
 import router from "@/router";
+import config from "@/config";
 import roomExists from "@/lib/roomExists";
+
+interface TwitchData {
+  id: number;
+  username: string;
+  photo: string;
+}
 
 const props = defineProps({
   windowHeight: String,
+});
+
+const twitchData = ref<TwitchData>();
+
+const updateTwitchData = async (): Promise<void> => {
+  const token = getTwitchAccessToken();
+  if (!token) return;
+
+  const response = await fetch(`https://api.twitch.tv/helix/users`, {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Client-Id": "qlfz8nlzzkq20jhl1xuawhza5xa3fm",
+    },
+  });
+
+  if (response.ok) {
+    const body = await response.json();
+    const userData = body.data[0];
+
+    twitchData.value = {
+      id: userData.id,
+      username: userData.display_name,
+      photo: userData.profile_image_url,
+    };
+  } else {
+    deleteTwitchAccessToken();
+  }
+};
+
+const logOutOfTwitch = () => {
+  const yes = confirm("Disconnect from Twitch?");
+  if (yes) {
+    twitchData.value = undefined;
+    deleteTwitchAccessToken();
+  }
+};
+
+onMounted(() => {
+  updateTwitchData();
 });
 
 const updateRoomExists = async () => {
@@ -58,7 +106,28 @@ updateRoomExists();
       <div class="lobby-nav">
         <div class="lobby-nav--left"></div>
         <div class="lobby-nav--center">hackbox</div>
-        <div class="lobby-nav--right"></div>
+        <div class="lobby-nav--right">
+          <div v-if="!twitchData" class="twitch-icon--container__logged-out">
+            <a
+              :href="`https://id.twitch.tv/oauth2/authorize?client_id=qlfz8nlzzkq20jhl1xuawhza5xa3fm&redirect_uri=${config.playerClientUri}/twitch-auth-callback&response_type=token`"
+            >
+              <font-awesome-icon
+                icon="fa-brands fa-twitch"
+                class="twitch-icon"
+              />
+            </a>
+          </div>
+          <div
+            v-else
+            class="twitch-icon--container__logged-in"
+            role="button"
+            tabindex="0"
+            @click="logOutOfTwitch"
+          >
+            <img class="twitch-photo" width="20" :src="twitchData.photo" />
+            <font-awesome-icon icon="fa-brands fa-twitch" class="twitch-icon" />
+          </div>
+        </div>
       </div>
     </nav>
     <section class="lobby-main--wrapper">
@@ -121,8 +190,39 @@ updateRoomExists();
   font-weight: bold;
 }
 
+.lobby-nav--left {
+  flex: 1;
+  display: flex;
+  justify-content: start;
+}
+
 .lobby-nav--center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
   font-family: "Fredoka One", "Helvetica", "sans-serif";
+}
+
+.lobby-nav--right {
+  flex: 1;
+  display: flex;
+  justify-content: end;
+}
+
+.twitch-icon {
+  color: white;
+}
+
+.twitch-icon--container__logged-in {
+  cursor: pointer;
+}
+
+.twitch-photo {
+  position: relative;
+  left: 35px;
+  top: 8px;
+  z-index: 10;
+  border-radius: 50%;
 }
 
 .lobby-main--wrapper {

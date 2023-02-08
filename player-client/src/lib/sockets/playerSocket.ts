@@ -3,7 +3,12 @@ import { io, Socket } from "socket.io-client";
 import { reactive } from "vue";
 import type { Router } from "vue-router";
 import type { PlayerState, PlayerStatePayload } from "@/types";
-import { getUserId, getUserName, getRoomCode } from "@/lib/browserStorage";
+import {
+  getUserId,
+  getUserName,
+  getRoomCode,
+  getTwitchAccessToken,
+} from "@/lib/browserStorage";
 import { expandStatePresets } from "../stateHelpers";
 
 const getVersion = (payload: PlayerStatePayload) =>
@@ -43,6 +48,7 @@ const initializePlayerSocket = (router: Router, defaultState: PlayerState) => {
       userId: getUserId(),
       userName: getUserName(),
       roomCode: getRoomCode(),
+      twitchAccessToken: getTwitchAccessToken(),
     },
   });
 
