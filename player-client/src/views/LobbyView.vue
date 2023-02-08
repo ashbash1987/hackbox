@@ -54,7 +54,7 @@ updateRoomExists();
     <nav class="lobby-nav--wrapper">
       <div class="lobby-nav">
         <div class="lobby-nav--left"></div>
-        <div class="lobby-nav--center">hackbox.ca</div>
+        <div class="lobby-nav--center">hackbox</div>
         <div class="lobby-nav--right"></div>
       </div>
     </nav>
@@ -83,19 +83,19 @@ updateRoomExists();
         </div>
 
         <button @click="joinGame" :disabled="!canJoin">PLAY</button>
-
-        <a class="host-link" :href="config.buzzUri">Host a game of BUZZ</a>
-        <a class="host-link" :href="config.sandboxUri">Play in the sandbox</a>
       </div>
     </section>
   </div>
 </template>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap");
+
 .lobby-wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  height: 100vh;
+  background-color: #120a20;
 }
 
 .lobby-nav--wrapper {
@@ -103,7 +103,7 @@ updateRoomExists();
   justify-content: center;
   height: 50px;
   color: white;
-  background: #ed729f;
+  background: #7c2fec;
 }
 
 .lobby-nav {
@@ -115,6 +115,10 @@ updateRoomExists();
   align-items: center;
   font-size: 28px;
   font-weight: bold;
+}
+
+.lobby-nav--center {
+  font-family: "Fredoka One", "Helvetica", "sans-serif";
 }
 
 .lobby-main--wrapper {
@@ -144,7 +148,7 @@ label {
   margin-left: 8px;
   margin-bottom: 6px;
   font-weight: 800;
-  color: #444444;
+  color: #dddddd;
 }
 
 .lobby-text-input {
@@ -166,7 +170,7 @@ button {
   margin-inline: 40px;
   padding: 20px;
   color: white;
-  background: #ed729f;
+  background: #7c2fec;
   opacity: 0.9;
   transition: color 0.2s, background 0.2s, opacity 0.2s;
 }
@@ -188,7 +192,7 @@ button:hover:not(:disabled) {
   display: flex;
   justify-content: center;
   margin-top: 30px;
-  color: #ed729f;
+  color: #7c2fec;
   font-size: 12px;
   text-decoration: none;
 }

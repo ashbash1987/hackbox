@@ -52,7 +52,3 @@ envVarGroups:
         value: 3000
       - key: VITE_BACKEND_URI
         value: "https://app.hackbox.ca"
-      - key: VITE_SANDBOX_URI
-        value: "https://sandbox.hackbox.ca"
-      - key: VITE_BUZZ_URI
-        value: "https://buzz.hackbox.ca"
