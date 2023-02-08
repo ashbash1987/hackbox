@@ -85,6 +85,12 @@ provide("socket", socket);
   display: flex;
   justify-content: center;
   overflow: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.player-main--wrapper::-webkit-scrollbar {
+  display: none;
 }
 
 .player-main {

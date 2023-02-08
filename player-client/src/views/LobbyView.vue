@@ -229,6 +229,12 @@ updateRoomExists();
   display: flex;
   justify-content: center;
   overflow: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.lobby-main--wrapper::-webkit-scrollbar {
+  display: none;
 }
 
 .lobby-main {
