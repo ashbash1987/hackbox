@@ -52,3 +52,5 @@ envVarGroups:
         value: 3000
       - key: VITE_BACKEND_URI
         value: "https://app.hackbox.ca"
+      - key: VITE_PLAYER_CLIENT_URI
+        value: "https://hackbox.ca"

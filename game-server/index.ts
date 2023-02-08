@@ -60,12 +60,19 @@ interface Handshake {
   userId: string;
   userName: string;
   roomCode: string;
+  twitchAccessToken: string | undefined;
 }
 
-io.on("connection", (socket: Socket) => {
-  const { userId, userName, roomCode } = socket.handshake
+io.on("connection", async (socket: Socket) => {
+  const { userId, userName, roomCode, twitchAccessToken } = socket.handshake
     .query as unknown as Handshake;
-  roomManager.joinRoom(socket, userId, userName, roomCode);
+  await roomManager.joinRoom(
+    socket,
+    userId,
+    userName,
+    roomCode,
+    twitchAccessToken
+  );
 });
 
 server.listen(port);

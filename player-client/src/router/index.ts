@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { getRoomCode, setTwitchAccessToken } from "@/lib/browserStorage";
+import roomExists from "@/lib/roomExists";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

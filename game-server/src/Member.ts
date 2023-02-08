@@ -4,20 +4,33 @@ import type { MemberState } from "../types";
 import { mergeStates } from "./helpers/stateHelpers";
 import { randomUUID } from "crypto";
 
+export interface TwitchData {
+  id: string;
+  username: string;
+  photo: string;
+}
+
 class Member {
   socket: Socket | null;
   id: string;
   name: string;
   roomCode: string;
   state: MemberState;
+  twitchData?: TwitchData;
   messages: object[];
 
-  constructor(id: string, name: string, roomCode: string) {
+  constructor(
+    id: string,
+    name: string,
+    roomCode: string,
+    twitchData?: TwitchData
+  ) {
     this.id = id;
     this.name = name;
     this.roomCode = roomCode;
     this.socket = null;
     this.messages = [];
+    this.twitchData = twitchData;
     this.state = {
       version: 1,
       theme: {

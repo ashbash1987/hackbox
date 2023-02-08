@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import config from "@/config";
 import { reactive, computed, onMounted, ref } from "vue";
 import {
   getRoomCode,
@@ -10,6 +9,7 @@ import {
   deleteTwitchAccessToken,
 } from "@/lib/browserStorage";
 import router from "@/router";
+import config from "@/config";
 import roomExists from "@/lib/roomExists";
 
 interface TwitchData {
