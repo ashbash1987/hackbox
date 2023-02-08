@@ -23,10 +23,10 @@ class Member {
       theme: {
         header: {
           color: "white",
-          background: "#ed729f",
+          background: "#7c2fec",
         },
         main: {
-          background: "white",
+          background: "#120a20",
         },
       },
       ui: {
@@ -42,7 +42,7 @@ class Member {
                 text: "Waiting for the host to let you in...",
                 align: "center",
                 border: "none",
-                color: "black",
+                color: "white",
                 background: "transparent",
               },
             },
