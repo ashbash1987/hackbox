@@ -1,20 +1,26 @@
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { RouterView } from "vue-router";
 import { getUserId } from "@/lib/browserStorage";
 
 getUserId();
+
+let windowHeight = ref(window.innerHeight);
+
+const onHeightChange = () => {
+  windowHeight.value = window.innerHeight;
+};
+
+onMounted(() => {
+  window.addEventListener("resize", onHeightChange);
+});
 </script>
 
 <template>
-  <RouterView />
+  <RouterView :window-height="windowHeight + 'px'" />
 </template>
 
 <style>
-@font-face {
-  font-family: "FredokaOne";
-  src: local("FredokaOne"), url(./fonts/FredokaOne.ttf) format("truetype");
-}
-
 body {
   margin: 0;
   box-sizing: border-box;

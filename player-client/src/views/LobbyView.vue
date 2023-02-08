@@ -8,7 +8,10 @@ import {
 } from "@/lib/browserStorage";
 import router from "@/router";
 import roomExists from "@/lib/roomExists";
-import config from "@/config";
+
+const props = defineProps({
+  windowHeight: Number,
+});
 
 const updateRoomExists = async () => {
   const roomCode = getRoomCode();
@@ -94,8 +97,8 @@ updateRoomExists();
 .lobby-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   background-color: #120a20;
+  height: v-bind("props.windowHeight");
 }
 
 .lobby-nav--wrapper {

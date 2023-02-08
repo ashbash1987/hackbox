@@ -4,6 +4,10 @@ import initializePlayerSocket from "@/lib/sockets/playerSocket";
 import router from "@/router";
 import type { PlayerState } from "@/types";
 
+const props = defineProps({
+  windowHeight: String,
+});
+
 const defaultState: PlayerState = {
   version: 1,
   theme: {
@@ -53,8 +57,8 @@ provide("socket", socket);
 .player-wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  height: 100vh;
+  height: v-bind("props.windowHeight");
+  background: v-bind("state.theme.main.background");
 }
 
 .player-nav--wrapper {
@@ -81,9 +85,7 @@ provide("socket", socket);
   display: flex;
   justify-content: center;
   max-height: -webkit-fill-available;
-  height: 100vh;
   overflow: scroll;
-  background: v-bind("state.theme.main.background");
 }
 
 .player-main {
