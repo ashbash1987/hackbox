@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { getRoomCode } from "@/lib/browserStorage";
-import roomExists from "@/lib/roomExists";
+import { getRoomCode, setTwitchAccessToken } from "@/lib/browserStorage";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +19,21 @@ const router = createRouter({
           alert("That room does not exist.");
           router.push("/");
         }
+      },
+    },
+    {
+      path: "/twitch-auth-callback",
+      name: "twitch-auth-callback",
+      component: () => {},
+      beforeEnter: async (to) => {
+        const hash = new URLSearchParams(to.hash.substring(1));
+        const accessToken = hash.get("access_token");
+
+        if (accessToken) {
+          setTwitchAccessToken(accessToken);
+        }
+
+        router.push("/");
       },
     },
     { path: "/:pathMatch(.*)*", redirect: "/" },
