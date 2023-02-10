@@ -3,11 +3,10 @@ import roomManager from "./RoomManager";
 import type { MemberState } from "../types";
 import { mergeStates } from "./helpers/stateHelpers";
 import { randomUUID } from "crypto";
+import { TwitchMetadata } from "./helpers/twitch";
 
-export interface TwitchData {
-  id: string;
-  username: string;
-  photo: string;
+export interface MemberMetadata {
+  twitch: TwitchMetadata | undefined;
 }
 
 class Member {
@@ -16,21 +15,21 @@ class Member {
   name: string;
   roomCode: string;
   state: MemberState;
-  twitchData?: TwitchData;
+  metadata: MemberMetadata;
   messages: object[];
 
   constructor(
     id: string,
     name: string,
     roomCode: string,
-    twitchData?: TwitchData
+    metadata: MemberMetadata
   ) {
     this.id = id;
     this.name = name;
     this.roomCode = roomCode;
     this.socket = null;
     this.messages = [];
-    this.twitchData = twitchData;
+    this.metadata = metadata;
     this.state = {
       version: 1,
       theme: {

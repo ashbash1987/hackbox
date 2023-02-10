@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import Host from "./Host";
-import Member, { TwitchData } from "./Member";
+import Member, { MemberMetadata } from "./Member";
 import roomManager from "./RoomManager";
 
 class Room {
@@ -18,7 +18,7 @@ class Room {
     userId: string,
     userName: string,
     socket: Socket,
-    twitchData?: TwitchData
+    metadata: MemberMetadata
   ) {
     socket.join(this.id);
 
@@ -29,7 +29,7 @@ class Room {
     } else {
       user = this.members[userId];
       if (!user) {
-        user = new Member(userId, userName, this.id, twitchData);
+        user = new Member(userId, userName, this.id, metadata);
         this.members[userId] = user;
       }
     }
@@ -53,7 +53,8 @@ class Room {
           acc[member.id] = {
             id: member.id,
             name: member.name,
-            twitchData: member.twitchData,
+            metadata: member.metadata,
+            twitchData: member.metadata.twitch,
           };
           return acc;
         },

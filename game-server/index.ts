@@ -4,7 +4,7 @@ import express from "express";
 import cors from "cors";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
-import roomManager from "./src/RoomManager";
+import roomManager, { HandshakeMetadata } from "./src/RoomManager";
 import Room from "./src/Room";
 
 const port: number = parseInt(process.env.PORT, 10);
@@ -60,18 +60,28 @@ interface Handshake {
   userId: string;
   userName: string;
   roomCode: string;
-  twitchAccessToken: string | undefined;
+  metadata: string;
 }
 
 io.on("connection", async (socket: Socket) => {
-  const { userId, userName, roomCode, twitchAccessToken } = socket.handshake
-    .query as unknown as Handshake;
+  const handshake = socket.handshake.query as unknown as Handshake;
+  const { userId, userName, roomCode } = handshake;
+  let { metadata } = handshake;
+
+  let handshakeMetadata = {} as HandshakeMetadata;
+
+  try {
+    handshakeMetadata = JSON.parse(metadata) as HandshakeMetadata;
+  } catch (error) {
+    console.error("Handshake metadata was not a JSON string.");
+  }
+
   await roomManager.joinRoom(
     socket,
     userId,
     userName,
     roomCode,
-    twitchAccessToken
+    handshakeMetadata
   );
 });
 

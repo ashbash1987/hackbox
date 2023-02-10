@@ -1,7 +1,12 @@
 import { Server, Socket } from "socket.io";
-import axios from "axios";
 import Room from "./Room";
 import Host from "./Host";
+import { authenticateWithTwitch } from "./helpers/twitch";
+import { MemberMetadata } from "./Member";
+
+export interface HandshakeMetadata {
+  twitchAccessToken?: string;
+}
 
 class RoomManager {
   io: Server | null;
@@ -58,7 +63,7 @@ class RoomManager {
     userId: string,
     userName: string,
     roomCode: string,
-    twitchAccessToken: string | undefined
+    metadata: HandshakeMetadata
   ) {
     let room = this.findRoom(roomCode);
     if (!room) {
@@ -67,30 +72,11 @@ class RoomManager {
       return;
     }
 
-    let twitchData;
+    const memberMetadata: MemberMetadata = {
+      twitch: await authenticateWithTwitch(metadata.twitchAccessToken),
+    };
 
-    if (twitchAccessToken) {
-      const response = await axios({
-        method: "GET",
-        url: "https://api.twitch.tv/helix/users",
-        headers: {
-          Authorization: "Bearer " + twitchAccessToken,
-          "Client-Id": "qlfz8nlzzkq20jhl1xuawhza5xa3fm",
-        },
-      });
-
-      if (response.status === 200) {
-        const userData = response.data.data[0];
-
-        twitchData = {
-          id: userData.id,
-          username: userData.display_name,
-          photo: userData.profile_image_url,
-        };
-      }
-    }
-
-    room.join(userId, userName, socket, twitchData);
+    room.join(userId, userName, socket, memberMetadata);
   }
 }
 

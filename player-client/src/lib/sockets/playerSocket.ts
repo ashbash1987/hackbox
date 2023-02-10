@@ -48,7 +48,9 @@ const initializePlayerSocket = (router: Router, defaultState: PlayerState) => {
       userId: getUserId(),
       userName: getUserName(),
       roomCode: getRoomCode(),
-      twitchAccessToken: getTwitchAccessToken(),
+      metadata: JSON.stringify({
+        twitchAccessToken: getTwitchAccessToken(),
+      }),
     },
   });
 
