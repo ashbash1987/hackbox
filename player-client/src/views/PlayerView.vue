@@ -83,8 +83,10 @@ provide("socket", socket);
 
 .player-main--wrapper {
   display: flex;
+  flex: 1;
   justify-content: center;
   overflow: scroll;
+  align-items: v-bind("state.ui.main.align");
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
@@ -96,8 +98,7 @@ provide("socket", socket);
 .player-main {
   display: flex;
   flex-direction: column;
-  justify-content: v-bind("state.ui.main.align");
-  margin-bottom: 10px;
+  max-height: 100%;
   width: 100%;
   min-width: 300px;
   max-width: 350px;
