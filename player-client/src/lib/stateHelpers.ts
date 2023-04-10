@@ -6,7 +6,7 @@ const expandStatePresets = (state: PlayerStatePayload): PlayerStatePayload => {
     const preset = presets[component.type];
     if (!preset) return component;
 
-    const props = { ...preset.props, ...component.props };
+    const props = { ...preset.props, ...component.props, style: { ...preset.props.style, ...component.props.style } };
     return { key: component.key, type: preset.type, props };
   });
 
