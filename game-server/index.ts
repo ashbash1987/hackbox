@@ -7,7 +7,7 @@ import { Server, Socket } from "socket.io";
 import roomManager, { HandshakeMetadata } from "./src/RoomManager";
 import Room from "./src/Room";
 
-const port: number = parseInt(process.env.PORT, 10);
+const port: number = 9000;
 
 const app = express();
 app.use(cors({ origin: "*" }));
