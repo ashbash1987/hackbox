@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 import roomManager, { HandshakeMetadata } from "./src/RoomManager";
 import Room from "./src/Room";
 
@@ -48,10 +49,29 @@ app.post("/rooms", (req, res) => {
 });
 
 const server = createServer(app);
+
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "http://localhost:9001",
+      "http://localhost:9002",
+      "https://buzz.hackbox.ca",
+      "https://sandbox.hackbox.ca",
+      "https://hackbox.ca",
+      "https://www.hackbox.ca",
+      "https://admin.socket.io",
+    ],
+    credentials: true,
   },
+});
+
+instrument(io, {
+  auth: {
+    type: "basic",
+    username: "dev",
+    password: "$2a$12$fVzleFxejMX9sTh4zJSVYeqUYNMVbPDjGBpES9Wb4ynT0aeGO8Kh6",
+  },
+  mode: "development",
 });
 
 roomManager.io = io;
