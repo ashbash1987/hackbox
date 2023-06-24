@@ -36,3 +36,8 @@ export interface PlayerStatePayload {
   ui: UiState;
   presets: { [key: string]: Component };
 }
+
+export interface FindRoomResponse {
+  exists: boolean;
+  twitchRequired?: boolean;
+}

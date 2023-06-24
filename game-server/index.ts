@@ -14,10 +14,19 @@ const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
+interface RoomCreateResponse {
+  exists: Boolean;
+  twitchRequired?: Boolean;
+}
+
 app.get("/rooms/:roomCode", (req, res) => {
   const roomCode = req.params.roomCode as string;
-  const exists = !!roomManager.findRoom(roomCode);
-  res.json({ exists });
+  const room = roomManager.findRoom(roomCode);
+
+  const response: RoomCreateResponse = { exists: !!room };
+  if (room) response.twitchRequired = room.twitchRequired;
+
+  res.json(response);
 });
 
 app.get("/rooms/:roomCode/auth-host/:userId", (req, res) => {
@@ -32,6 +41,7 @@ app.post("/rooms", (req, res) => {
   let newRoom: Room;
 
   const specifiedRoomCode = req.body.roomCode as string;
+  const twitchRequired = !!req.body.twitchRequired || false;
 
   if (specifiedRoomCode) {
     if (specifiedRoomCode.length !== 4)
@@ -43,7 +53,7 @@ app.post("/rooms", (req, res) => {
     roomCode = roomManager.generateRoomCode();
   }
 
-  newRoom = roomManager.createRoom(req.body.hostId, roomCode);
+  newRoom = roomManager.createRoom(req.body.hostId, roomCode, twitchRequired);
 
   return res.json({ ok: true, roomCode: newRoom.id });
 });
