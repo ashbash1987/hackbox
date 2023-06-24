@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/devanhurst/hackbox#readme",
   "devDependencies": {
-    "concurrently": "^7.2.2"
+    "concurrently": "^8.2.0"
   }
 }
