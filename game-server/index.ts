@@ -62,26 +62,8 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:9001",
-      "http://localhost:9002",
-      "https://buzz.hackbox.ca",
-      "https://sandbox.hackbox.ca",
-      "https://hackbox.ca",
-      "https://www.hackbox.ca",
-      "https://admin.socket.io",
-    ],
-    credentials: true,
+    origin: "*",
   },
-});
-
-instrument(io, {
-  auth: {
-    type: "basic",
-    username: "dev",
-    password: "$2a$12$fVzleFxejMX9sTh4zJSVYeqUYNMVbPDjGBpES9Wb4ynT0aeGO8Kh6",
-  },
-  mode: "development",
 });
 
 roomManager.io = io;
