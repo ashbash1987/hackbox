@@ -4,7 +4,8 @@ import express from "express";
 import cors from "cors";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
-import { instrument } from "@socket.io/admin-ui";
+import { createAdapter } from "@socket.io/redis-adapter";
+import { createClient } from "redis";
 import roomManager, { HandshakeMetadata } from "./src/RoomManager";
 import Room from "./src/Room";
 
@@ -65,6 +66,12 @@ const io = new Server(server, {
     origin: "*",
   },
 });
+
+const pubClient = createClient({
+  url: "redis://red-ciu7u1h5rnuhcnt3dvbg:6379",
+});
+const subClient = pubClient.duplicate();
+io.adapter(createAdapter(pubClient, subClient));
 
 roomManager.io = io;
 
