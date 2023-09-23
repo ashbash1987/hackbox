@@ -4,14 +4,21 @@ export interface Component {
   props: { [key: string]: unknown };
 }
 
+export interface CustomFont {
+  family: string;
+}
+
 export interface ThemeState {
   header: {
     color: string;
     background: string;
+    fontFamily: string;
   };
   main: {
     background: string;
+    fontFamily: string;
   };
+  fonts?: CustomFont[];
 }
 
 export interface UiState {

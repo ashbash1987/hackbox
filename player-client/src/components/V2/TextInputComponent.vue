@@ -13,7 +13,8 @@ const defaultProps = {
     background: "white",
     border: "2px solid black",
     fontSize: "30px",
-    borderRadius: "0px"
+    borderRadius: "0px",
+    fontFamily: "sans-serif",
   },
 };
 
@@ -60,19 +61,16 @@ onUnmounted(() => {
       class="text-input"
       type="text"
       v-model="inputState.value"
-      :disabled="inputState.submitted"
-    />
+      :disabled="inputState.submitted" />
     <button @click="respond" class="submit-button">
       <font-awesome-icon
         v-if="inputState.submitted"
         class="submit-icon"
-        icon="fa-solid fa-check"
-      />
+        icon="fa-solid fa-check" />
       <font-awesome-icon
         v-if="!inputState.submitted"
         class="submit-icon"
-        icon="fa-solid fa-paper-plane"
-      />
+        icon="fa-solid fa-paper-plane" />
     </button>
   </div>
 </template>
@@ -84,6 +82,7 @@ onUnmounted(() => {
   border: v-bind("props.style.border");
   border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
+  font-family: v-bind("props.style.fontFamily");
 }
 
 .text-input {

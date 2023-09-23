@@ -16,4 +16,34 @@ const expandStatePresets = (state: PlayerStatePayload): PlayerStatePayload => {
   return state;
 };
 
-export { expandStatePresets };
+const processFonts = (state: PlayerStatePayload): void => {
+  document.getElementById("google-fonts-preload-link")?.remove();
+  document.getElementById("google-fonts-link")?.remove();
+
+  const fonts = state.theme.fonts;
+  if (!fonts || fonts.length === 0) return;
+
+  const searchParams = new URLSearchParams();
+
+  fonts.forEach(({ family }) => {
+    searchParams.append("family", family);
+  });
+  searchParams.append("display", "swap");
+
+  const googleFontsPreloadLink = document.createElement("link");
+  googleFontsPreloadLink.id = "google-fonts-preload-link";
+  googleFontsPreloadLink.href = `https://fonts.googleapis.com/css2?${searchParams.toString()}`;
+  googleFontsPreloadLink.rel = "preload";
+  googleFontsPreloadLink.as = "style";
+  googleFontsPreloadLink.crossOrigin = "anonymous";
+
+  const googleFontsLink = document.createElement("link");
+  googleFontsLink.id = "google-fonts-preload-link";
+  googleFontsLink.href = `https://fonts.googleapis.com/css2?${searchParams.toString()}`;
+  googleFontsLink.rel = "stylesheet";
+
+  document.head.appendChild(googleFontsPreloadLink);
+  document.head.appendChild(googleFontsLink);
+};
+
+export { expandStatePresets, processFonts };

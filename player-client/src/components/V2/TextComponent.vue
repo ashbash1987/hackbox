@@ -11,6 +11,7 @@ const defaultProps = {
     border: "4px solid black",
     color: "black",
     align: "center",
+    fontFamily: "sans-serif",
   },
 };
 
@@ -40,6 +41,7 @@ const text = computed(() => markdown(props.text));
   color: v-bind("props.style.color");
   background: v-bind("props.style.background");
   border: v-bind("props.style.border");
+  font-family: v-bind("props.style.fontFamily");
 }
 
 p {

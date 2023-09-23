@@ -129,8 +129,7 @@ onMounted(() => {
       :disabled="state.submitted"
       :label="choice.label"
       :keys="choice.keys"
-      :style="{ ...props.style, ...choice.style }"
-    ></choice-button>
+      :style="{ ...props.style, ...choice.style }"></choice-button>
     <choice-button
       v-if="props.multiSelect"
       key="submit-button"
@@ -138,8 +137,7 @@ onMounted(() => {
       :disabled="state.submitted || state.selections.length === 0"
       :label="props.submit.label"
       :keys="['Enter']"
-      :style="{ ...props.style, ...props.submit.style }"
-    ></choice-button>
+      :style="{ ...props.style, ...props.submit.style }"></choice-button>
   </div>
 </template>
 

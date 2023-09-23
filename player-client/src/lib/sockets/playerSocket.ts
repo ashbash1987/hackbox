@@ -9,7 +9,7 @@ import {
   getRoomCode,
   getTwitchAccessToken,
 } from "@/lib/browserStorage";
-import { expandStatePresets } from "../stateHelpers";
+import { expandStatePresets, processFonts } from "../stateHelpers";
 
 const getVersion = (payload: PlayerStatePayload) =>
   payload.version ? payload.version : 1;
@@ -35,6 +35,7 @@ const attachPlayerEvents = (
 
   socket.on("state.member", (payload: PlayerStatePayload) => {
     const newState = expandStatePresets(payload);
+    processFonts(payload);
 
     state.version = getVersion(payload);
     state.theme = newState.theme;
