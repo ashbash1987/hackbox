@@ -4,6 +4,7 @@ import type { MemberState } from "../types";
 import { mergeStates } from "./helpers/stateHelpers";
 import { randomUUID } from "crypto";
 import { TwitchMetadata } from "./helpers/twitch";
+import Room from "./Room";
 
 export interface MemberMetadata {
   twitch: TwitchMetadata | undefined;
@@ -99,7 +100,7 @@ class Member {
   }
 
   get room() {
-    return roomManager.findRoom(this.roomCode);
+    return roomManager.findRoom(this.roomCode) as Room;
   }
 }
 

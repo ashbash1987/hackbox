@@ -6,32 +6,16 @@ import roomManager from "./RoomManager";
 class Room {
   readonly id: string;
   host: Host;
-  members: { [id: string]: Member };
+  members: Map<string, Member>;
   readonly twitchRequired: Boolean;
   readonly createdAt: number;
-  lastActivity: number;
 
   constructor(roomCode: string, host: Host, twitchRequired: Boolean) {
     this.id = roomCode;
     this.host = host;
-    this.members = {};
+    this.members = new Map<string, Member>();
     this.twitchRequired = twitchRequired;
     this.createdAt = Date.now();
-    this.lastActivity = this.createdAt;
-  }
-
-  /**
-   * @returns Returns this room's age, in seconds
-   */
-  age(): number {
-    return (Date.now() - this.createdAt) / 1000;
-  }
-  
-  /**
-   * @returns The time since the room's last activity, in seconds
-   */
-  timeSinceLastActivity(): number {
-    return (Date.now() - this.lastActivity) / 1000;
   }
 
   join(
@@ -42,15 +26,14 @@ class Room {
   ) {
     socket.join(this.id);
 
-    let user: Host | Member;
-
+    let user: Host | Member | undefined;
     if (userId === this.host.id) {
       user = this.host;
     } else {
-      user = this.members[userId];
+      user = this.members.get(userId);
       if (!user) {
         user = new Member(userId, userName, this.id, metadata);
-        this.members[userId] = user;
+        this.members.set(userId, user);
       }
     }
 
@@ -60,17 +43,15 @@ class Room {
 
   sendPrivateStateToHost() {
     this.host.send("state.host", this.privateState);
-    this.lastActivity = Date.now();
   }
 
   sendEventToRoom(payload: object) {
     roomManager.io?.to(this.id).emit("event", payload);
-    this.lastActivity = Date.now();
   }
 
   get privateState() {
     return {
-      members: Object.values(this.members).reduce(
+      members: Object.values(Object.fromEntries(this.members.entries())).reduce(
         (acc: { [memberId: string]: object }, member) => {
           acc[member.id] = {
             id: member.id,

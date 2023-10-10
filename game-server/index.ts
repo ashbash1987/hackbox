@@ -1,7 +1,7 @@
 import "dotenv/config";
-
 import express from "express";
 import cors from "cors";
+import initializeJobs from "./src/jobs";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
@@ -109,6 +109,8 @@ io.on("connection", async (socket: Socket) => {
     handshakeMetadata
   );
 });
+
+initializeJobs(roomManager);
 
 server.listen(port);
 
