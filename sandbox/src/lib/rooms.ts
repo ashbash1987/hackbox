@@ -18,7 +18,11 @@ const authorizedToHost = async (
   return body.authed;
 };
 
-const createRoom = async (): Promise<string> => {
+interface CreateOptions {
+  twitchRequired?: boolean;
+}
+
+const createRoom = async (options: CreateOptions = {}): Promise<string> => {
   const response = await fetch(`${config.backendUri}/rooms`, {
     method: "POST",
     headers: {
@@ -26,6 +30,7 @@ const createRoom = async (): Promise<string> => {
     },
     body: JSON.stringify({
       hostId: getUserId(),
+      ...options,
     }),
   });
   const body = await response.json();

@@ -49,11 +49,15 @@ class RoomManager {
     return this.rooms[roomCode];
   }
 
-  createRoom(hostId: string, roomCode: string): Room {
+  createRoom(hostId: string, roomCode: string, twitchRequired = false): Room {
     const existingRoom = this.findRoom(roomCode);
     if (existingRoom) return this.createRoom(hostId, this.generateRoomCode());
 
-    const newRoom = new Room(roomCode, new Host(hostId, roomCode));
+    const newRoom = new Room(
+      roomCode,
+      new Host(hostId, roomCode),
+      twitchRequired
+    );
     this.rooms[roomCode] = newRoom;
     return newRoom;
   }
@@ -75,6 +79,19 @@ class RoomManager {
     const memberMetadata: MemberMetadata = {
       twitch: await authenticateWithTwitch(metadata.twitchAccessToken),
     };
+
+    if (userId === room.host.id) {
+      room.join(userId, userName, socket, memberMetadata);
+      return;
+    }
+
+    if (room.twitchRequired && !memberMetadata.twitch) {
+      socket.emit("error", {
+        message: "Please log in with Twitch before joining this room.",
+      });
+      socket.disconnect(true);
+      return;
+    }
 
     room.join(userId, userName, socket, memberMetadata);
   }

@@ -80,5 +80,6 @@ onUnmounted(() => {
   box-shadow: v-bind("props.shadow");
   border-radius: v-bind("props.radius");
   border: v-bind("props.border");
+  font-family: v-bind("props.fontFamily");
 }
 </style>

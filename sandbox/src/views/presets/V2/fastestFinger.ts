@@ -3,11 +3,19 @@ export default `{
   "theme": {
     "header": {
       "color": "black",
-      "background": "#FAA516"
+      "background": "#FAA516",
+      "fontFamily": "monospace"
     },
     "main": {
       "background": "black"
-    }
+    },
+    "fonts": [
+      { "family": "Roboto Condensed" },
+      { "family": "Open Sans" },
+      { "family": "Montserrat" },
+      { "family": "Raleway" },
+      { "family": "Ubuntu" }
+    ]
   },
   "presets": {
     "Question": {
@@ -16,7 +24,8 @@ export default `{
         "style": {
           "color": "white",
           "background": "black",
-          "border": "4px solid #7391CA"
+          "border": "4px solid #7391CA",
+          "fontFamily": "Roboto Condensed"
         }
       }
     },
@@ -35,11 +44,12 @@ export default `{
           }
         },
         "submit": {
-          "label": "Final Answer",
+          "label": "Final Answer?",
           "style": {
             "align": "center",
             "background": "#FAA516",
             "color": "black",
+            "fontFamily": "Comic Sans MS",
             "hover": {
               "background": "#0BDA51",
               "color": "white"
@@ -51,7 +61,7 @@ export default `{
   },
   "ui": {
     "header": {
-      "text": "CAPTAIN"
+      "text": "REGIS"
     },
     "main": {
       "align": "start",
@@ -59,7 +69,7 @@ export default `{
         {
           "type": "Question",
           "props": {
-            "text": "Put these words <br> in **alphabetical** order."
+            "text": "Starting with the most popular, put these **Google Fonts** in order by the number of downloads."
           }
         },
         {
@@ -67,35 +77,39 @@ export default `{
           "props": {
             "choices": [
               {
-                "label": "**A:** Great",
+                "label": "**A:** Open Sans",
                 "value": "A",
                 "keys": ["A", "1"],
                 "style": {
-                  "background": "#111111"
+                  "background": "#111111",
+                  "fontFamily": "Open Sans"
                 }
               },
               {
-                "label": "**B:** Zebra",
+                "label": "**B:** Montserrat",
                 "value": "B",
                 "keys": ["B", "2"],
                 "style": {
-                  "background": "#222222"
+                  "background": "#222222",
+                  "fontFamily": "Montserrat"
                 }
               },
               {
-                "label": "**C:** London",
+                "label": "**C:** Raleway",
                 "value": "C",
                 "keys": ["C", "3"],
                 "style": {
-                  "background": "#333333"
+                  "background": "#333333",
+                  "fontFamily": "Raleway"
                 }
               },
               {
-                "label": "**D:** Country",
+                "label": "**D:** Ubuntu",
                 "value": "D",
                 "keys": ["D", "4"],
                 "style": {
-                  "background": "#444444"
+                  "background": "#444444",
+                  "fontFamily": "Ubuntu"
                 }
               }
             ]

@@ -10,7 +10,8 @@ import {
 } from "@/lib/browserStorage";
 import router from "@/router";
 import config from "@/config";
-import roomExists from "@/lib/roomExists";
+import getRoom from "@/lib/getRoom";
+import type { FindRoomResponse } from "@/types";
 
 interface TwitchData {
   id: number;
@@ -61,9 +62,9 @@ onMounted(() => {
   updateTwitchData();
 });
 
-const updateRoomExists = async () => {
+const updateRoom = async () => {
   const roomCode = getRoomCode();
-  state.roomExists = roomCode.length !== 4 ? false : await roomExists(roomCode);
+  state.room = await getRoom(roomCode);
 };
 
 const setRoomCodeFromInput = (event: Event) => {
@@ -71,7 +72,7 @@ const setRoomCodeFromInput = (event: Event) => {
   const newRoomCode = target.value;
   state.roomCode = newRoomCode;
   setRoomCode(newRoomCode);
-  updateRoomExists();
+  updateRoom();
 };
 
 const setUserNameFromInput = (event: Event) => {
@@ -84,20 +85,25 @@ const setUserNameFromInput = (event: Event) => {
 const canJoin = computed(() => {
   if (state.userName.length === 0) return false;
   if (state.userName.length > 12) return false;
-  return state.roomExists;
+  return state.room.exists;
 });
 
 const joinGame = () => {
+  if (state.room.twitchRequired && !getTwitchAccessToken()) {
+    alert("Please log in with Twitch before joining this room.");
+    return;
+  }
+
   router.push("/play");
 };
 
 const state = reactive({
   roomCode: getRoomCode(),
   userName: getUserName(),
-  roomExists: false,
+  room: { exists: false, twitchRequired: false } as FindRoomResponse,
 });
 
-updateRoomExists();
+updateRoom();
 </script>
 
 <template>
@@ -308,3 +314,4 @@ button:hover:not(:disabled) {
   text-decoration: none;
 }
 </style>
+@/lib/getRoom
