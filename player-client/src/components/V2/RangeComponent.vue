@@ -15,7 +15,10 @@ const defaultProps = {
     align: "left",
     background: "white",
     border: "2px solid black",
+    width: "100%",
     fontSize: "16px",
+    padding: "10px",
+    margin: "10px 0",
     borderRadius: "0px",
     fontFamily: "sans-serif",
   },
@@ -95,12 +98,14 @@ onUnmounted(() => {
   border: v-bind("props.style.border");
   border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
+  width: v-bind("props.style.width");
+  margin: v-bind("props.style.margin");
   font-family: v-bind("props.style.fontFamily");
 }
 
 .range-input {
   margin: 0;
-  padding: 10px 0;
+  padding: v-bind("props.style.padding");
   flex-grow: 1;
 }
 
@@ -115,7 +120,7 @@ onUnmounted(() => {
   background: transparent;
   font-size: v-bind("props.style.fontSize");
   margin: 0;
-  padding: 10px 5px;
+  padding: v-bind("props.style.padding");
   width: 25%;
   text-align: center;
 }
@@ -133,7 +138,7 @@ onUnmounted(() => {
   border: none;
   border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
-  padding: 10px;
+  padding: v-bind("props.style.padding");
 }
 
 .submit-icon {
