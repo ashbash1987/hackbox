@@ -52,9 +52,15 @@ app.post("/rooms", (req, res) => {
 
   if (specifiedRoomCode) {
     if (specifiedRoomCode.length !== 4)
-      return res.json({ ok: false, error: "invalid room code"} as RoomCreationResponse);
+      return res.json({
+        ok: false,
+        error: "invalid room code",
+      } as RoomCreationResponse);
     if (roomManager.findRoom(specifiedRoomCode))
-      return res.json({ ok: false, error: "room code unavailable"} as RoomCreationResponse);
+      return res.json({
+        ok: false,
+        error: "room code unavailable",
+      } as RoomCreationResponse);
     roomCode = specifiedRoomCode;
   } else {
     roomCode = roomManager.generateRoomCode();
@@ -110,7 +116,8 @@ io.on("connection", async (socket: Socket) => {
   );
 });
 
-initializeJobs(roomManager);
+// Not enabling cron jobs just yet.
+// initializeJobs(roomManager);
 
 server.listen(port);
 
