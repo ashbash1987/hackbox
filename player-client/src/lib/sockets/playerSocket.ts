@@ -16,9 +16,11 @@ const getVersion = (payload: PlayerStatePayload) =>
 
 const attachPlayerEvents = (
   socket: Socket,
+  defaultState: PlayerState,
   state: PlayerState,
   router: Router
 ) => {
+
   socket.on("disconnect", (reason: string) => {
     const reconnectReasons = [
       "ping timeout",
@@ -37,7 +39,16 @@ const attachPlayerEvents = (
     const newState = expandStatePresets(payload);
 
     state.version = getVersion(payload);
-    state.theme = newState.theme;
+    state.theme = {
+      header: {
+        ...defaultState.theme.header,
+        ...newState.theme.header
+      },
+      main: {
+        ...defaultState.theme.main,
+        ...newState.theme.main
+      }
+    };
     state.ui = newState.ui;
   });
 };
@@ -56,7 +67,7 @@ const initializePlayerSocket = (router: Router, defaultState: PlayerState) => {
 
   const state = reactive(defaultState);
 
-  attachPlayerEvents(socket, state, router);
+  attachPlayerEvents(socket, defaultState, state, router);
 
   return { socket, state };
 };
