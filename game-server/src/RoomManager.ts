@@ -10,11 +10,11 @@ export interface HandshakeMetadata {
 
 class RoomManager {
   io: Server | null;
-  rooms: { [roomCode: string]: Room };
+  rooms: Map<string, Room>;
 
   constructor() {
     this.io = null;
-    this.rooms = {};
+    this.rooms = new Map<string, Room>();
   }
 
   generateRoomCode = () => {
@@ -46,7 +46,7 @@ class RoomManager {
   };
 
   findRoom(roomCode: string) {
-    return this.rooms[roomCode];
+    return this.rooms.get(roomCode);
   }
 
   createRoom(hostId: string, roomCode: string, twitchRequired = false): Room {
@@ -58,7 +58,7 @@ class RoomManager {
       new Host(hostId, roomCode),
       twitchRequired
     );
-    this.rooms[roomCode] = newRoom;
+    this.rooms.set(roomCode, newRoom);
     return newRoom;
   }
 
@@ -94,6 +94,10 @@ class RoomManager {
     }
 
     room.join(userId, userName, socket, memberMetadata);
+  }
+
+  deleteRoom(roomCode: string) {
+    this.rooms.delete(roomCode);
   }
 }
 
