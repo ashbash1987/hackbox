@@ -15,14 +15,14 @@ const defaultState: PlayerState = {
       color: "black",
       background: "black",
       minHeight: "50px",
-      maxHeight: "50px"
-      fontFamily: "Helvetica",
+      maxHeight: "50px",
+      fontFamily: "Helvetica"
     },
     main: {
       background: "black",
       minWidth: "300px",
-      maxWidth: "350px"
-      fontFamily: "Helvetica",
+      maxWidth: "350px",
+      fontFamily: "Helvetica"
     },
   },
   ui: {

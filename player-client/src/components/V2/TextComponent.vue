@@ -15,8 +15,8 @@ const defaultProps = {
     fontSize: "16px",
     padding: "10px",
     margin: "10px 0px",
-    borderRadius: "10px"
-    fontFamily: "sans-serif",
+    borderRadius: "10px",
+    fontFamily: "sans-serif"
   },
 };
 
