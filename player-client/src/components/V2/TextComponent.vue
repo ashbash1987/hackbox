@@ -7,10 +7,15 @@ const customProps = defineProps(["custom"]);
 const defaultProps = {
   text: "Sample Text",
   style: {
-    background: "white",
-    border: "4px solid black",
     color: "black",
     align: "center",
+    background: "white",
+    border: "4px solid black",
+    width: "auto",
+    fontSize: "16px",
+    padding: "10px",
+    margin: "10px 0px",
+    borderRadius: "10px"
   },
 };
 
@@ -33,13 +38,16 @@ const text = computed(() => markdown(props.text));
 <style scoped>
 .textbox {
   display: flex;
-  padding: 10px;
-  border-radius: 10px;
+  width: v-bind("props.style.width");
+  border: v-bind("props.style.border");
   justify-content: v-bind("props.style.align");
   text-align: v-bind("props.style.align");
   color: v-bind("props.style.color");
   background: v-bind("props.style.background");
-  border: v-bind("props.style.border");
+  fontSize: v-bind("props.style.fontSize");
+  padding: v-bind("props.style.padding");
+  margin: v-bind("props.style.margin");
+  border-radius: v-bind("props.style.borderRadius");
 }
 
 p {

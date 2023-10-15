@@ -12,7 +12,10 @@ const defaultProps = {
     align: "left",
     background: "white",
     border: "2px solid black",
+    width: "100%",
     fontSize: "30px",
+    padding: "10px",
+    margin: "10px 0",
     borderRadius: "0px"
   },
 };
@@ -84,6 +87,8 @@ onUnmounted(() => {
   border: v-bind("props.style.border");
   border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
+  width: v-bind("props.style.width");
+  margin: v-bind("props.style.margin");
 }
 
 .text-input {
@@ -93,7 +98,7 @@ onUnmounted(() => {
   font-size: v-bind("props.style.fontSize");
   margin: 0;
   width: 100%;
-  padding: 10px;
+  padding: v-bind("props.style.padding");
   flex-grow: 1;
 }
 
@@ -106,7 +111,7 @@ onUnmounted(() => {
   border: none;
   border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
-  padding: 10px;
+  padding: v-bind("props.style.padding");
 }
 
 .submit-icon {
