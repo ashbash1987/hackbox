@@ -14,9 +14,15 @@ const defaultState: PlayerState = {
     header: {
       color: "black",
       background: "black",
+      minHeight: "50px",
+      maxHeight: "50px",
+      fontFamily: "Helvetica"
     },
     main: {
       background: "black",
+      minWidth: "300px",
+      maxWidth: "350px",
+      fontFamily: "Helvetica"
     },
   },
   ui: {
@@ -36,18 +42,31 @@ provide("socket", socket);
 
 <template>
   <div class="player-wrapper">
-    <div class="player-nav--wrapper">
-      <div class="player-nav">{{ state.ui.header.text }}</div>
+    <div
+      class="player-nav--wrapper"
+      :style="
+        state.theme.header.fontFamily
+          ? { fontFamily: state.theme.header.fontFamily }
+          : {}
+      ">
+      <div class="player-nav">
+        {{ state.ui.header.text }}
+      </div>
     </div>
-    <div class="player-main--wrapper">
+    <div
+      class="player-main--wrapper"
+      :style="
+        state.theme.main.fontFamily
+          ? { fontFamily: state.theme.main.fontFamily }
+          : {}
+      ">
       <div class="player-main" v-if="state.ui.main.components">
         <component
           v-for="comp in state.ui.main.components"
           :is="`V${state.version}${comp.type}Component`"
           :key="comp.key"
           :custom="comp.props"
-          class="player-component"
-        />
+          class="player-component" />
       </div>
     </div>
   </div>
@@ -64,8 +83,8 @@ provide("socket", socket);
 .player-nav--wrapper {
   display: flex;
   justify-content: center;
-  min-height: 50px;
-  max-height: 50px;
+  min-height: v-bind("state.theme.header.minHeight");
+  max-height: v-bind("state.theme.header.maxHeight");
   color: v-bind("state.theme.header.color");
   background: v-bind("state.theme.header.background");
 }
@@ -74,8 +93,8 @@ provide("socket", socket);
   display: flex;
   justify-content: center;
   width: 100%;
-  min-width: 300px;
-  max-width: 350px;
+  min-width: v-bind("state.theme.main.minWidth");
+  max-width: v-bind("state.theme.main.maxWidth");
   align-items: center;
   font-size: 28px;
   font-weight: bold;
@@ -100,8 +119,8 @@ provide("socket", socket);
   flex-direction: column;
   max-height: 100%;
   width: 100%;
-  min-width: 300px;
-  max-width: 350px;
+  min-width: v-bind("state.theme.main.minWidth");
+  max-width: v-bind("state.theme.main.maxWidth");
 }
 
 .player-component {

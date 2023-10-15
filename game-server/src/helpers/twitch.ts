@@ -1,4 +1,5 @@
 import axios from "axios";
+import { env } from "process";
 
 export interface TwitchMetadata {
   id: string;
@@ -10,6 +11,8 @@ export const authenticateWithTwitch = async (
   twitchAccessToken: string | undefined
 ): Promise<TwitchMetadata | undefined> => {
   if (!twitchAccessToken) return undefined;
+
+  if (env.MOCK_HTTP) return authenticateWithTwitchMock();
 
   const response = await axios({
     method: "GET",
@@ -31,4 +34,12 @@ export const authenticateWithTwitch = async (
   } else {
     return undefined;
   }
+};
+
+const authenticateWithTwitchMock = (): TwitchMetadata => {
+  return {
+    id: "123456123456",
+    username: "twitchuser",
+    photo: "assets/twiter_user_photo.png",
+  };
 };

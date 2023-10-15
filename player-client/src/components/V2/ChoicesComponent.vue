@@ -35,6 +35,10 @@ const defaultProps = {
     },
   },
   style: {
+    grid: false,
+    gridColumns: 2,
+    gridRowHeight: "1fr",
+    gridGap: "10px",
     hover: {},
   },
 };
@@ -121,16 +125,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="choices">
-    <choice-button
-      v-for="choice in state.choices"
-      :key="choice.value"
-      :onSelect="() => toggleSelection(choice.value)"
-      :disabled="state.submitted"
-      :label="choice.label"
-      :keys="choice.keys"
-      :style="{ ...props.style, ...choice.style }"
-    ></choice-button>
+  <div v-if="props.style.grid">
+    <div class="choices-grid">
+      <choice-button
+        v-for="choice in state.choices"
+        :key="choice.value"
+        :onSelect="() => toggleSelection(choice.value)"
+        :disabled="state.submitted"
+        :label="choice.label"
+        :keys="choice.keys"
+        :style="{ ...props.style, ...choice.style }"></choice-button>
+    </div>
     <choice-button
       v-if="props.multiSelect"
       key="submit-button"
@@ -138,8 +143,25 @@ onMounted(() => {
       :disabled="state.submitted || state.selections.length === 0"
       :label="props.submit.label"
       :keys="['Enter']"
-      :style="{ ...props.style, ...props.submit.style }"
-    ></choice-button>
+      :style="{ ...props.style, ...props.submit.style }"></choice-button>
+  </div>  
+  <div v-else class="choices">
+    <choice-button
+      v-for="choice in state.choices"
+      :key="choice.value"
+      :onSelect="() => toggleSelection(choice.value)"
+      :disabled="state.submitted"
+      :label="choice.label"
+      :keys="choice.keys"
+      :style="{ ...props.style, ...choice.style }"></choice-button>
+    <choice-button
+      v-if="props.multiSelect"
+      key="submit-button"
+      :onSelect="submitResponse"
+      :disabled="state.submitted || state.selections.length === 0"
+      :label="props.submit.label"
+      :keys="['Enter']"
+      :style="{ ...props.style, ...props.submit.style }"></choice-button>
   </div>
 </template>
 
@@ -147,5 +169,13 @@ onMounted(() => {
 .choices {
   display: flex;
   flex-direction: column;
+}
+
+.choices-grid {
+  display: grid;
+  grid-template-columns: repeat(v-bind("props.style.gridColumns"), 1fr);
+  grid-auto-rows: v-bind("props.style.gridRowHeight");
+  grid-gap: v-bind("props.style.gridGap");
+  margin-bottom: v-bind("props.style.gridGap");
 }
 </style>

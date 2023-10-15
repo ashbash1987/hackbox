@@ -15,8 +15,12 @@ const defaultProps = {
     align: "left",
     background: "white",
     border: "2px solid black",
+    width: "100%",
     fontSize: "16px",
+    padding: "10px",
+    margin: "10px 0",
     borderRadius: "0px",
+    fontFamily: "sans-serif",
   },
 };
 
@@ -65,8 +69,7 @@ onUnmounted(() => {
       :min="props.min"
       :max="props.max"
       :step="props.step"
-      :disabled="inputState.submitted"
-    />
+      :disabled="inputState.submitted" />
     <input
       class="range-text-input"
       type="number"
@@ -74,19 +77,16 @@ onUnmounted(() => {
       :min="props.min"
       :max="props.max"
       :step="props.step"
-      :disabled="inputState.submitted"
-    />
+      :disabled="inputState.submitted" />
     <button @click="respond" class="submit-button">
       <font-awesome-icon
         v-if="inputState.submitted"
         class="submit-icon"
-        icon="fa-solid fa-check"
-      />
+        icon="fa-solid fa-check" />
       <font-awesome-icon
         v-if="!inputState.submitted"
         class="submit-icon"
-        icon="fa-solid fa-paper-plane"
-      />
+        icon="fa-solid fa-paper-plane" />
     </button>
   </div>
 </template>
@@ -98,11 +98,14 @@ onUnmounted(() => {
   border: v-bind("props.style.border");
   border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
+  width: v-bind("props.style.width");
+  margin: v-bind("props.style.margin");
+  font-family: v-bind("props.style.fontFamily");
 }
 
-.range-input {  
+.range-input {
   margin: 0;
-  padding: 10px 0;
+  padding: v-bind("props.style.padding");
   flex-grow: 1;
 }
 
@@ -117,13 +120,13 @@ onUnmounted(() => {
   background: transparent;
   font-size: v-bind("props.style.fontSize");
   margin: 0;
-  padding: 10px 5px;
+  padding: v-bind("props.style.padding");
   width: 25%;
-  text-align: center;  
+  text-align: center;
 }
 
 .range-text-input::-webkit-inner-spin-button {
-  opacity:1;
+  opacity: 1;
 }
 
 .range-text-input:disabled {
@@ -135,7 +138,7 @@ onUnmounted(() => {
   border: none;
   border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
-  padding: 10px;
+  padding: v-bind("props.style.padding");
 }
 
 .submit-icon {

@@ -19,6 +19,9 @@ const mergeStates = (
         ...oldState.theme.main,
         ...newState.theme.main,
       };
+    if (newState.theme.fonts) {
+      combinedState.theme.fonts = newState.theme.fonts;
+    }
   }
 
   if (newState.presets) {

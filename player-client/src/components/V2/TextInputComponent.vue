@@ -12,8 +12,12 @@ const defaultProps = {
     align: "left",
     background: "white",
     border: "2px solid black",
+    width: "100%",
     fontSize: "30px",
-    borderRadius: "0px"
+    padding: "10px",
+    margin: "10px 0",
+    borderRadius: "0px",
+    fontFamily: "sans-serif"
   },
 };
 
@@ -60,19 +64,16 @@ onUnmounted(() => {
       class="text-input"
       type="text"
       v-model="inputState.value"
-      :disabled="inputState.submitted"
-    />
+      :disabled="inputState.submitted" />
     <button @click="respond" class="submit-button">
       <font-awesome-icon
         v-if="inputState.submitted"
         class="submit-icon"
-        icon="fa-solid fa-check"
-      />
+        icon="fa-solid fa-check" />
       <font-awesome-icon
         v-if="!inputState.submitted"
         class="submit-icon"
-        icon="fa-solid fa-paper-plane"
-      />
+        icon="fa-solid fa-paper-plane" />
     </button>
   </div>
 </template>
@@ -84,6 +85,9 @@ onUnmounted(() => {
   border: v-bind("props.style.border");
   border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
+  width: v-bind("props.style.width");
+  margin: v-bind("props.style.margin");
+  font-family: v-bind("props.style.fontFamily");
 }
 
 .text-input {
@@ -93,7 +97,7 @@ onUnmounted(() => {
   font-size: v-bind("props.style.fontSize");
   margin: 0;
   width: 100%;
-  padding: 10px;
+  padding: v-bind("props.style.padding");
   flex-grow: 1;
 }
 
@@ -106,7 +110,7 @@ onUnmounted(() => {
   border: none;
   border-radius: v-bind("props.style.borderRadius");
   background: v-bind("props.style.background");
-  padding: 10px;
+  padding: v-bind("props.style.padding");
 }
 
 .submit-icon {

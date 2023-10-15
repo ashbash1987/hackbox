@@ -58,8 +58,7 @@ onMounted(() => {
     :label="props.label"
     :keys="props.keys"
     :style="props.style"
-    :disabled="state.submitted"
-  ></choice-button>
+    :disabled="state.submitted"></choice-button>
 </template>
 
 <style scoped></style>

@@ -12,6 +12,7 @@ export interface StyleProps {
   padding: string;
   margin: string;
   borderRadius: string;
+  fontFamily: string;
   hover: Partial<StyleProps>;
 }
 
@@ -41,6 +42,7 @@ const defaultProps = {
     padding: "0 20px",
     margin: "10px 0px",
     borderRadius: "10px",
+    fontFamily: "sans-serif",
     hover: {
       color: "black",
       background: "#AAAAAA",
@@ -102,8 +104,7 @@ onUnmounted(() => {
     @click="handleSelect"
     :disabled="state.selected"
     :class="`choice ${state.selected ? 'choice--selected' : ''}`"
-    v-html="label"
-  ></button>
+    v-html="label"></button>
 </template>
 
 <style scoped>
@@ -118,6 +119,7 @@ onUnmounted(() => {
   padding: v-bind("props.style.padding");
   margin: v-bind("props.style.margin");
   border-radius: v-bind("props.style.borderRadius");
+  font-family: v-bind("props.style.fontFamily");
 }
 
 .choice--selected {

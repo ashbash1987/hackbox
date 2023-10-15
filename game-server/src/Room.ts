@@ -7,11 +7,13 @@ class Room {
   id: string;
   host: Host;
   members: { [id: string]: Member };
+  twitchRequired: Boolean;
 
-  constructor(roomCode: string, host: Host) {
+  constructor(roomCode: string, host: Host, twitchRequired: Boolean) {
     this.id = roomCode;
     this.host = host;
     this.members = {};
+    this.twitchRequired = twitchRequired;
   }
 
   join(

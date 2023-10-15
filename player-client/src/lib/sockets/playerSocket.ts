@@ -9,16 +9,18 @@ import {
   getRoomCode,
   getTwitchAccessToken,
 } from "@/lib/browserStorage";
-import { expandStatePresets } from "../stateHelpers";
+import { expandStatePresets, processFonts } from "../stateHelpers";
 
 const getVersion = (payload: PlayerStatePayload) =>
   payload.version ? payload.version : 1;
 
 const attachPlayerEvents = (
   socket: Socket,
+  defaultState: PlayerState,
   state: PlayerState,
   router: Router
 ) => {
+
   socket.on("disconnect", (reason: string) => {
     const reconnectReasons = [
       "ping timeout",
@@ -35,9 +37,19 @@ const attachPlayerEvents = (
 
   socket.on("state.member", (payload: PlayerStatePayload) => {
     const newState = expandStatePresets(payload);
+    processFonts(payload);
 
     state.version = getVersion(payload);
-    state.theme = newState.theme;
+    state.theme = {
+      header: {
+        ...defaultState.theme.header,
+        ...newState.theme.header
+      },
+      main: {
+        ...defaultState.theme.main,
+        ...newState.theme.main
+      }
+    };
     state.ui = newState.ui;
   });
 };
@@ -56,7 +68,7 @@ const initializePlayerSocket = (router: Router, defaultState: PlayerState) => {
 
   const state = reactive(defaultState);
 
-  attachPlayerEvents(socket, state, router);
+  attachPlayerEvents(socket, defaultState, state, router);
 
   return { socket, state };
 };
