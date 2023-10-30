@@ -12,11 +12,15 @@ export interface ThemeState {
   header: {
     color: string;
     background: string;
+    minHeight: string;
+    maxHeight: string;
     fontFamily: string;
   };
   main: {
     background: string;
     fontFamily: string;
+    minWidth: string;
+    maxWidth: string;
   };
   fonts?: CustomFont[];
 }
