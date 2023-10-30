@@ -16,7 +16,7 @@ const defaultProps = {
     padding: "10px",
     margin: "10px 0px",
     borderRadius: "10px",
-    fontFamily: "sans-serif"
+    fontFamily: "sans-serif",
   },
 };
 
@@ -45,7 +45,7 @@ const text = computed(() => markdown(props.text));
   text-align: v-bind("props.style.align");
   color: v-bind("props.style.color");
   background: v-bind("props.style.background");
-  fontSize: v-bind("props.style.fontSize");
+  font-size: v-bind("props.style.fontSize");
   padding: v-bind("props.style.padding");
   margin: v-bind("props.style.margin");
   border-radius: v-bind("props.style.borderRadius");
