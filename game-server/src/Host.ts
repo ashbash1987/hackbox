@@ -1,5 +1,6 @@
 import type { Socket } from "socket.io";
 import roomManager from "./RoomManager";
+import Room from "./Room";
 
 const forAllRecipients = (
   recipients: any,
@@ -23,7 +24,7 @@ class Host {
 
     socket.on("member.update", async (payload) => {
       await forAllRecipients(payload.to, (recipientId) => {
-        const player = this.room.members[recipientId];
+        const player = this.room.members.get(recipientId);
         player?.updateState(payload.data);
       });
     });
@@ -38,7 +39,7 @@ class Host {
   }
 
   get room() {
-    return roomManager.findRoom(this.roomCode);
+    return roomManager.findRoom(this.roomCode) as Room;
   }
 }
 

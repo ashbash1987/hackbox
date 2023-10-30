@@ -4,16 +4,18 @@ import Member, { MemberMetadata } from "./Member";
 import roomManager from "./RoomManager";
 
 class Room {
-  id: string;
+  readonly id: string;
   host: Host;
-  members: { [id: string]: Member };
-  twitchRequired: Boolean;
+  members: Map<string, Member>;
+  readonly twitchRequired: Boolean;
+  readonly createdAt: number;
 
   constructor(roomCode: string, host: Host, twitchRequired: Boolean) {
     this.id = roomCode;
     this.host = host;
-    this.members = {};
+    this.members = new Map<string, Member>();
     this.twitchRequired = twitchRequired;
+    this.createdAt = Date.now();
   }
 
   join(
@@ -24,15 +26,14 @@ class Room {
   ) {
     socket.join(this.id);
 
-    let user: Host | Member;
-
+    let user: Host | Member | undefined;
     if (userId === this.host.id) {
       user = this.host;
     } else {
-      user = this.members[userId];
+      user = this.members.get(userId);
       if (!user) {
         user = new Member(userId, userName, this.id, metadata);
-        this.members[userId] = user;
+        this.members.set(userId, user);
       }
     }
 
@@ -50,7 +51,7 @@ class Room {
 
   get privateState() {
     return {
-      members: Object.values(this.members).reduce(
+      members: Object.values(Object.fromEntries(this.members.entries())).reduce(
         (acc: { [memberId: string]: object }, member) => {
           acc[member.id] = {
             id: member.id,
