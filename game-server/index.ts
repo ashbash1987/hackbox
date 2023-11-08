@@ -1,11 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import initializeJobs from "./src/jobs";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
-import { createAdapter } from "@socket.io/redis-adapter";
-import { createClient } from "redis";
 import roomManager, { HandshakeMetadata } from "./src/RoomManager";
 import Room from "./src/Room";
 
@@ -79,12 +76,6 @@ const io = new Server(server, {
   },
 });
 
-const pubClient = createClient({
-  url: "redis://red-ciu7u1h5rnuhcnt3dvbg:6379",
-});
-const subClient = pubClient.duplicate();
-io.adapter(createAdapter(pubClient, subClient));
-
 roomManager.io = io;
 
 interface Handshake {
@@ -115,9 +106,6 @@ io.on("connection", async (socket: Socket) => {
     handshakeMetadata
   );
 });
-
-// Not enabling cron jobs just yet.
-// initializeJobs(roomManager);
 
 server.listen(port);
 
