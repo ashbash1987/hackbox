@@ -39,12 +39,12 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 const respond = () => {
-    if (inputState.value.length === 0) return;
-    socket.emit("msg", {
-      event: props.event,
-      value: inputState.value,
-      ms: Date.now() - mountedAt,
-    });
+  if (inputState.value.length === 0) return;
+  socket.emit("msg", {
+    event: props.event,
+    value: inputState.value,
+    ms: Date.now() - mountedAt,
+  });
 
   if (props.persistent) {
     inputState.value = "";
