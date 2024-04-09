@@ -39,21 +39,20 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 const respond = () => {
-  if (inputState.value.length === 0) return;
-  if (!props.persistent)
-  {
+    if (inputState.value.length === 0) return;
+    socket.emit("msg", {
+      event: props.event,
+      value: inputState.value,
+      ms: Date.now() - mountedAt,
+    });
+
+  if (props.persistent) {
+    inputState.value = "";
+  } else {
     inputState.submitted = true;
     window.removeEventListener("keydown", handleKeydown);
   }
-  socket.emit("msg", {
-    event: props.event,
-    value: inputState.value,
-    ms: Date.now() - mountedAt,
-  });
-  if (props.persistent)
-  {
-    inputState.value = "";
-  }
+
 };
 
 onMounted(() => {
